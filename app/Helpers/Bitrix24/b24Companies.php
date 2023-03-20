@@ -13,16 +13,27 @@ class b24Companies
 
     public function __construct(Client $client)
     {
-        $this->client = $client;
-    }
-
-    public function getCompanies()
-    {
         $this->client = new Client([
             'base_uri' => 'https://geleon.bitrix24.ua/rest/1/jvj8rqmvyz6emv0k/',
 
         ]);
+    }
 
+    public function getCompanies()
+    {
+
+
+      
+    //    dd($result);
+    //    $response2 = $this->client->get('crm.company.userfield.list', ['filter' => ['FIELD_NAME' => '435',] ]); fetch user fields
+      //  $result2 = json_decode($response2->getBody());
+
+      
+          
+       
+        $companies = new stdClass;
+
+       
         $response = $this->client->post('crm.company.list', [
             'form_params' => [
                 'select' => [
@@ -36,30 +47,6 @@ class b24Companies
                 ],
             ],
         ]);
-        $result = json_decode($response->getBody());
-      
-    //    dd($result);
-        $response2 = $this->client->get('crm.company.userfield.list', ['filter' => ['FIELD_NAME' => '435',] ]);
-        $result2 = json_decode($response2->getBody());
-        dd($result2);
-        $response2 = $this->client->get('crm.company.userfield.get', ['query' => ['id' => '1409',] ]);
-        $result2 = json_decode($response2->getBody());
-      
-        $response2 = $this->client->get('crm.company.userfield.get', ['query' => ['id' => '335',] ]);
-        $result2 = json_decode($response2->getBody());
-      
-        $response2 = $this->client->get('crm.company.userfield.get', ['query' => ['id' => '1',] ]);
-        $result2 = json_decode($response2->getBody());
-        $response2 = $this->client->get('crm.company.userfield.get', ['query' => ['id' => '98391',] ]);
-        $result2 = json_decode($response2->getBody());
-      
-      
-      
-      
-       
-        $companies = new stdClass;
-
-        $response = $this->client->get('https://geleon.bitrix24.ua/rest/1/jvj8rqmvyz6emv0k/crm.company.list?limit=50');
         $result = json_decode($response->getBody());
 
         $companies->items = $result->result;
