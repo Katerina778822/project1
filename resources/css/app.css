@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    table {
+      @apply border-collapse border-2 border-blue-400 bg-blue-200;
+    }
+    th {
+        @apply border-2 border-blue-400 bg-blue-300 p-2;
+      }
+      td {
+        @apply border-separate border border-blue-400 p-2;
+      }
+      h4 {
+        @apply border-separate border border-blue-400;
+      }
+      
+  }
+  @layer components {
+    .btn-main {
+      @apply transition duration-500 ease-in-out bg-gray-100 hover:bg-blue-500 transform  hover:scale-110
+      rounded-lg mx-2 px-2;
+    }
+    .btn-del {
+      @apply transition duration-200 ease-in-out bg-gray-100 hover:bg-red-500 transform  hover:scale-75
+      rounded-lg mx-2 px-2;
+    }
+    .field-main {
+      @apply border-blue-300  border-2   bg-blue-50 w-64;
+    }
+  }
