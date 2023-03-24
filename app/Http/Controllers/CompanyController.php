@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Bitrix24\b24Companies;
+use App\Models\Company;
+use DateTime;
+use Exception;
+use Hamcrest\Core\IsNull;
 use Illuminate\Http\Request;
+use stdClass;
 
 class CompanyController extends Controller
 {
 
-    protected $bitrix24;
+    private b24Companies $helper;
 
-    public function __construct(CompanyController $bitrix24)
+    public function __construct()
     {
-      
-        $this->bitrix24 = $bitrix24;
+        $this->helper = new b24Companies();
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -40,9 +46,25 @@ class CompanyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(array $companie)
     {
-        //
+        
+        $modelCompanie=null;
+        $modelCompanie=Company::where('ID',$companie['ID'])->get();
+        if(count($modelCompanie)){
+            return;
+            
+        }
+        $modelCompanie = Company::create($companie);
+
+        try {
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
+        finally{
+            return;
+        }
+      
     }
 
     /**
@@ -91,7 +113,17 @@ class CompanyController extends Controller
     }
     public function fetchAll()
     {
-        
+        $companies = $this->helper->getCompanies();
+
+        foreach ($companies as $companie) {
+
+            $companie=get_object_vars($companie);
+            $companie['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $companie['DATE_CREATE']);
+            $companie['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $companie['DATE_MODIFY']);
+            $companie['LAST_ACTIVITY_TIME'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $companie['LAST_ACTIVITY_TIME']);
+            $this->store($companie);
+        }
+        return redirect()->back();
     }
     public function f2($id)
     {

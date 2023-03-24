@@ -74,10 +74,24 @@ Route::get('/partial.errorMessage/{error}', function () {
     return view('partial.errorMessage');
 })->name('/partial.errorMessag');
 
+Route::post('/Bitrix24/company', [App\Http\Controllers\CompanyController::class, 'fetchAll'])->middleware(['auth'])
+->name('company.fetchAll');
 
+
+Route::post('/Bitrix24/field', [App\Http\Controllers\B24FieldController::class, 'fetchAll'])->middleware(['auth'])
+->name('b24field.fetchAll');
+Route::post('/Bitrix24/b24user', [App\Http\Controllers\B24UserController::class, 'fetchAll'])->middleware(['auth'])
+->name('b24user.fetchAll');
+Route::post('/Bitrix24/b24ring', [App\Http\Controllers\B24RingController::class, 'fetchAll'])->middleware(['auth'])
+->name('b24ring.fetchAll');
+Route::post('/Bitrix24/b24task', [App\Http\Controllers\B24TaskController::class, 'fetchAll'])->middleware(['auth'])
+->name('b24task.fetchAll');
+Route::post('/Bitrix24/b24deal', [App\Http\Controllers\B24DealController::class, 'fetchAll'])->middleware(['auth'])
+->name('b24deal.fetchAll');
 
 Route::get('/bitrix24', function () {
     return view('bitrix24.b24dashboard');
 })->middleware(['auth'])->name('/bitrix24');
+
 Route::get('/bitrix24/token', [App\Http\Controllers\bitrix24Controller::class, 'getToken'])
 ->name('/getToken');
