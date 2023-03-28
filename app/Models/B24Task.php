@@ -11,8 +11,8 @@ class B24Task extends Model
     
     protected $table = 'b24_tasks';
     protected $fillable = [
-        'ID', 'STAGE_ID', 'PARENT_ID', 'GROUP_ID', 'RESPONSIBLE_ID','REAL_STATUS',
-        'STATUS', 'FORUM_ID', 'FORUM_TOPIC_ID', 'DESCRIPTION', 'RESPONSIBLE_NAME','RESPONSIBLE_LAST_NAME',
-        'GUID', 'ACTIVITY_DATE', 'CLOSED_DATE', 'CREATED_DATE', 'DEADLINE',
+        'id', 'timeEstimate', 'UF_CRM_TASK_LEAD', 'UF_CRM_TASK_CONTACT','UF_CRM_TASK_COMPANY', 'responsibleId','status',
+        'UF_CRM_TASK_DEAL', 'title', 'description', 'closedDate', 'createdDate','deadline','changedDate',
+        'dateStart', 
     ];
 }

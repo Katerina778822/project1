@@ -13,8 +13,8 @@
         "laravel/framework": "^8.54",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
-        "mesilov/bitrix24-php-sdk": "2.x",
-        "symfony/http-client": "^5.2"
+        "symfony/http-client": "^5.2",
+        "mesilov/bitrix24-php-sdk": "2.x"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -29,6 +29,7 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
+       
         }
     },
     "autoload-dev": {

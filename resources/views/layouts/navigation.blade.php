@@ -33,7 +33,7 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('/bitrix24')" :active="request()->routeIs('/bitrix24')">
+                    <x-nav-link :href="route('/bitrix24/new')" :active="request()->routeIs('/bitrix24')">
                         {{('Bitrix24') }}
                     </x-nav-link>
                 </div>

@@ -88,10 +88,20 @@ Route::post('/Bitrix24/b24task', [App\Http\Controllers\B24TaskController::class,
 ->name('b24task.fetchAll');
 Route::post('/Bitrix24/b24deal', [App\Http\Controllers\B24DealController::class, 'fetchAll'])->middleware(['auth'])
 ->name('b24deal.fetchAll');
+Route::post('/Bitrix24/b24lead', [App\Http\Controllers\B24LeadController::class, 'fetchAll'])->middleware(['auth'])
+->name('b24lead.fetchAll');
+Route::post('/Bitrix24/b24contacts', [App\Http\Controllers\B24ContactController::class, 'fetchAll'])->middleware(['auth'])
+->name('b24contact.fetchAll');
 
-Route::get('/bitrix24', function () {
+Route::get('/bitrix24/first', function () {
+    return view('bitrix24.b24dashboardFirst');
+})->middleware(['auth'])->name('/bitrix24/first');
+Route::get('/bitrix24/new', function () {
     return view('bitrix24.b24dashboard');
-})->middleware(['auth'])->name('/bitrix24');
+})->middleware(['auth'])->name('/bitrix24/new');
+Route::get('/bitrix24/analitics', function () {
+    return view('bitrix24.b24dashboardAnalitics ');
+})->middleware(['auth'])->name('/bitrix24/analitics');
 
 Route::get('/bitrix24/token', [App\Http\Controllers\bitrix24Controller::class, 'getToken'])
 ->name('/getToken');

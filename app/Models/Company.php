@@ -36,4 +36,9 @@ class Company extends Model
     {
         return $this->hasOne(B24User::class, 'b24user');
     }
+
+    public function contacts()
+    {
+        return $this->belongsToMany(Company::class, 'b24_contact_company', 'company_id', 'contact_id');
+    }
 }

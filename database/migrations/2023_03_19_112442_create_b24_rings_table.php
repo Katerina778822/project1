@@ -23,12 +23,20 @@ class CreateB24RingsTable extends Migration
             $table->text('CALL_RECORD_URL')->nullable()->default('');
             $table->string('CALL_FAILED_REASON')->nullable()->default('');
             $table->unsignedBigInteger('PORTAL_USER_ID')->nullable()->default(0);
-            $table->unsignedBigInteger('CRM_ENTITY_ID')->nullable()->default(0);
+           // $table->unsignedBigInteger('CRM_ENTITY_ID')->nullable()->default(0);
+            $table->unsignedBigInteger('CRM_LEAD_ID')->nullable()->default(0);
+            $table->unsignedBigInteger('CRM_COMPANY_ID')->nullable()->default(0);
+            $table->unsignedBigInteger('CRM_CONTACT_ID')->nullable()->default(0);
+
+
             $table->unsignedBigInteger('CALL_DURATION')->nullable()->default(0);
             $table->unsignedBigInteger('CRM_ACTIVITY_ID')->nullable()->default(0);
             $table->unsignedBigInteger('CALL_TYPE')->nullable()->default(0);
             $table->unsignedBigInteger('RECORD_FILE_ID')->nullable()->default(0);
             $table->dateTime('CALL_START_DATE')->nullable()->default(null);
+
+            $table->foreign('PORTAL_USER_ID')->references('ID')->on('b24_users');
+           // $table->foreign('CRM_COMPANY_ID')->references('ID')->on('companies');
         });
     }
 

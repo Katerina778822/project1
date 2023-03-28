@@ -161,6 +161,8 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+       // Mesilov\Bitrix24\Bitrix24ServiceProvider::class,
+
 
         /*
          * Package Service Providers...

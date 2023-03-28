@@ -14,7 +14,7 @@ class b24Companies
 
     public function __construct($base_uri = null)
     {
-        $base_uri = $base_uri ?? env('B24_API');
+        $base_uri = $base_uri ?? env('B24_APIold');
         $this->client = new Client([
             'base_uri' => $base_uri,
 
@@ -28,11 +28,14 @@ class b24Companies
     {
         $companies = [];
         $result = new stdClass;
-        $result->next = 1;
+        $result->next = -1;
 
         //   $companies = $result->result;
 
         while (property_exists($result, 'next') && !empty($result->next)) {
+            if ($result->next == -1) {
+                $result->next = 0;
+            }
             //     if ($result->next > 200) {             break;            }
             $response = $this->client->post(
                 'crm.company.list' . '?start=' . $result->next . '&limit=50',
@@ -68,11 +71,14 @@ class b24Companies
     {
         $items = [];
         $result = new stdClass;
-        $result->next = 1;
+        $result->next = -1;
 
         //   $companies = $result->result;
 
         while (property_exists($result, 'next') && !empty($result->next)) {
+            if ($result->next == -1) {
+                $result->next = 0;
+            }
             //     if ($result->next > 200) {             break;            }
             $response = $this->client->post(
                 'crm.company.userfield.list' . '?start=' . $result->next,
@@ -107,12 +113,14 @@ class b24Companies
     {
         $items = [];
         $result = new stdClass;
-        $result->next = 1;
+        $result->next = -1;
 
         //   $companies = $result->result;
 
         while (property_exists($result, 'next') && !empty($result->next)) {
-            //     if ($result->next > 200) {             break;            }
+            if ($result->next == -1) {
+                $result->next = 0;
+            }
             $response = $this->client->post(
                 'user.get' . '?start=' . $result->next,
                 [
@@ -136,8 +144,8 @@ class b24Companies
                 ]
             );
             $result = json_decode($response->getBody());
-
-            $items = array_merge($items, $result->result);
+            if (!empty($result->result))
+                $items = array_merge($items, $result->result);
         }
         //dd( $companies->items[3343]);
         return $items;
@@ -147,11 +155,14 @@ class b24Companies
     {
         $items = [];
         $result = new stdClass;
-        $result->next = 1;
+        $result->next = -1;
 
         //   $companies = $result->result;
 
         while (property_exists($result, 'next') && !empty($result->next)) {
+            if ($result->next == -1) {
+                $result->next = 0;
+            }
             //     if ($result->next > 200) {             break;            }
             $response = $this->client->post(
                 'crm.deal.list' . '?start=' . $result->next,
@@ -225,11 +236,14 @@ class b24Companies
     {
         $items = [];
         $result = new stdClass;
-        $result->next = 1;
+        $result->next = -1;
 
         //   $companies = $result->result;
 
         while (property_exists($result, 'next') && !empty($result->next)) {
+            if ($result->next == -1) {
+                $result->next = 0;
+            }
             //     if ($result->next > 200) {             break;            }
             $response = $this->client->post(
                 'voximplant.statistic.get' . '?start=' . $result->next,
@@ -265,32 +279,6 @@ class b24Companies
             $items = array_merge($items, $result->result);
         }
         //dd( $companies->items[3343]);
-        return $items;
-    }
-
-    public function getTasks()
-    {
-        $items = [];
-        $result = new stdClass;
-        $result->next = 0;
-
-        //     while (property_exists($result, 'next') && !empty($result->next)) {
-        $response = $this->client->get(
-            'tasks.task.list' . '?start=' . $result->next,
-            [
-                'query' => [
-                    'filter' => [
-                        '=UF_CRM_TASK' => 98081, // замените 2332 на идентификатор нужной сделки
-                    ],
-                    'select' => ['ID', 'TITLE', 'DESCRIPTION', 'CREATED_BY', 'RESPONSIBLE_ID', 'DEADLINE', 'STATUS', 'MARK'],
-                ],
-            ]
-        );
-        $result = json_decode($response->getBody());
-        $items = array_merge($items, $result->result);
-        //    dd( $result);
-        //      }
-
         return $items;
     }
 }
