@@ -54,6 +54,7 @@ class b24Companies
                             'DATE_CREATE',
                             'DATE_MODIFY',
                             'LAST_ACTIVITY_TIME',
+                            'COMPANY_TYPE',
                         ],
                     ],
                 ]
@@ -169,7 +170,7 @@ class b24Companies
                 [
                     'form_params' => [
                         'filter' => [
-                            '>DATE_CREATE' => '09.03.2023',
+                            //                   '>DATE_CREATE' => '09.03.2023',
                         ],
                         'select' => [
                             'ID',
@@ -232,25 +233,19 @@ class b24Companies
         //dd( $companies->items[3343]);
         return $items;
     }
-    public function getRings()
+
+
+    public function getRings($count)
     {
         $items = [];
-        $result = new stdClass;
-        $result->next = -1;
-
-        //   $companies = $result->result;
-
-        while (property_exists($result, 'next') && !empty($result->next)) {
-            if ($result->next == -1) {
-                $result->next = 0;
-            }
+       
             //     if ($result->next > 200) {             break;            }
             $response = $this->client->post(
-                'voximplant.statistic.get' . '?start=' . $result->next,
+                'voximplant.statistic.get' . '?start=' . $count,
                 [
                     'form_params' => [
                         'filter' => [
-                            '>CALL_START_DATE' => '09.03.2023',
+                          '>CALL_START_DATE' => '01.01.2022',
 
                             'ID',
                             'CALL_ID',
@@ -277,7 +272,7 @@ class b24Companies
             $result = json_decode($response->getBody());
             //          dd($result);
             $items = array_merge($items, $result->result);
-        }
+   
         //dd( $companies->items[3343]);
         return $items;
     }

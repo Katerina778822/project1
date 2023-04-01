@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\b24RingFetch;
+use App\Models\B24Analitics;
 use App\Models\B24Ring;
 use DateTime;
 use Exception;
@@ -99,31 +101,64 @@ class B24RingController extends AbstractB24Controller
 
     public function fetchAll()
     {
-        $items = $this->helper->getRings();
-        //dd($items);
-        foreach ($items as $item) {
-            //      dd($item);
-            $item = get_object_vars($item);
-            $item['CALL_START_DATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CALL_START_DATE']);
-            switch ($item['CRM_ENTITY_TYPE']) {
-                case 'CONTACT': {
-                        $item['CRM_LEAD_ID']=$item['CRM_ENTITY_ID'];
-                        break;
-                    }
-                case 'COMPANY': {
-                        $item['CRM_COMPANY_ID']=$item['CRM_ENTITY_ID'];
-                        break;
-                    }
-                case 'LEAD': {
-                    $item['CRM_LEAD_ID']=$item['CRM_ENTITY_ID'];
-                        break;
-                    }
-                default:break;
+        $job = new b24RingFetch();
+        $this->dispatch($job);
+    }
+
+    public function fetchData()
+    {
+        $count = 0;
+        $b24countItems = $this->helperOriginAPI->getQuantity('ring');
+        $b24count = B24Analitics::where('AIM', 1)->first();
+        if (!empty($b24count))
+            if (!empty($b24count->big_int1)) {
+            } else {
+                $b24count->big_int1 = 0;
+                $b24count->string1 = 'rings total fetch quantity';
+                $b24count->save();
             }
-
-
-            $this->store($item);
+        else {
+            $b24count = B24Analitics::create(['AIM' => 1, 'big_int1' => 0]);
         }
+        $items = $this->helper->getRings($b24count->big_int1);
+
+        while (count($items)&&$b24countItems> $b24count->big_int1) {
+
+            foreach ($items as $item) {
+                //      dd($item);
+                $item = get_object_vars($item);
+                $item['CALL_START_DATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CALL_START_DATE']);
+                switch ($item['CRM_ENTITY_TYPE']) {
+                    case 'CONTACT': {
+                            $item['CRM_LEAD_ID'] = $item['CRM_ENTITY_ID'];
+                            break;
+                        }
+                    case 'COMPANY': {
+                            $item['CRM_COMPANY_ID'] = $item['CRM_ENTITY_ID'];
+                            break;
+                        }
+                    case 'LEAD': {
+                            $item['CRM_LEAD_ID'] = $item['CRM_ENTITY_ID'];
+                            break;
+                        }
+                    default:
+                        break;
+                }
+
+                if ($item['PORTAL_USER_ID'] == 0)
+                    $item['PORTAL_USER_ID'] = 1;
+                $this->store($item);
+                $count++;
+            }
+            $b24count->big_int1 = B24Ring::count();; //save result in DB
+            $b24count->save();
+            $count = 0;
+
+            $items = $this->helper->getRings($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantity('ring');
+        }
+        //dd($items);
+
         return redirect()->back();
     }
 }

@@ -15,11 +15,16 @@
     </x-slot>
     <div>
         <div>
-            <div class="bg-blue-300 rounded-lg  p-8">
+            <div class="bg-blue-300 rounded-lg  p-8 flex">
 
               
-                <form action="{{ ('b24contact.fetchAll') }}" method="POST">
-                    <button class="btn-main my-4">Fetch </button>
+                <form action="{{ route('b24contact.analitics.companies_date') }}" method="get">
+                    <button class="btn-main my-4">Компании без движения после  </button>
+                    <input type="date" class="field-main" id="date" name="date">
+                    @csrf
+                </form>
+                <form action="{{ route('b24contact.analitics.companies_date_show') }}" method="get" disabled>
+                    <button class="btn-main my-4">Показать  </button>
                     @csrf
                 </form>
 

@@ -96,12 +96,19 @@ Route::post('/Bitrix24/b24contacts', [App\Http\Controllers\B24ContactController:
 Route::get('/bitrix24/first', function () {
     return view('bitrix24.b24dashboardFirst');
 })->middleware(['auth'])->name('/bitrix24/first');
+
 Route::get('/bitrix24/new', function () {
     return view('bitrix24.b24dashboard');
 })->middleware(['auth'])->name('/bitrix24/new');
+
 Route::get('/bitrix24/analitics', function () {
     return view('bitrix24.b24dashboardAnalitics ');
 })->middleware(['auth'])->name('/bitrix24/analitics');
+Route::get('/Bitrix24/analitics/companies_date', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDate'])->middleware(['auth'])
+->name('b24contact.analitics.companies_date');
+Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_show', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDateShow'])->middleware(['auth'])
+->name('b24contact.analitics.companies_date_show');
+
 
 Route::get('/bitrix24/token', [App\Http\Controllers\bitrix24Controller::class, 'getToken'])
 ->name('/getToken');

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 
 use App\Helpers\Bitrix24\b24OriginAPI;
+use App\Jobs\b24TaskFetch;
+use App\Models\B24Analitics;
 use App\Models\B24Task;
 
 use DateTime;
@@ -103,63 +105,94 @@ class B24TaskController extends AbstractB24Controller
 
     public function fetchAll()
     {
-        $items = $this->helperOriginAPI->getTasks();
+        $job = new b24TaskFetch();
+        $this->dispatch($job);
+    }
+
+    public function fetchData()
+    {
+      //  $count = 0;
+      $checkDate='2023-03-20T00:00:00+03:00';
+        $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $b24count = B24Task::count();
+
+
+
+        //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
+        $requestArray['DATE']=$checkDate;
+        $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
+        $requestArray['start'] = $b24count;
+
+  //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('task',$requestArray);
         //dd($items);
-        foreach ($items as $item) {
-            //      dd($item);
-            //     $item = get_object_vars($item);
+        while (count($items)&&$b24countItems> $b24count) {
+            foreach ($items as $item) {
+                //      dd($item);
+                //     $item = get_object_vars($item);
 
-            if (!empty($item['closedDate']))
-                $item['closedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['closedDate']);
-            else $item['closedDate'] = NULL;
-            if (!empty($item['createdDate']))
-                $item['createdDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['createdDate']);
-            else $item['createdDate'] = NULL;
-            if (!empty($item['deadline']))
-                $item['deadline'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['deadline']);
-            else $item['deadline'] = NULL;
-            if (!empty($item['dateStart']))
-                $item['dateStart'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['dateStart']);
-            else $item['dateStart'] = NULL;
-            if (!empty($item['changedDate']))
-                $item['changedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['changedDate']);
-            else $item['changedDate'] = NULL;
+                if (!empty($item['closedDate']))
+                    $item['closedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['closedDate']);
+                else $item['closedDate'] = NULL;
+                if (!empty($item['createdDate']))
+                    $item['createdDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['createdDate']);
+                else $item['createdDate'] = NULL;
+                if (!empty($item['deadline']))
+                    $item['deadline'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['deadline']);
+                else $item['deadline'] = NULL;
+                if (!empty($item['dateStart']))
+                    $item['dateStart'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['dateStart']);
+                else $item['dateStart'] = NULL;
+                if (!empty($item['changedDate']))
+                    $item['changedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['changedDate']);
+                else $item['changedDate'] = NULL;
 
-            if (!empty($item['ufCrmTask']))
-                foreach ($item['ufCrmTask'] as $hostItem)
-                    if (!empty($hostItem))
-                        switch (substr($hostItem, 0, 2)) {      //находим сущность, кот принадлежит данная задача
-                            case 'C_': {
-                                    $str = substr($hostItem, 2, (strlen($hostItem) - 3));
-                                    $unsignedBigInt = intval($str);
-                                    $item['UF_CRM_TASK_CONTACT'] = $unsignedBigInt;
+                if (!empty($item['ufCrmTask']))
+                    foreach ($item['ufCrmTask'] as $hostItem)
+                        if (!empty($hostItem))
+                            switch (substr($hostItem, 0, 2)) {      //находим сущность, кот принадлежит данная задача
+                                case 'C_': {
+                                        $str = substr($hostItem, 2, (strlen($hostItem) - 3));
+                                        $unsignedBigInt = intval($str);
+                                        $item['UF_CRM_TASK_CONTACT'] = $unsignedBigInt;
+                                        break;
+                                    }
+                                case 'CO': {
+                                        $str = substr($hostItem, 3, (strlen($hostItem) - 3));
+                                        $unsignedBigInt = intval($str);
+                                        $item['UF_CRM_TASK_COMPANY'] = $unsignedBigInt;
+                                        break;
+                                    }
+                                case 'L_': {
+                                        $str = substr($hostItem, 2, (strlen($hostItem) - 2));
+                                        $unsignedBigInt = intval($str);
+                                        $item['UF_CRM_TASK_LEAD'] = $unsignedBigInt;
+                                        break;
+                                    }
+                                case 'D_': {
+                                        $str = substr($hostItem, 2, (strlen($hostItem) - 2));
+                                        $unsignedBigInt = intval($str);
+                                        $item['UF_CRM_TASK_DEAL'] = $unsignedBigInt;
+                                        break;
+                                    }
+                                default:
+                                    // $item['description'] = $hostItem;
                                     break;
-                                }
-                            case 'CO': {
-                                    $str = substr($hostItem, 3, (strlen($hostItem) - 3));
-                                    $unsignedBigInt = intval($str);
-                                    $item['UF_CRM_TASK_COMPANY'] = $unsignedBigInt;
-                                    break;
-                                }
-                            case 'L_': {
-                                    $str = substr($hostItem, 2, (strlen($hostItem) - 2));
-                                    $unsignedBigInt = intval($str);
-                                    $item['UF_CRM_TASK_LEAD'] = $unsignedBigInt;
-                                    break;
-                                }
-                            case 'D_': {
-                                    $str = substr($hostItem, 2, (strlen($hostItem) - 2));
-                                    $unsignedBigInt = intval($str);
-                                    $item['UF_CRM_TASK_DEAL'] = $unsignedBigInt;
-                                    break;
-                                }
-                            default:
-                               // $item['description'] = $hostItem;
-                                break;
-                        }
+                            }
 
-            $this->store($item);
+                $this->store($item);
+               // $count++;
+            }
+            $b24count =B24Task::count(); //save result count
+            //$b24count->save();
+           // $count = 0;
+           $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('task',$requestArray);
+           // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
         }
+
         return redirect()->back();
     }
 }

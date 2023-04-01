@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\b24LeadFetch;
+use App\Models\B24Analitics;
 use App\Models\B24Lead;
 use DateTime;
 use Exception;
@@ -95,29 +97,60 @@ class B24LeadController extends AbstractB24Controller
     public function destroy($id)
     {
     }
+
     public function fetchAll()
     {
-        $items = $this->helperOriginAPI->getLeads();
-        //dd($items);
-        foreach ($items as $item) {
+        $job = new b24LeadFetch();
+        $this->dispatch($job);
+    }
 
-            $item['COMMENTS'] = substr($item['COMMENTS'], 0, 255);
-            if (!empty($item['DATE_CREATE']))
-                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
-            else $item['DATE_CREATE'] = NULL;
-            if (!empty($item['DATE_CLOSED']))
-                $item['DATE_CLOSED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CLOSED']);
-            else $item['DATE_CLOSED'] = NULL;
-            if (!empty($item['DATE_MODIFY']))
-                $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY']);
-            else $item['DATE_MODIFY'] = NULL;
+    public function fetchData()
+    {
+        $count = 0;
 
-            if (!empty($item['PHONE']))
-                if (!empty($item['PHONE'][0]))
-                    $item['PHONE'] = $item['PHONE'][0]['VALUE'];
+        $b24count = B24Analitics::where('AIM', 3)->first();
+        if (!empty($b24count))
+            if (!empty($b24count->big_int1)) {
+            } else {
+                $b24count->big_int1 = 0;
+                $b24count->string1 = 'leads total fetch quantity';
+                $b24count->save();
+            }
+        else {
+            $b24count = B24Analitics::create(['AIM' => 3, 'big_int1' => 0]);
+        }
+
+        $items = $this->helperOriginAPI->getLeads($b24count->big_int1);
+
+        while (count($items)) {
+           
+            //dd($items);
+            foreach ($items as $item) {
+
+                $item['COMMENTS'] = substr($item['COMMENTS'], 0, 255);
+                if (!empty($item['DATE_CREATE']))
+                    $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
+                else $item['DATE_CREATE'] = NULL;
+                if (!empty($item['DATE_CLOSED']))
+                    $item['DATE_CLOSED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CLOSED']);
+                else $item['DATE_CLOSED'] = NULL;
+                if (!empty($item['DATE_MODIFY']))
+                    $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY']);
+                else $item['DATE_MODIFY'] = NULL;
+
+                if (!empty($item['PHONE']))
+                    if (!empty($item['PHONE'][0]))
+                        $item['PHONE'] = $item['PHONE'][0]['VALUE'];
 
 
-            $this->store($item);
+                $this->store($item);
+                $count++;
+            }
+            $b24count->big_int1 += $count; //save result in DB
+            $b24count->save();
+            $count = 0;
+
+            $items = $this->helperOriginAPI->getLeads($b24count->big_int1);
         }
         return redirect()->back();
     }

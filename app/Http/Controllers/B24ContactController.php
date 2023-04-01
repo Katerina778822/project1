@@ -99,18 +99,47 @@ class B24ContactController extends AbstractB24Controller
 
     public function fetchAll()
     {
-        $items = $this->helperOriginAPI->getContacts();
+        $job = new b24TaskFetch();
+        $this->dispatch($job);
+    }
+
+    public function fetchData()
+    {
+      //  $count = 0;
+      $checkDate='2023-03-20T00:00:00+03:00';
+        $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $b24count = B24Contact::count();
+
+
+
+        $requestArray['DATE']=$checkDate;
+        $requestArray['select'] = ["*", "UF_*", 'PHONE',];
+        $requestArray['start'] = $b24count;
+
+  //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('task',$requestArray);
         //dd($items);
-        foreach ($items as $item) {
+        while (count($items)&&$b24countItems> $b24count) {
+            foreach ($items as $item) {
 
-            if (!empty($item['DATE_CREATE']))
-                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
-            else $item['DATE_CREATE'] = NULL;
-
-
-
-            $this->store($item);
+                if (!empty($item['DATE_CREATE']))
+                    $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
+                else $item['DATE_CREATE'] = NULL;
+    
+    
+    
+                $this->store($item);
+            }
+            $b24count =B24Contact::count(); //save result count
+            //$b24count->save();
+           // $count = 0;
+           $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('task',$requestArray);
+           // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
         }
+
         return redirect()->back();
     }
 }
