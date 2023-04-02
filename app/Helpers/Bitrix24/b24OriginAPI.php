@@ -214,7 +214,7 @@ class b24OriginAPI
                     break;
                 }
             case 'ring': {
-                    return '';
+                    return 'CALL_START_DATE';
                     break;
                 }
             case 'contact': {

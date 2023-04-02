@@ -105,28 +105,27 @@ class B24RingController extends AbstractB24Controller
         $this->dispatch($job);
     }
 
+   
+
     public function fetchData()
     {
-        $count = 0;
-        $b24countItems = $this->helperOriginAPI->getQuantity('ring');
-        $b24count = B24Analitics::where('AIM', 1)->first();
-        if (!empty($b24count))
-            if (!empty($b24count->big_int1)) {
-            } else {
-                $b24count->big_int1 = 0;
-                $b24count->string1 = 'rings total fetch quantity';
-                $b24count->save();
-            }
-        else {
-            $b24count = B24Analitics::create(['AIM' => 1, 'big_int1' => 0]);
-        }
-        $items = $this->helper->getRings($b24count->big_int1);
+      //  $count = 0;
+      $checkDate='2022-01-01T00:00:00+03:00';
+        $b24countItems=$this->helperOriginAPI->getQuantity('ring',$checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $b24count = B24Ring::count();
 
-        while (count($items)&&$b24countItems> $b24count->big_int1) {
+        $requestArray['DATE']=$checkDate;
+        $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
+        $requestArray['start'] = $b24count;
 
+  //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('ring',$requestArray);
+        //dd($items);
+        while (count($items)&&$b24countItems> $b24count) {
             foreach ($items as $item) {
                 //      dd($item);
-                $item = get_object_vars($item);
+              //  $item = get_object_vars($item);
                 $item['CALL_START_DATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CALL_START_DATE']);
                 switch ($item['CRM_ENTITY_TYPE']) {
                     case 'CONTACT': {
@@ -148,16 +147,15 @@ class B24RingController extends AbstractB24Controller
                 if ($item['PORTAL_USER_ID'] == 0)
                     $item['PORTAL_USER_ID'] = 1;
                 $this->store($item);
-                $count++;
             }
-            $b24count->big_int1 = B24Ring::count();; //save result in DB
-            $b24count->save();
-            $count = 0;
-
-            $items = $this->helper->getRings($b24count->big_int1);
-            $b24countItems = $this->helperOriginAPI->getQuantity('ring');
+            $b24count =B24Ring::count(); //save result count
+            //$b24count->save();
+           // $count = 0;
+           $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('ring',$requestArray);
+           // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems=$this->helperOriginAPI->getQuantity('ring',$checkDate);
         }
-        //dd($items);
 
         return redirect()->back();
     }
