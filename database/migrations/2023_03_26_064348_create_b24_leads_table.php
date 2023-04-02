@@ -20,7 +20,6 @@ class CreateB24LeadsTable extends Migration
             $table->string('LAST_NAME')->nullable()->default('');
             $table->string('SOURCE_ID')->nullable()->default('');
             $table->string('STATUS_ID')->nullable()->default('');
-            $table->string('COMMENTS')->nullable()->default('');
             $table->string('ADDRESS')->nullable()->default('');
             $table->string('UTM_SOURCE')->nullable()->default('');
             $table->string('UTM_MEDIUM')->nullable()->default('');
@@ -29,6 +28,8 @@ class CreateB24LeadsTable extends Migration
             $table->string('UTM_TERM')->nullable()->default('');
             $table->string('CURRENCY_ID')->nullable()->default('');
             $table->string('PHONE')->nullable()->default('');
+
+            $table->text('COMMENTS')->nullable()->default('');
 
             $table->double('OPPORTUNITY')->nullable()->default(0);
             $table->unsignedBigInteger('COMPANY_ID')->nullable()->default(0);
