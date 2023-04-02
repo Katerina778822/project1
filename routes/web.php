@@ -110,5 +110,5 @@ Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_show', [App\
 ->name('b24contact.analitics.companies_date_show');
 
 
-Route::get('/bitrix24/token', [App\Http\Controllers\bitrix24Controller::class, 'getToken'])
-->name('/getToken');
+Route::post('/bitrix24/fetchstate', [App\Http\Controllers\B24FetchController::class, 'fetchState'])->middleware(['auth'])
+->name('b24fetch.state');
