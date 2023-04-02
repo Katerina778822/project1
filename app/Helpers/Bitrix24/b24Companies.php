@@ -83,7 +83,7 @@ class b24Companies
             //     if ($result->next > 200) {             break;            }
             $response = $this->client->post(
                 'crm.company.userfield.list' . '?start=' . $result->next,
-                /*       [
+                       [
                     'form_params' => [
                         'select' => [
                             'ID',
@@ -100,7 +100,7 @@ class b24Companies
                             'LAST_ACTIVITY_TIME',
                         ],
                     ],
-                ]*/
+                ]
             );
             $result = json_decode($response->getBody());
 

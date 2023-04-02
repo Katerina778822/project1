@@ -3,22 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Bitrix24\b24Companies;
+use App\Jobs\b24CompanyFetch;
+use App\Models\B24Contact;
 use App\Models\Company;
 use DateTime;
 use Exception;
 use Hamcrest\Core\IsNull;
 use Illuminate\Http\Request;
 use stdClass;
+use Symfony\Component\HttpFoundation\Session\Storage\Proxy\AbstractProxy;
 
-class CompanyController extends Controller
+class CompanyController extends AbstractB24Controller
 {
 
-    private b24Companies $helper;
 
-    public function __construct()
-    {
-        $this->helper = new b24Companies();
-    }
+
 
     /**
      * Display a listing of the resource.
@@ -113,20 +112,50 @@ class CompanyController extends Controller
     }
     public function fetchAll()
     {
-        $companies = $this->helper->getCompanies();
-
-        foreach ($companies as $companie) {
-
-            $companie=get_object_vars($companie);
-            $companie['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $companie['DATE_CREATE']);
-            $companie['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $companie['DATE_MODIFY']);
-            $companie['LAST_ACTIVITY_TIME'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $companie['LAST_ACTIVITY_TIME']);
-            $this->store($companie);
-        }
-        return redirect()->back();
+        $job = new b24CompanyFetch();
+        $this->dispatch($job);
     }
-    public function f2($id)
+
+    public function fetchData()
     {
-        //
+     
+        //  $count = 0;
+        $checkDate = '2016-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantity('company', $checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $b24count = Company::count();
+
+
+
+        //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
+        $requestArray['select'] = [
+            'ID', 'TITLE', 'UF_CRM_1597826997473', 'ASSIGNED_BY_ID', 'COMPANY_TYPE', 'DATE_CREATE', 'DATE_MODIFY', 'LAST_ACTIVITY_TIME',
+            'ASSIGNED_BY_ID', 'LAST_ACTIVITY_BY', 'UF_CRM_1540465145514', 'UF_CRM_1540121191354', 'UF_CRM_5DBAA9FFCC357'
+        ];
+        $requestArray['start'] = $b24count;
+
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('company', $requestArray);
+        //dd($items);
+        while (count($items) && $b24countItems > $b24count) {
+            foreach ($items as $item) {
+
+                $item=get_object_vars($item);
+                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
+                $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY']);
+                $item['LAST_ACTIVITY_TIME'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['LAST_ACTIVITY_TIME']);
+                $this->store($item);
+            }
+            $b24count = Company::count(); //save result count
+            //$b24count->save();
+            // $count = 0;
+            $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('company', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantity('company', $checkDate);
+        }
+
+        return redirect()->back();
     }
 }

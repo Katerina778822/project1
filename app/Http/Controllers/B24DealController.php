@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\b24DealFetch;
 use App\Models\B24Deal;
+use App\View\Components\Alert;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -37,17 +39,15 @@ class B24DealController extends AbstractB24Controller
      */
     public function store(array $item)
     {
-        $modelItem = null;
-        $modelItem = B24Deal::where('ID', $item['ID'])->get();
-        if (count($modelItem)) {
-            return;
-        }
-        $modelItem = B24Deal::create($item);
 
-        try {
-        } catch (Exception $e) {
-            $e->getMessage();
-        } finally {
+      
+            $modelItem = B24Deal::where('ID', $item['ID'])->get();
+            if (count($modelItem)) {
+                return;
+            }
+            $modelItem = B24Deal::create($item);
+            try { } catch (Exception $e) {
+            echo ('Не могу записать сделку ИД'.$item['ID'].' название '.$item['TITLE'].' Проверьте компанию и  пользователя. ИД компании '.$item['COMPANY_ID']);
             return;
         }
     }
@@ -99,30 +99,67 @@ class B24DealController extends AbstractB24Controller
 
     public function fetchAll()
     {
-        $items = $this->helper->getDeals();
+
+        $job = new b24DealFetch();
+        $this->dispatch($job);
+    }
+
+    public function fetchData()
+    {
+
+        //  $count = 0;
+        $checkDate = '2023-03-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantity('deal', $checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $b24count = B24Deal::count();
+
+
+
+        //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
+           $requestArray['select'] = [
+            'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID',
+            'OPPORTUNITY', 'COMMENTS', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
+            'UF_CRM_5BB6246DC30D8', 'UF_CRM_1545811346080', 'UF_CRM_1564411704463', 'UF_CRM_5CAB07390C964', 'UF_CRM_1540120643248',
+            'UF_CRM_1545811274193', 'UF_CRM_1547732437301', 'DATE_CREATE', 'CLOSEDATE', 'UF_CRM_5C224D08961A9',
+        ];
+        $requestArray['start'] = $b24count;
+
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('deal', $requestArray);
         //dd($items);
-        foreach ($items as $item) {
-            //      dd($item);
-            $item = get_object_vars($item);
-            $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
-            if (!empty($item['UF_CRM_5CAB07390C964']))
-                $item['UF_CRM_5CAB07390C964'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_5CAB07390C964']);
+        while (count($items) && $b24countItems > $b24count) {
+            foreach ($items as $item) {
+                //      dd($item);
+                //               $item = get_object_vars($item);
+                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
+                if (!empty($item['UF_CRM_5CAB07390C964']))
+                    $item['UF_CRM_5CAB07390C964'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_5CAB07390C964']);
                 else $item['UF_CRM_5CAB07390C964'] = NULL;
-            if (!empty($item['UF_CRM_1540120643248']))
-                $item['UF_CRM_1540120643248'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1540120643248']);
+                if (!empty($item['UF_CRM_1540120643248']))
+                    $item['UF_CRM_1540120643248'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1540120643248']);
                 else $item['UF_CRM_1540120643248'] = NULL;
-            if (!empty($item['UF_CRM_1545811274193']))
-                $item['UF_CRM_1545811274193'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1545811274193']);
+                if (!empty($item['UF_CRM_1545811274193']))
+                    $item['UF_CRM_1545811274193'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1545811274193']);
                 else $item['UF_CRM_1545811274193'] = NULL;
-            if (!empty($item['UF_CRM_1547732437301']))
-                $item['UF_CRM_1547732437301'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1547732437301']);
+                if (!empty($item['UF_CRM_1547732437301']))
+                    $item['UF_CRM_1547732437301'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1547732437301']);
                 else $item['UF_CRM_1547732437301'] = NULL;
-            if (!empty($item['CLOSEDATE']))
-                $item['CLOSEDATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CLOSEDATE']);
+                if (!empty($item['CLOSEDATE']))
+                    $item['CLOSEDATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CLOSEDATE']);
                 else $item['CLOSEDATE'] = NULL;
 
                 $this->store($item);
+            }
+            $b24count = B24Deal::count(); //save result count
+            //$b24count->save();
+            // $count = 0;
+            $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('deal', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantity('deal', $checkDate);
         }
+
         return redirect()->back();
     }
 }

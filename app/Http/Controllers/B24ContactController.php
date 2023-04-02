@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\b24ContactFetch;
 use App\Models\B24Contact;
 use DateTime;
 use Exception;
@@ -99,45 +100,45 @@ class B24ContactController extends AbstractB24Controller
 
     public function fetchAll()
     {
-        $job = new b24TaskFetch();
+        $job = new b24ContactFetch();
         $this->dispatch($job);
     }
 
     public function fetchData()
     {
-      //  $count = 0;
-      $checkDate='2023-03-20T00:00:00+03:00';
-        $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
+        //  $count = 0;
+        $checkDate = '2016-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantity('contact', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24Contact::count();
 
 
 
-        $requestArray['DATE']=$checkDate;
-        $requestArray['select'] = ["*", "UF_*", 'PHONE',];
+        $requestArray['DATE'] = $checkDate;
+        $requestArray['select'] = [ 'ID','LAST_NAME','NAME','ASSIGNED_BY_ID','COMPANY_ID','DATE_CREATE'];
         $requestArray['start'] = $b24count;
 
-  //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-        $items = $this->helperOriginAPI->getItem('task',$requestArray);
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('contact', $requestArray);
         //dd($items);
-        while (count($items)&&$b24countItems> $b24count) {
+        while (count($items) && $b24countItems > $b24count) {
             foreach ($items as $item) {
 
                 if (!empty($item['DATE_CREATE']))
                     $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
                 else $item['DATE_CREATE'] = NULL;
-    
-    
-    
+
+
+
                 $this->store($item);
             }
-            $b24count =B24Contact::count(); //save result count
+            $b24count = B24Contact::count(); //save result count
             //$b24count->save();
-           // $count = 0;
-           $requestArray['start'] = $b24count;
-            $items = $this->helperOriginAPI->getItem('task',$requestArray);
-           // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
+            // $count = 0;
+            $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('contact', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantity('contact', $checkDate);
         }
 
         return redirect()->back();

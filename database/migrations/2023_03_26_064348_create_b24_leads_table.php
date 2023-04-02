@@ -40,7 +40,7 @@ class CreateB24LeadsTable extends Migration
             $table->dateTime('DATE_MODIFY')->nullable()->default(null);
 
             $table->foreign('ASSIGNED_BY_ID')->references('ID')->on('b24_users');
-            $table->foreign('CREATED_BY_ID')->references('ID')->on('b24_users');
+   
         
             $table->timestamps();
            

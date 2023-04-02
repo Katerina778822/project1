@@ -84,7 +84,7 @@ Route::post('/Bitrix24/b24user', [App\Http\Controllers\B24UserController::class,
 ->name('b24user.fetchAll');
 Route::post('/Bitrix24/b24ring', [App\Http\Controllers\B24RingController::class, 'fetchAll'])->middleware(['auth'])
 ->name('b24ring.fetchAll');
-Route::post('/Bitrix24/b24task', [App\Http\Controllers\B24TaskController::class, 'fetchAll'])->middleware(['auth'])
+Route::post('/Bitrix24/b24task', [App\Http\Controllers\B24LeadController::class, 'fetchAll'])->middleware(['auth'])
 ->name('b24task.fetchAll');
 Route::post('/Bitrix24/b24deal', [App\Http\Controllers\B24DealController::class, 'fetchAll'])->middleware(['auth'])
 ->name('b24deal.fetchAll');

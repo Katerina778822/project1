@@ -38,8 +38,13 @@ class b24OriginAPI
         $applicationProfile = new ApplicationProfile($app_id, $app_secret, $scope);
         $credentials = new Credentials($webhookUrl, $accessTokenObj, $applicationProfile, 'https://geleon.bitrix24.ua');
         $this->apiClient = new ApiClient($credentials, $client, new NullLogger());
+    
+        
     }
 
+
+
+    
 
     public function getLeads($count)
     {
@@ -123,7 +128,7 @@ class b24OriginAPI
 
     public function getQuantity($itemType,  $date = null, $apiUrl = null,)
     {
-        $items = [];
+
         $apiUrl = $this->getApiUrl($itemType);
         $dateCreate = $this->getDateString($itemType);
 
@@ -146,7 +151,7 @@ class b24OriginAPI
 
     public function getItem($itemType, $requestArray, $apiUrl = null)
     {
-
+   
         //$requestArray['filter']['start']=  intdiv( $requestArray['filter']['start'], 50)*50;//целочисленное деление на 50 и умножение для нарезки блоков items строго по 50 в запросе.
         $requestArray['filter'][ '>'.$this->getDateString($itemType)]=$requestArray["DATE"];
         $response = $this->apiClient->getResponse($this->getApiUrl($itemType), $requestArray);
@@ -158,6 +163,9 @@ class b24OriginAPI
         return  $result['result'];
         // 
     }
+    
+
+
 
     private function getApiUrl($itemType)
     {
@@ -175,11 +183,11 @@ class b24OriginAPI
                     break;
                 }
             case 'company': {
-                    return '';
+                    return 'crm.company.list';
                     break;
                 }
             case 'field': {
-                    return '';
+                    return 'crm.company.userfield.list';
                     break;
                 }
             case 'user': {
@@ -187,11 +195,11 @@ class b24OriginAPI
                     break;
                 }
             case 'deal': {
-                    return '';
+                    return 'crm.deal.list';
                     break;
                 }
             case 'lead': {
-                    return '';
+                    return 'crm.lead.list';
                     break;
                 }
             default:
@@ -214,11 +222,11 @@ class b24OriginAPI
                     break;
                 }
             case 'company': {
-                    return '';
+                    return 'DATE_CREATE';
                     break;
                 }
             case 'field': {
-                    return '';
+                    return 'DATE_CREATE';
                     break;
                 }
             case 'user': {
@@ -226,11 +234,11 @@ class b24OriginAPI
                     break;
                 }
             case 'deal': {
-                    return '';
+                    return 'DATE_CREATE';
                     break;
                 }
             case 'lead': {
-                    return '';
+                    return 'DATE_CREATE';
                     break;
                 }
             default:

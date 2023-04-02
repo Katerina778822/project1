@@ -98,24 +98,51 @@ class B24FieldController extends AbstractB24Controller
         //
     }
 
+
     public function fetchAll()
     {
-        $items = $this->helper->getFields();
-        //dd($items);
-        foreach ($items as $item) {
-        
-            if (property_exists($item, 'LIST') && !empty($item->LIST)) {
-                foreach ($item->LIST as $list) {
+  //      $item2 = $this->helper->getFields();
+        //  $count = 0;
+        $checkDate = '2016-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantity('field', $checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $b24count = B24Field::count();
 
-                    $list->FIELD_ID = $item->ID;
-                    $list->ENTITY_ID = $item->ENTITY_ID;
-                    $list->FIELD_NAME = $item->FIELD_NAME;
-                    $list = get_object_vars($list);
-                    $this->store($list);
+
+        $fieldApicount=0;
+        //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
+        $requestArray['select'] = ['ID', 'VALUE', 'ENTITY_ID', 'FIELD_NAME', 'FIELD_ID'];
+        $requestArray['start'] = 0;
+
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('field', $requestArray);
+        //dd($items);
+    //  while (count($items)) {
+            foreach ($items as $item) {
+                $fieldApicount++;
+                if ( !empty($item['LIST'])) {
+                    foreach ($item['LIST'] as $list) {
     
+                        $list['FIELD_ID'] = $item["ID"];
+                        $list['ENTITY_ID'] = $item['ENTITY_ID'];
+                        $list['FIELD_NAME'] = $item['FIELD_NAME'];
+                       // $list = get_object_vars($list);
+                        $this->store($list);
+        
+                    }
+                  
                 }
             }
-        }
+           // $b24count = B24Field::count(); //save result count
+            //$b24count->save();
+            // $count = 0;
+            $requestArray['start'] = 0;//передаем только основные поля без значений
+            $items = $this->helperOriginAPI->getItem('field', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+           
+     //   }
+     //   dd($item);
         return redirect()->back();
     }
 }
