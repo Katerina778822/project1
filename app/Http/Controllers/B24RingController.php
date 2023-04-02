@@ -154,6 +154,7 @@ class B24RingController extends AbstractB24Controller
            $requestArray['start'] = $b24count;
             $items = $this->helperOriginAPI->getItem('ring',$requestArray);
            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+           sleep(1);
             $b24countItems=$this->helperOriginAPI->getQuantity('ring',$checkDate);
         }
 
