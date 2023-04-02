@@ -151,7 +151,7 @@ class b24OriginAPI
 
     public function getItem($itemType, $requestArray, $apiUrl = null)
     {
-        usleep(300000);
+        usleep(500000);
         //$requestArray['filter']['start']=  intdiv( $requestArray['filter']['start'], 50)*50;//целочисленное деление на 50 и умножение для нарезки блоков items строго по 50 в запросе.
         $requestArray['filter'][ '>'.$this->getDateString($itemType)]=$requestArray["DATE"];
         $response = $this->apiClient->getResponse($this->getApiUrl($itemType), $requestArray);
