@@ -19,7 +19,8 @@
 
                 <form action="{{ ('route') }}" method="POST">
                     @csrf
-                    <button class="btn-main"> fields</button>
+                    <button class="btn-main"> Update DATA</button>
+                    
                 </form>
 
                

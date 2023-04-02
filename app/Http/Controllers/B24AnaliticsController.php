@@ -7,6 +7,7 @@ use App\Models\B24Contact;
 use App\Models\B24Deal;
 use App\Models\B24Ring;
 use App\Models\B24Task;
+use App\Models\B24User;
 use App\Models\Company;
 use Illuminate\Http\Request;
 
@@ -15,6 +16,7 @@ class B24AnaliticsController extends Controller
     public function companiesDate(Request $request)
     { //returns array of companies which dont have tasks, rings, deals after the date
 
+        
         $companies = Company::where('COMPANY_TYPE','CUSTOMER')->get();
         $DatesArray = [];
         foreach ($companies as $companie) {
@@ -66,6 +68,7 @@ class B24AnaliticsController extends Controller
                         
                         'AIM' => 3,
                         'id_item' => $companie->ID,
+                        'string3'=> B24User::find($companie->ASSIGNED_BY_ID)->NAME,
                         'date1' => $dateLastRings,
                         'date2' => $dateLastContactsRings,
                         'date3' => $dateLastTasksDeadline,

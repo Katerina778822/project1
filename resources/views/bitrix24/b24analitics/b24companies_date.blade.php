@@ -18,6 +18,7 @@
                 <tr>
                     <th>Id</th>
                     <th>Название</th>
+                    <th>Ответственный</th>
                     <th>Звонок компании</th>
                     <th>Звонок контакту</th>
                     <th>Дедлайн задачи</th>
@@ -35,6 +36,7 @@
                     <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/company/details/'.$item->id_item.'/'}}">
                         {{$item->string1}} </a>
                     </td>
+                    <td>{{$item->string3}}</td>
                     <td>{{$item->date1}}</td>
                     <td>{{$item->date2}}</td>
                     <td>{{$item->date3}}</td>

@@ -40,14 +40,15 @@ class B24DealController extends AbstractB24Controller
     public function store(array $item)
     {
 
-      
-            $modelItem = B24Deal::where('ID', $item['ID'])->get();
-            if (count($modelItem)) {
-                return;
-            }
-            $modelItem = B24Deal::create($item);
-            try { } catch (Exception $e) {
-            echo ('Не могу записать сделку ИД'.$item['ID'].' название '.$item['TITLE'].' Проверьте компанию и  пользователя. ИД компании '.$item['COMPANY_ID']);
+
+        $modelItem = B24Deal::where('ID', $item['ID'])->get();
+        if (count($modelItem)) {
+            return;
+        }
+        $modelItem = B24Deal::create($item);
+        try {
+        } catch (Exception $e) {
+            echo ('Не могу записать сделку ИД' . $item['ID'] . ' название ' . $item['TITLE'] . ' Проверьте компанию и  пользователя. ИД компании ' . $item['COMPANY_ID']);
             return;
         }
     }
@@ -108,7 +109,7 @@ class B24DealController extends AbstractB24Controller
     {
 
         //  $count = 0;
-        $checkDate = null;//'2023-03-01T00:00:00+03:00';
+        $checkDate = null; //'2023-03-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantity('deal', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24Deal::count();
@@ -117,7 +118,7 @@ class B24DealController extends AbstractB24Controller
 
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
         $requestArray['DATE'] = $checkDate;
-           $requestArray['select'] = [
+        $requestArray['select'] = [
             'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID',
             'OPPORTUNITY', 'COMMENTS', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
             'UF_CRM_5BB6246DC30D8', 'UF_CRM_1545811346080', 'UF_CRM_1564411704463', 'UF_CRM_5CAB07390C964', 'UF_CRM_1540120643248',
@@ -148,6 +149,8 @@ class B24DealController extends AbstractB24Controller
                 if (!empty($item['CLOSEDATE']))
                     $item['CLOSEDATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CLOSEDATE']);
                 else $item['CLOSEDATE'] = NULL;
+
+
 
                 $this->store($item);
             }
