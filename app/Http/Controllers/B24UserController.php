@@ -96,18 +96,54 @@ class B24UserController extends AbstractB24Controller
         //
     }
 
+    
     public function fetchAll()
     {
-        $items = $this->helper->getUser();
+        //  $count = 0;
+        $checkDate = '2016-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantity('user', $checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $b24count = B24User::count();
+
+
+
+        //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
+        $requestArray['select'] = [
+            'ID',
+            'TITLE',
+            'UF_CRM_1540465145514', // замените на идентификатор своего пользовательского поля
+            'UF_CRM_1540121191354', // замените на идентификатор своего пользовательского поля
+            'UF_CRM_5DBAA9FFCC357', // замените на идентификатор своего пользовательского поля
+            'UF_CRM_1597826997473', // замените на идентификатор своего пользовательского поля
+
+            'ASSIGNED_BY_ID',
+            'LAST_ACTIVITY_BY',
+            'COMPANY_TYPE',
+            'DATE_CREATE',
+            'DATE_MODIFY',
+            'LAST_ACTIVITY_TIME',
+        ];
+        $requestArray['start'] = $b24count;
+
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('user', $requestArray);
         //dd($items);
-        foreach ($items as $item) {
-         
-                    $list = get_object_vars($item);
-                    $this->store($list);
-                  
+        while (count($items) && $b24countItems > $b24count) {
+            foreach ($items as $item) {
+
+                $list = get_object_vars($item);
+                $this->store($list);
+            }
+            $b24count = B24User::count(); //save result count
+            //$b24count->save();
+            // $count = 0;
+            $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('user', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantity('user', $checkDate);
         }
+
         return redirect()->back();
     }
-
-
 }

@@ -191,7 +191,7 @@ class b24OriginAPI
                     break;
                 }
             case 'user': {
-                    return '';
+                    return 'user.get';
                     break;
                 }
             case 'deal': {

@@ -116,7 +116,20 @@ class B24RingController extends AbstractB24Controller
         $b24count = B24Ring::count();
 
         $requestArray['DATE']=$checkDate;
-        $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
+        $requestArray['select'] = ['ID',
+        'CALL_ID',
+        'PORTAL_USER_ID',
+        'PHONE_NUMBER',
+        'CALL_CATEGORY',
+        'CALL_DURATION',
+        'CALL_START_DATE',
+        'CRM_ENTITY_TYPE',
+        'CRM_ENTITY_ID',
+        'CRM_ACTIVITY_ID',
+        'CALL_TYPE',
+        'RECORD_FILE_ID',
+        'CALL_RECORD_URL',
+        'CALL_FAILED_REASON',];
         $requestArray['start'] = $b24count;
 
   //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
@@ -154,7 +167,7 @@ class B24RingController extends AbstractB24Controller
            $requestArray['start'] = $b24count;
             $items = $this->helperOriginAPI->getItem('ring',$requestArray);
            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-           sleep(1);
+           usleep(100000);
             $b24countItems=$this->helperOriginAPI->getQuantity('ring',$checkDate);
         }
 

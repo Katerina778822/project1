@@ -113,7 +113,7 @@ class B24TaskController extends AbstractB24Controller
     {
       //  $count = 0;
       $checkDate='2022-01-01T00:00:00+03:00';
-        $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
+        $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24Task::count();
 
@@ -190,7 +190,7 @@ class B24TaskController extends AbstractB24Controller
            $requestArray['start'] = $b24count;
             $items = $this->helperOriginAPI->getItem('task',$requestArray);
            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate,'tasks.task.list');
+            $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate);
         }
 
         return redirect()->back();
