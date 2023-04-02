@@ -141,7 +141,6 @@ class CompanyController extends AbstractB24Controller
         while (count($items) && $b24countItems > $b24count) {
             foreach ($items as $item) {
 
-                $item=get_object_vars($item);
                 $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
                 $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY']);
                 $item['LAST_ACTIVITY_TIME'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['LAST_ACTIVITY_TIME']);
