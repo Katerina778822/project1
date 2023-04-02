@@ -100,7 +100,7 @@ class B24UserController extends AbstractB24Controller
     public function fetchAll()
     {
         //  $count = 0;
-        $checkDate = '2016-01-01T00:00:00+03:00';
+        $checkDate =null; //'2016-01-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantity('user', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24User::count();

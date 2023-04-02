@@ -38,13 +38,11 @@ class b24OriginAPI
         $applicationProfile = new ApplicationProfile($app_id, $app_secret, $scope);
         $credentials = new Credentials($webhookUrl, $accessTokenObj, $applicationProfile, 'https://geleon.bitrix24.ua');
         $this->apiClient = new ApiClient($credentials, $client, new NullLogger());
-    
-        
     }
 
 
 
-    
+
 
     public function getLeads($count)
     {
@@ -131,11 +129,12 @@ class b24OriginAPI
 
         $apiUrl = $this->getApiUrl($itemType);
         $dateCreate = $this->getDateString($itemType);
-
+        if(!$date)
+            $date=$this->getDate($itemType);
         if ($apiUrl) {
             $response = $this->apiClient->getResponse($apiUrl, [
                 'filter' => [
-                    '>'.$dateCreate => $date,
+                    '>' . $dateCreate => $date,
                 ]
             ],);
             $responseContent = $response->getContent();
@@ -153,7 +152,11 @@ class b24OriginAPI
     {
         usleep(800000);
         //$requestArray['filter']['start']=  intdiv( $requestArray['filter']['start'], 50)*50;//целочисленное деление на 50 и умножение для нарезки блоков items строго по 50 в запросе.
-        $requestArray['filter'][ '>'.$this->getDateString($itemType)]=$requestArray["DATE"];
+        if ($requestArray['DATE'])
+            $requestArray['filter']['>' . $this->getDateString($itemType)] = $requestArray["DATE"];
+        else
+            $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
+
         $response = $this->apiClient->getResponse($this->getApiUrl($itemType), $requestArray);
         $responseContent = $response->getContent();
         $result = json_decode($responseContent, true);
@@ -163,7 +166,7 @@ class b24OriginAPI
         return  $result['result'];
         // 
     }
-    
+
 
 
 
@@ -239,6 +242,46 @@ class b24OriginAPI
                 }
             case 'lead': {
                     return 'DATE_CREATE';
+                    break;
+                }
+            default:
+                return false;
+        }
+    }
+
+    private function getDate($itemType)
+    {
+        switch ($itemType) {
+            case 'task': {
+                    return '2022-01-01T00:00:00+03:00';
+                    break;
+                }
+            case 'ring': {
+                    return '2022-01-01T00:00:00+03:00';
+                    break;
+                }
+            case 'contact': {
+                    return '2016-01-01T00:00:00+03:00';
+                    break;
+                }
+            case 'company': {
+                    return '2016-01-01T00:00:00+03:00';
+                    break;
+                }
+            case 'field': {
+                    return '2016-01-01T00:00:00+03:00';
+                    break;
+                }
+            case 'user': {
+                    return '';
+                    break;
+                }
+            case 'deal': {
+                    return '2016-01-01T00:00:00+03:00';
+                    break;
+                }
+            case 'lead': {
+                    return '2016-01-01T00:00:00+03:00';
                     break;
                 }
             default:

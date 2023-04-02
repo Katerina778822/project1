@@ -108,7 +108,7 @@ class B24DealController extends AbstractB24Controller
     {
 
         //  $count = 0;
-        $checkDate = '2023-03-01T00:00:00+03:00';
+        $checkDate = null;//'2023-03-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantity('deal', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24Deal::count();
