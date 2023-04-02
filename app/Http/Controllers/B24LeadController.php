@@ -144,7 +144,7 @@ class B24LeadController extends AbstractB24Controller
                 $item['CREATED_BY_ID']==1063||
                 $item['CREATED_BY_ID']==1067)
                     $item['CREATED_BY_ID'] = 1;
-                if (!empty($item['PHONE'][0]['VALUE']))
+                if (!empty($item['PHONE'][0]['VALUE'])||!empty($item['PHONE']))
                     $item['PHONE'] = $item['PHONE'][0]['VALUE'];
                 $this->store($item);
             }
