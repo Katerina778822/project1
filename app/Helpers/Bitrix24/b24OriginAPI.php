@@ -167,6 +167,25 @@ class b24OriginAPI
         // 
     }
 
+    public function getItemUpdate($itemType, $requestArray, $apiUrl = null)
+    {
+        usleep(800000);
+        //$requestArray['filter']['start']=  intdiv( $requestArray['filter']['start'], 50)*50;//целочисленное деление на 50 и умножение для нарезки блоков items строго по 50 в запросе.
+        if ($requestArray['DATE'])
+            $requestArray['filter']['>' . $this->getDateModifyString($itemType)]= $requestArray["DATE"];
+        else
+            $requestArray['filter']['>' . $this->getDateModifyString($itemType)]= $this->getDate($itemType);
+
+        $response = $this->apiClient->getResponse($this->getApiUrl($itemType), $requestArray);
+        $responseContent = $response->getContent();
+        $result = json_decode($responseContent, true);
+        //     dd($result['result']);
+        if (!empty($result['result']['tasks']))
+            return $result['result']['tasks'];
+        return  $result['result'];
+        // 
+    }
+
 
 
 
@@ -248,6 +267,45 @@ class b24OriginAPI
                 return false;
         }
     }
+    private function getDateModifyString($itemType)
+    {
+        switch ($itemType) {
+            case 'task': {
+                    return 'CREATED_DATE';
+                    break;
+                }
+            case 'ring': {
+                    return 'CALL_START_DATE';
+                    break;
+                }
+            case 'contact': {
+                    return 'DATE_CREATE';
+                    break;
+                }
+            case 'company': {
+                    return 'DATE_CREATE';
+                    break;
+                }
+            case 'field': {
+                    return 'DATE_CREATE';
+                    break;
+                }
+            case 'user': {
+                    return '';
+                    break;
+                }
+            case 'deal': {
+                    return 'DATE_CREATE';
+                    break;
+                }
+            case 'lead': {
+                    return 'DATE_MODIFY';
+                    break;
+                }
+            default:
+                return false;
+        }
+    }
 
     private function getDate($itemType)
     {
@@ -277,7 +335,7 @@ class b24OriginAPI
                     break;
                 }
             case 'deal': {
-                    return '2016-01-01T00:00:00+03:00';
+                    return '2022-01-01T00:00:00+03:00';
                     break;
                 }
             case 'lead': {
