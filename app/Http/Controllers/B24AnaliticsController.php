@@ -9,6 +9,7 @@ use App\Models\B24Ring;
 use App\Models\B24Task;
 use App\Models\B24User;
 use App\Models\Company;
+use Exception;
 use Illuminate\Http\Request;
 
 class B24AnaliticsController extends Controller
@@ -16,8 +17,10 @@ class B24AnaliticsController extends Controller
     public function companiesDate(Request $request)
     { //returns array of companies which dont have tasks, rings, deals after the date
 
-        
-        $companies = Company::where('COMPANY_TYPE','CUSTOMER')->get();
+        if (empty($request->date))
+            return;
+        B24Analitics::query()->delete();
+        $companies = Company::where('COMPANY_TYPE', 'CUSTOMER')->get();
         $DatesArray = [];
         foreach ($companies as $companie) {
             $dateLastRings = null;
@@ -65,10 +68,10 @@ class B24AnaliticsController extends Controller
                 ) {
 
                     $DatesArray = [
-                        
+
                         'AIM' => 3,
                         'id_item' => $companie->ID,
-                        'string3'=> B24User::find($companie->ASSIGNED_BY_ID)->NAME,
+                        'string3' => B24User::find($companie->ASSIGNED_BY_ID)->NAME . '' . B24User::find($companie->ASSIGNED_BY_ID)->LAST_NAME,
                         'date1' => $dateLastRings,
                         'date2' => $dateLastContactsRings,
                         'date3' => $dateLastTasksDeadline,
@@ -79,7 +82,19 @@ class B24AnaliticsController extends Controller
                         //              'dateLastDealsCreated'=> null,
                         //              'dateLastDealsClosed'=> null,
                     ];
-                    $res = B24Analitics::create($DatesArray);
+
+
+                    $B24AnaliticsItem = B24Analitics::where('id_item', $companie->ID)->first();
+                    if ($B24AnaliticsItem == 0)
+                        $res = B24Analitics::create($DatesArray);
+                    else {
+                        log("ERROR! B24Analitics is trying to create second item for current company! ID: " . $companie->ID);
+                        throw new Exception("ERROR! B24Analitics is trying to create second item for current company!");
+                    }
+                    $dateLastRings = null;
+                    $dateLastContactsRings = null;
+                    $dateLastTasksDeadline = null;
+                    $dateLastTasksClosed = null;
                     if (!$res)
                         log('companies_date() error create B24Analitics companie->ID ' . $companie->ID);
                 }
@@ -95,15 +110,15 @@ class B24AnaliticsController extends Controller
 
     public function companiesDateShow()
     {
-        $items=B24Analitics::where('AIM','3')->get();
+        $items = B24Analitics::where('AIM', '3')->get();
 
         return view('bitrix24.b24analitics.b24companies_date', [
             'items' => $items,
-         //   'id_node' => $id
+            //   'id_node' => $id
         ]);
     }
-    
-    
+
+
     public function destroy($id)
     {
         $item = B24Analitics::find($id);
