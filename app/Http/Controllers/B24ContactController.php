@@ -125,7 +125,7 @@ class B24ContactController extends AbstractB24Controller
             foreach ($items as $item) {
 
                 if (!empty($item['DATE_CREATE']))
-                    $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
+                    $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE'])->format('Y-m-d H:i:s');
                 else $item['DATE_CREATE'] = NULL;
 
 

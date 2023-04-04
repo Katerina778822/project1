@@ -133,21 +133,21 @@ class B24DealController extends AbstractB24Controller
             foreach ($items as $item) {
                 //      dd($item);
                 //               $item = get_object_vars($item);
-                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE']);
+                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE'])->format('Y-m-d H:i:s');
                 if (!empty($item['UF_CRM_5CAB07390C964']))
-                    $item['UF_CRM_5CAB07390C964'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_5CAB07390C964']);
+                    $item['UF_CRM_5CAB07390C964'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_5CAB07390C964'])->format('Y-m-d H:i:s');
                 else $item['UF_CRM_5CAB07390C964'] = NULL;
                 if (!empty($item['UF_CRM_1540120643248']))
-                    $item['UF_CRM_1540120643248'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1540120643248']);
+                    $item['UF_CRM_1540120643248'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1540120643248'])->format('Y-m-d H:i:s');
                 else $item['UF_CRM_1540120643248'] = NULL;
                 if (!empty($item['UF_CRM_1545811274193']))
-                    $item['UF_CRM_1545811274193'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1545811274193']);
+                    $item['UF_CRM_1545811274193'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1545811274193'])->format('Y-m-d H:i:s');
                 else $item['UF_CRM_1545811274193'] = NULL;
                 if (!empty($item['UF_CRM_1547732437301']))
-                    $item['UF_CRM_1547732437301'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1547732437301']);
+                    $item['UF_CRM_1547732437301'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1547732437301'])->format('Y-m-d H:i:s');
                 else $item['UF_CRM_1547732437301'] = NULL;
                 if (!empty($item['CLOSEDATE']))
-                    $item['CLOSEDATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CLOSEDATE']);
+                    $item['CLOSEDATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CLOSEDATE'])->format('Y-m-d H:i:s');
                 else $item['CLOSEDATE'] = NULL;
 
 

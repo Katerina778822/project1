@@ -17,9 +17,10 @@
         <div>
             <div class="bg-blue-300 rounded-lg  p-8 flex">
 
-                <form action="{{ ('route') }}" method="POST">
+                <form action="{{ route('b24fetch.updateData') }}" method="POST">
                     @csrf
                     <button class="btn-main"> Update DATA</button>
+                    <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
 

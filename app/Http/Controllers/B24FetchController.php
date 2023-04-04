@@ -64,5 +64,11 @@ class B24FetchController extends AbstractB24Controller
     public function fetchAll(){
 
     }
+
+    public function updateData(){
+//  dd('Here');
+        $controller = new B24LeadController;
+        $controller->updateData($_POST['date']);
+        }
     
 }

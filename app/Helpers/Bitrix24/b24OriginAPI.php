@@ -147,6 +147,29 @@ class b24OriginAPI
         return  0;
         // 
     }
+    public function getQuantityUpdate($itemType,  $date = null, $apiUrl = null,)
+    {
+
+        $apiUrl = $this->getApiUrl($itemType);
+        $dateCreate = $this->getDateModifyString($itemType);
+        if(!$date)
+            $date=$this->getDate($itemType);
+        if ($apiUrl) {
+            $response = $this->apiClient->getResponse($apiUrl, [
+                'filter' => [
+                    '>' . $dateCreate => $date,
+                ]
+            ],);
+            $responseContent = $response->getContent();
+            $result = json_decode($responseContent, true);
+            if (!empty($result['total']))
+                return $result['total'];
+        }
+
+
+        return  0;
+        // 
+    }
 
     public function getItem($itemType, $requestArray, $apiUrl = null)
     {

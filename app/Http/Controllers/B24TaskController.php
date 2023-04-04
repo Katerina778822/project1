@@ -133,19 +133,19 @@ class B24TaskController extends AbstractB24Controller
                 //     $item = get_object_vars($item);
 
                 if (!empty($item['closedDate']))
-                    $item['closedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['closedDate']);
+                    $item['closedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['closedDate'])->format('Y-m-d H:i:s');
                 else $item['closedDate'] = NULL;
                 if (!empty($item['createdDate']))
-                    $item['createdDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['createdDate']);
+                    $item['createdDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['createdDate'])->format('Y-m-d H:i:s');
                 else $item['createdDate'] = NULL;
                 if (!empty($item['deadline']))
-                    $item['deadline'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['deadline']);
+                    $item['deadline'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['deadline'])->format('Y-m-d H:i:s');
                 else $item['deadline'] = NULL;
                 if (!empty($item['dateStart']))
-                    $item['dateStart'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['dateStart']);
+                    $item['dateStart'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['dateStart'])->format('Y-m-d H:i:s');
                 else $item['dateStart'] = NULL;
                 if (!empty($item['changedDate']))
-                    $item['changedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['changedDate']);
+                    $item['changedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['changedDate'])->format('Y-m-d H:i:s');
                 else $item['changedDate'] = NULL;
 
                 if (!empty($item['ufCrmTask']))
