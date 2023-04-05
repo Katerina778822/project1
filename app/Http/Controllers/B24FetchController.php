@@ -67,7 +67,7 @@ class B24FetchController extends AbstractB24Controller
 
     public function updateData()
     {
-        $date = new DateTime('-3 days');
+        $date = new DateTime('-7 days');
         $date = $date->format('Y-m-d');
 
         if ($_POST['date'] > $date)
@@ -82,7 +82,7 @@ class B24FetchController extends AbstractB24Controller
 
         $controller = new B24TaskController;
         $controller->updateData($date);
-        
+
         $controller = new B24DealController;
         $controller->updateData($date);
     }
