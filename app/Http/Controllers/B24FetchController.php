@@ -67,7 +67,7 @@ class B24FetchController extends AbstractB24Controller
 
     public function updateData()
     {
-        $date = new DateTime('-7 days');
+        $date = new DateTime('-3 days');
         $date = $date->format('Y-m-d');
 
         if ($_POST['date'] > $date)
@@ -89,7 +89,7 @@ class B24FetchController extends AbstractB24Controller
 
     public function updateDataCompany()
     {
-        $date = new DateTime('-3 days');
+        $date = new DateTime('-10 days');
         $date = $date->format('Y-m-d');
 
         if ($_POST['date'] > $date)
@@ -100,7 +100,7 @@ class B24FetchController extends AbstractB24Controller
     }
     public function updateDataTask()
     {
-        $date = new DateTime('-3 days');
+        $date = new DateTime('-10 days');
         $date = $date->format('Y-m-d');
 
         if ($_POST['date'] > $date)
@@ -111,7 +111,7 @@ class B24FetchController extends AbstractB24Controller
     }
     public function updateDataDeal()
     {
-        $date = new DateTime('-3 days');
+        $date = new DateTime('-10 days');
         $date = $date->format('Y-m-d');
 
         if ($_POST['date'] > $date)
@@ -123,7 +123,7 @@ class B24FetchController extends AbstractB24Controller
 
     public function updateDataLead()
     {
-        $date = new DateTime('-3 days');
+        $date = new DateTime('-10 days');
         $date = $date->format('Y-m-d');
 
         if ($_POST['date'] > $date)
