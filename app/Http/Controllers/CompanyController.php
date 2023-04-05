@@ -95,9 +95,17 @@ class CompanyController extends AbstractB24Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(array $item)
     {
-        //
+        $b24Item = Company::find($item['ID']);
+
+        if (!empty($b24Item)) {
+            if ($item['DATE_MODIFY'] == $b24Item->DATE_MODIFY) {
+                return;
+            } else
+                $b24Item->update($item);
+        } else
+            $this->store($item);
     }
 
     /**
@@ -144,7 +152,7 @@ class CompanyController extends AbstractB24Controller
                 $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE'])->format('Y-m-d H:i:s');
                 $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 $item['LAST_ACTIVITY_TIME'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['LAST_ACTIVITY_TIME'])->format('Y-m-d H:i:s');
-                $this->store($item);
+                $this->update($item);
             }
             $b24count = Company::count(); //save result count
             //$b24count->save();
@@ -153,6 +161,45 @@ class CompanyController extends AbstractB24Controller
             $items = $this->helperOriginAPI->getItem('company', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantity('company', $checkDate);
+        }
+
+        return redirect()->back();
+    }
+
+    public function updateData($checkDate)
+    {
+     
+        //  $count = 0;
+        //$checkDate = null;//'2016-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantityUpdate('company', $checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $count = 0; 
+        $requestArray['DATE'] = $checkDate;
+        $requestArray['select'] = [
+            'ID', 'TITLE', 'UF_CRM_1597826997473', 'ASSIGNED_BY_ID', 'COMPANY_TYPE', 'DATE_CREATE', 'DATE_MODIFY', 'LAST_ACTIVITY_TIME',
+            'ASSIGNED_BY_ID', 'LAST_ACTIVITY_BY', 'UF_CRM_1540465145514', 'UF_CRM_1540121191354', 'UF_CRM_5DBAA9FFCC357'
+        ];
+        $requestArray['start'] = $count;
+
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItemUpdate('company', $requestArray);
+        //dd($items);
+        while (count($items) && $b24countItems > $count) {
+            foreach ($items as $item) {
+
+                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE'])->format('Y-m-d H:i:s');
+                $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
+                $item['LAST_ACTIVITY_TIME'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['LAST_ACTIVITY_TIME'])->format('Y-m-d H:i:s');
+                $this->update($item);
+                $count++;
+            }
+            //$b24count = Company::count(); //save result count
+            //$b24count->save();
+            // $count = 0;
+            $requestArray['start'] = $count;
+            $items = $this->helperOriginAPI->getItemUpdate('company', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantityUpdate('company', $checkDate);
         }
 
         return redirect()->back();

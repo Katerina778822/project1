@@ -17,14 +17,35 @@
         <div>
             <div class="bg-blue-300 rounded-lg  p-8 flex">
 
-                <form action="{{ route('b24fetch.updateData') }}" method="POST">
+                
+                <form action="{{ route('b24fetch.updateDataCompany') }}" method="POST">
                     @csrf
-                    <button class="btn-main"> Update DATA</button>
+                    <button class="btn-main"> Update DATA Company</button>
                     <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
 
-               
+                <form action="{{ route('b24fetch.updateDataTask') }}" method="POST">
+                    @csrf
+                    <button class="btn-main"> Update Task</button>
+                    <input type="date" class="field-main" id="date" name="date">
+                    
+                </form>
+
+                <form action="{{ route('b24fetch.updateDataDeal') }}" method="POST">
+                    @csrf
+                    <button class="btn-main"> Update DATA Deal</button>
+                    <input type="date" class="field-main" id="date" name="date">
+                    
+                </form>
+
+                <form action="{{ route('b24fetch.updateDataLead') }}" method="POST">
+                    @csrf
+                    <button class="btn-main"> Update Lead</button>
+                    <input type="date" class="field-main" id="date" name="date">
+                    
+                </form>
+
 
             </div>
 

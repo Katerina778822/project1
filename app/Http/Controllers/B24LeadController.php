@@ -195,12 +195,6 @@ class B24LeadController extends AbstractB24Controller
         $items = $this->helperOriginAPI->getItemUpdate('lead', $requestArray);
         //dd($items);
 
-      
-
-        $dateString = '2023-04-03T01:38:42+03:00';
-        $date = Carbon::createFromFormat('Y-m-d\TH:i:sP', $dateString);
-
-
         while (count($items) && $b24countItems > $count) {
             foreach ($items as $item) {
                 if (!empty($item['DATE_CREATE']))
@@ -229,9 +223,9 @@ class B24LeadController extends AbstractB24Controller
             //$b24count->save();
             // $count = 0;
             $requestArray['start'] = $count;
-            $items = $this->helperOriginAPI->getItem('lead', $requestArray);
+            $items = $this->helperOriginAPI->getItemUpdate('lead', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems = $this->helperOriginAPI->getQuantity('lead', $checkDate);
+            $b24countItems = $this->helperOriginAPI->getQuantityUpdate('lead', $checkDate);
         }
 
         return redirect()->back();

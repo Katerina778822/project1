@@ -294,23 +294,23 @@ class b24OriginAPI
     {
         switch ($itemType) {
             case 'task': {
-                    return 'CREATED_DATE';
+                    return 'CHANGED_DATE';
                     break;
                 }
             case 'ring': {
-                    return 'CALL_START_DATE';
+                    return '';
                     break;
                 }
             case 'contact': {
-                    return 'DATE_CREATE';
+                    return '';
                     break;
                 }
             case 'company': {
-                    return 'DATE_CREATE';
+                    return 'DATE_MODIFY';
                     break;
                 }
             case 'field': {
-                    return 'DATE_CREATE';
+                    return '';
                     break;
                 }
             case 'user': {
@@ -318,7 +318,7 @@ class b24OriginAPI
                     break;
                 }
             case 'deal': {
-                    return 'DATE_CREATE';
+                    return 'DATE_MODIFY';
                     break;
                 }
             case 'lead': {

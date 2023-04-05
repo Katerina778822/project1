@@ -112,5 +112,15 @@ Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_show', [App\
 
 Route::post('/bitrix24/fetchstate', [App\Http\Controllers\B24FetchController::class, 'fetchState'])->middleware(['auth'])
 ->name('b24fetch.state');
+
 Route::post('/bitrix24/updateData', [App\Http\Controllers\B24FetchController::class, 'updateData'])->middleware(['auth'])
 ->name('b24fetch.updateData');
+
+Route::post('/bitrix24/updateDataTask', [App\Http\Controllers\B24FetchController::class, 'updateDataTask'])->middleware(['auth'])
+->name('b24fetch.updateDataTask');
+Route::post('/bitrix24/updateDataCompany', [App\Http\Controllers\B24FetchController::class, 'updateDataCompany'])->middleware(['auth'])
+->name('b24fetch.updateDataCompany');
+Route::post('/bitrix24/updateDataDeal', [App\Http\Controllers\B24FetchController::class, 'updateDataDeal'])->middleware(['auth'])
+->name('b24fetch.updateDataDeal');
+Route::post('/bitrix24/updateDataLead', [App\Http\Controllers\B24FetchController::class, 'updateDataLead'])->middleware(['auth'])
+->name('b24fetch.updateDataLead');

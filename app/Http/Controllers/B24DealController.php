@@ -82,9 +82,17 @@ class B24DealController extends AbstractB24Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(array $item)
     {
-        //
+        $b24Item = B24Deal::find($item['ID']);
+
+        if (!empty($b24Item)) {
+            if ($item['DATE_MODIFY'] == $b24Item->DATE_MODIFY) {
+                return;
+            } else
+                $b24Item->update($item);
+        } else
+            $this->store($item);
     }
 
     /**
@@ -149,6 +157,9 @@ class B24DealController extends AbstractB24Controller
                 if (!empty($item['CLOSEDATE']))
                     $item['CLOSEDATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CLOSEDATE'])->format('Y-m-d H:i:s');
                 else $item['CLOSEDATE'] = NULL;
+                if (!empty($item['DATE_MODIFY']))
+                    $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
+                else $item['DATE_MODIFY'] = NULL;
 
 
 
@@ -161,6 +172,70 @@ class B24DealController extends AbstractB24Controller
             $items = $this->helperOriginAPI->getItem('deal', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantity('deal', $checkDate);
+        }
+
+        return redirect()->back();
+    }
+    public function updateData($checkDate)
+    {
+
+        //  $count = 0;
+        //$checkDate = null; //'2023-03-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantityUpdate('deal', $checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $count = 0;
+
+
+
+        //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
+        $requestArray['select'] = [
+            'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID',
+            'OPPORTUNITY', 'COMMENTS', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
+            'UF_CRM_5BB6246DC30D8', 'UF_CRM_1545811346080', 'UF_CRM_1564411704463', 'UF_CRM_5CAB07390C964', 'UF_CRM_1540120643248',
+            'UF_CRM_1545811274193', 'UF_CRM_1547732437301', 'DATE_CREATE', 'CLOSEDATE', 'UF_CRM_5C224D08961A9', 'DATE_MODIFY'
+        ];
+        $requestArray['start'] = $count;
+
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('deal', $requestArray);
+        //dd($items);
+        while (count($items) && $b24countItems > $count) {
+            foreach ($items as $item) {
+                //      dd($item);
+                //               $item = get_object_vars($item);
+                $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE'])->format('Y-m-d H:i:s');
+                if (!empty($item['UF_CRM_5CAB07390C964']))
+                    $item['UF_CRM_5CAB07390C964'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_5CAB07390C964'])->format('Y-m-d H:i:s');
+                else $item['UF_CRM_5CAB07390C964'] = NULL;
+                if (!empty($item['UF_CRM_1540120643248']))
+                    $item['UF_CRM_1540120643248'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1540120643248'])->format('Y-m-d H:i:s');
+                else $item['UF_CRM_1540120643248'] = NULL;
+                if (!empty($item['UF_CRM_1545811274193']))
+                    $item['UF_CRM_1545811274193'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1545811274193'])->format('Y-m-d H:i:s');
+                else $item['UF_CRM_1545811274193'] = NULL;
+                if (!empty($item['UF_CRM_1547732437301']))
+                    $item['UF_CRM_1547732437301'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['UF_CRM_1547732437301'])->format('Y-m-d H:i:s');
+                else $item['UF_CRM_1547732437301'] = NULL;
+                if (!empty($item['CLOSEDATE']))
+                    $item['CLOSEDATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CLOSEDATE'])->format('Y-m-d H:i:s');
+                else $item['CLOSEDATE'] = NULL;
+                if (!empty($item['DATE_MODIFY']))
+                    $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
+                else $item['DATE_MODIFY'] = NULL;
+
+
+
+                $this->update($item);
+                 $count++;
+            }
+           // $b24count = B24Deal::count(); //save result count
+            //$b24count->save();
+            
+            $requestArray['start'] = $count;
+            $items = $this->helperOriginAPI->getItemUpdate('deal', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantityUpdate('deal', $checkDate);
         }
 
         return redirect()->back();
