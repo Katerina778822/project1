@@ -15,7 +15,7 @@
     </x-slot>
     <div>
         <div>
-            <div class="bg-blue-300 rounded-lg  p-8 flex">
+            <div class="bg-blue-300 rounded-lg  p-6 flex">
 
                 
                 <form action="{{ route('b24fetch.updateDataCompany') }}" method="POST">
@@ -43,6 +43,13 @@
                     @csrf
                     <button class="btn-main"> Update Lead</button>
                     <input type="date" class="field-main" id="date" name="date">
+                    
+                </form>
+
+                <form action="{{ route('b24fetch.updateDataLead') }}" method="POST" class=" ">
+                    @csrf
+                    <button class="btn-main"> Update ALL</button>
+                    <input type="date" class="field-main mx-10" id="date" name="date">
                     
                 </form>
 

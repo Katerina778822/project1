@@ -72,7 +72,18 @@ class B24FetchController extends AbstractB24Controller
 
         if ($_POST['date'] > $date)
             $date = $_POST['date'];
+
+            
         $controller = new B24LeadController;
+        $controller->updateData($date);
+
+        $controller = new CompanyController;
+        $controller->updateData($date);
+
+        $controller = new B24TaskController;
+        $controller->updateData($date);
+        
+        $controller = new B24DealController;
         $controller->updateData($date);
     }
 
