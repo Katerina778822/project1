@@ -46,10 +46,10 @@
                     
                 </form>
 
-                <form action="{{ route('b24fetch.updateDataLead') }}" method="POST" class=" ">
+                <form action="{{ route('b24fetch.updateDataLead') }}" method="POST" class="mx-10 ">
                     @csrf
-                    <button class="btn-main"> Update ALL</button>
-                    <input type="date" class="field-main mx-10" id="date" name="date">
+                    <button class="btn-main"> Update Lead</button>
+                    <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
 
