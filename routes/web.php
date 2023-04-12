@@ -47,6 +47,9 @@ Route::resource('node','App\Http\Controllers\NodeController');
 Route::resource('catalog','App\Http\Controllers\CatalogController');
 Route::resource('goods','App\Http\Controllers\GoodsController');
 Route::resource('selector','App\Http\Controllers\SelectorController');
+Route::resource('b24analitics_companies_date', 'App\Http\Controllers\B24AnaliticsCompanyColdController');
+
+
 Route::get('/export/{node_id}', [App\Http\Controllers\Controller::class, 'exportData'])->name('exp');
 Route::get('/node/NodeDownload/{node_id}', [App\Http\Controllers\Controller::class, 'NodeDownload'])
 ->name('NodeDownload');
@@ -106,8 +109,13 @@ Route::get('/bitrix24/analitics', function () {
 })->middleware(['auth'])->name('/bitrix24/analitics');
 Route::get('/Bitrix24/analitics/companies_date', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDate'])->middleware(['auth'])
 ->name('b24contact.analitics.companies_date');
-Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_show', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDateShow'])->middleware(['auth'])
+Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_index', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDateShow'])->middleware(['auth'])
 ->name('b24contact.analitics.companies_date_show');
+
+Route::get('/Bitrix24/analitics/companies_cold_date', [App\Http\Controllers\B24AnaliticsCompanyColdController::class, 'companiesDate'])->middleware(['auth'])
+->name('b24contact.analitics.companies_cold_date');
+//Route::get('/Bitrix24/analitics/b24contact.analitics.companies_cold_date_index', [App\Http\Controllers\B24AnaliticsCompanyColdController::class, 'index'])->middleware(['auth'])
+//->name('b24contact.analitics.companies_cold_date_index');
 
 
 Route::post('/bitrix24/fetchstate', [App\Http\Controllers\B24FetchController::class, 'fetchState'])->middleware(['auth'])

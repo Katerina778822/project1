@@ -9,6 +9,7 @@ use App\Models\B24Ring;
 use App\Models\B24Task;
 use App\Models\B24User;
 use App\Models\Company;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -20,6 +21,12 @@ class B24AnaliticsController extends Controller
         if (empty($request->date))
             return;
         B24Analitics::query()->delete();
+        $today = Carbon::today();
+        $todayStart = Carbon::today()->startOfDay();
+        $todayEnd = Carbon::today()->endOfDay();
+        $b24currentDate = B24Analitics::whereBetween('created_at', [$todayStart, $todayEnd])->get();
+        if ($b24currentDate->count())
+            return;
         $companies = Company::where('COMPANY_TYPE', 'CUSTOMER')->get();
         $DatesArray = [];
         foreach ($companies as $companie) {
@@ -41,17 +48,17 @@ class B24AnaliticsController extends Controller
             foreach ($contacts as $contact) {
                 $rings = B24Ring::where('CRM_CONTACT_ID', $contact->ID)->get();
                 foreach ($rings as $ring) {
-                    //                   if ($ring->CALL_START_DATE > $dateLastContactsRings)
-                    $dateLastContactsRings = $ring->CALL_START_DATE;
+                    if ($ring->CALL_START_DATE > $dateLastContactsRings)
+                        $dateLastContactsRings = $ring->CALL_START_DATE;
                 }
             }
             ////3 tasks
             $tasks = B24Task::where('UF_CRM_TASK_COMPANY', $companie->ID)->get();
             foreach ($tasks as $task) {
-                //               if ($task->closedDate > $dateLastTasksClosed)
-                $dateLastTasksClosed = $task->closedDate;
-                //              if ($task->deadline > $dateLastTasksDeadline)
-                $dateLastTasksDeadline = $task->deadline;
+                if ($task->closedDate > $dateLastTasksClosed)
+                    $dateLastTasksClosed = $task->closedDate;
+                if ($task->deadline > $dateLastTasksDeadline)
+                    $dateLastTasksDeadline = $task->deadline;
             }
             ////4 deals
             /*        $deals = B24Deal::where('COMPANY_ID', $companie->ID)->get();
@@ -84,10 +91,12 @@ class B24AnaliticsController extends Controller
                     ];
 
 
-                    $B24AnaliticsItem = B24Analitics::where('id_item', $companie->ID)->first();
-                    if ($B24AnaliticsItem == 0)
+                    $B24AnaliticsItem = B24Analitics::where('id_item', $companie->ID)->first(); //check if item exist
+                    if ($B24AnaliticsItem == 0) {
                         $res = B24Analitics::create($DatesArray);
-                    else {
+                        if (!$res)
+                            log('companies_date() error create B24Analitics companie->ID ' . $companie->ID);
+                    } else {
                         log("ERROR! B24Analitics is trying to create second item for current company! ID: " . $companie->ID);
                         throw new Exception("ERROR! B24Analitics is trying to create second item for current company!");
                     }
@@ -95,8 +104,6 @@ class B24AnaliticsController extends Controller
                     $dateLastContactsRings = null;
                     $dateLastTasksDeadline = null;
                     $dateLastTasksClosed = null;
-                    if (!$res)
-                        log('companies_date() error create B24Analitics companie->ID ' . $companie->ID);
                 }
         }
         /*  dd($DatesArray);
@@ -112,7 +119,7 @@ class B24AnaliticsController extends Controller
     {
         $items = B24Analitics::where('AIM', '3')->get();
 
-        return view('bitrix24.b24analitics.b24companies_date', [
+        return view('bitrix24.b24analitics.companies_date.b24companies_date', [
             'items' => $items,
             //   'id_node' => $id
         ]);
