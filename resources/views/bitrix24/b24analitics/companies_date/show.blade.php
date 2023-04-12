@@ -34,7 +34,7 @@
                 <tr>
        
                     <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/company/details/'.$item['company_id'].'/'}}">
-                        {{$item->companyName}} </a>
+                        {{$item['companyName']}} </a>
                     </td>
                     <td>{{$item['user']}}</td>
                     <td>{{$item['ring']}}</td>
