@@ -73,6 +73,7 @@ class B24AnaliticsCompanyColdController extends Controller
         $items = array();
         $i = 0;
         foreach ($data as $currentData) {
+
             $company=Company::where('ID', $currentData['company_id'])->first();
             $items[$i]['companyName'] = $company->TITLE;
             $items[$i]['company_id'] = $currentData['company_id'];
@@ -103,7 +104,7 @@ class B24AnaliticsCompanyColdController extends Controller
             } else
                 $items[$i]['taskCLose'] = 0;
 
-
+$i++;
     
         }
         return view('bitrix24.b24analitics.companies_date.show', [
