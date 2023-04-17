@@ -239,11 +239,10 @@ class B24AnaliticsCompanyColdController extends Controller
      */
     public function destroy($since_date)
     {
-        $items=B24AnaliticsCompanyCold::where('since_date',$since_date)->delete();
-        $this->index();
-        
+        $items = B24AnaliticsCompanyCold::where('since_date', $since_date)->delete();
+        return $this->index();
     }
-//fill array of stattes of each company (and upload to current DB) which dont have tasks, rings, deals after the date
+    //fill array of stattes of each company (and upload to current DB) which dont have tasks, rings, deals after the date
 
     public function companiesDate(Request $request, $checkCompanies = null)
     { //выходим если не заполнена дата since_date - дата, с которой начинается проверка компаний без движений
@@ -254,6 +253,7 @@ class B24AnaliticsCompanyColdController extends Controller
         if (!empty($checkCompanies)) {
             $companies = $checkCompanies;
             $check_date = Carbon::today();
+            $items = B24AnaliticsCompanyCold::where('since_date', '!=', $check_date)->where('check_date', '!=', $check_date)->delete();
         } else {
             $check_date = $since_date;
             $companies = Company::where('COMPANY_TYPE', 'CUSTOMER')->get();
