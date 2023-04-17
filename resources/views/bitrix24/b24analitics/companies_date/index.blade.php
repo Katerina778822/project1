@@ -28,6 +28,13 @@
                 <td>{{$item->total}}</td>
 
                 <td><a class="btn btn-link" href="{{ route('company_cold_show_raport',[$item->since_date]) }}"> Raport w</a></td>
+                <td>
+                    <form method="post" action="{{route('b24analitics_companies_date.destroy',[$item->since_date])}}">
+                        {{csrf_field()}}
+                        {{method_field('delete')}}
+                        <input type="submit" value="Delete" class="btn-del">
+                    </form>
+                </td>
 
 
             </tr>

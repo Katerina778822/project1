@@ -237,9 +237,11 @@ class B24AnaliticsCompanyColdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($since_date)
     {
-        //
+        $items=B24AnaliticsCompanyCold::where('since_date',$since_date)->delete();
+        $this->index();
+        
     }
 //fill array of stattes of each company (and upload to current DB) which dont have tasks, rings, deals after the date
 
