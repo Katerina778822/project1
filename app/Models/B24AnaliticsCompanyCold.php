@@ -12,6 +12,11 @@ class B24AnaliticsCompanyCold extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'company_id',    'ring_id' ,   'task_id',    'deal_id'  ,  'ringContact_id',    'date'
+        'company_id',    'ring_id',   'task_id',    'deal_id',  'ringContact_id',    'since_date', 'check_date'
     ];
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
 }

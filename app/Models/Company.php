@@ -32,13 +32,17 @@ class Company extends Model
     {
         return $this->hasMany(B24Task::class, 'b24task');
     }
-    public function b24user()
-    {
-        return $this->hasOne(B24User::class, 'b24user');
-    }
+
 
     public function contacts()
     {
         return $this->belongsToMany(Company::class, 'b24_contact_company', 'company_id', 'contact_id');
     }
+
+
+    public function b24user()
+    {
+        return $this->belongsTo(B24User::class, 'ASSIGNED_BY_ID', 'ID');
+    }
+    
 }

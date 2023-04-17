@@ -20,7 +20,8 @@ return new class extends Migration
             $table->unsignedBigInteger('task_id')->nullable()->default(0);
             $table->unsignedBigInteger('deal_id')->nullable()->default(0);
             $table->unsignedBigInteger('ringContact_id')->nullable()->default(0);
-            $table->date('date')->nullable()->default('2023-01-01');
+            $table->date('check_date')->nullable()->default('2023-01-01');
+            $table->date('since_date')->nullable()->default('2023-01-01');
             $table->foreign('company_id')->references('ID')->on('companies');
 
             //$table->timestamps();

@@ -132,8 +132,8 @@ class B24UserController extends AbstractB24Controller
         while (count($items) && $b24countItems > $b24count) {
             foreach ($items as $item) {
 
-                $list = get_object_vars($item);
-                $this->store($list);
+              
+                $this->store($item);
             }
             $b24count = B24User::count(); //save result count
             //$b24count->save();
