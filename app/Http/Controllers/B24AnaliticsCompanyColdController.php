@@ -334,7 +334,7 @@ class B24AnaliticsCompanyColdController extends Controller
                     ];
 
 
-                    $B24AnaliticsItem = B24AnaliticsCompanyCold::where('company_id', $Company_id)->andwhere('check_date', $check_date)->first();
+                    $B24AnaliticsItem = B24AnaliticsCompanyCold::where('company_id', $Company_id)->where('check_date', $check_date)->first();
                     if (empty($B24AnaliticsItem)) {
                         $res = B24AnaliticsCompanyCold::create($DatesArray);
                         if (!$res) {
