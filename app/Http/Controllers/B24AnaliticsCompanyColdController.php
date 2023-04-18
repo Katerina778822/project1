@@ -89,7 +89,9 @@ class B24AnaliticsCompanyColdController extends Controller
             $counts = $user_deals->count();
             $result[$user['ID']] = [
                 'deals_all' => $counts,
-                //  'deal_created' => 0
+                'ID' => $user['ID'],
+                'NAME' => $user['NAME'],
+                'LAST_NAME' => $user['LAST_NAME'],
             ];
             //посчитать к-во компаний c созданной сделкой по каждому
             $deals_count = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
@@ -128,20 +130,20 @@ class B24AnaliticsCompanyColdController extends Controller
                 ->where('b24_users.ID', '=', $user['ID'])
                 ->get()->count();
             $result[$user['ID']]['deals_staige_loose'] = $deals_count;
+
+            //посчитать к-во компаний без движения по каждому
+            $request = new Request([
+                'since_date' => $date,
+            ]);
+
+            $userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
+
+            $res = $this->companiesDate($request, $userCompanies);
+            $result[$user['ID']]['company_cold_count'] = B24AnaliticsCompanyCold::where('check_date', Carbon::today());
         }
 
-        //посчитать к-во компаний без движения по каждому
-        $request = new Request([
-            'since_date' => $date,
-        ]);
-
-        $userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
-
-        $res = $this->companiesDate($request, $userCompanies);
-
-
         return view('bitrix24.b24analitics.companies_date.showRaport', [
-            'items' => $items,
+            'items' => $result,
             //   'id_node' => $id
         ]);
     }
@@ -236,7 +238,8 @@ class B24AnaliticsCompanyColdController extends Controller
         if (!empty($checkCompanies)) {
             $companies = $checkCompanies;
             $check_date = Carbon::today();
-            $items = B24AnaliticsCompanyCold::where('since_date', '!=', $check_date)->where('check_date', '!=', $check_date)->delete();
+            $items = B24AnaliticsCompanyCold::whereColumn('since_date', '!=', 'check_date')->delete();
+            //  $items = $items
         } else {
             $check_date = $since_date;
             $companies = Company::where('COMPANY_TYPE', 'CUSTOMER')->get();

@@ -19,6 +19,7 @@
                     <th>Id</th>
                     <th>Ответственный1</th>
                     <th>к-во компаний </th>
+                    <th>к-во компаний с открытой сделкой</th>
                     <th>к-во закрытых успешно сделок</th>
                     <th>к-во отказов и</th>
                     <th>сумма продаж</th>
@@ -29,13 +30,17 @@
             <tbody>
                 @if(count($items))
                 @foreach($items as $item)
-                <tr>
-                    <td>{{$item->ID}}</td>
-                    <td>{{$item->TITLE}}</td>
-                    <td>{{$item->NAME}}</td>
-                    <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/company/details/'.$item->id_item.'/'}}">
-                        {{$item->LAST_NAME}} </a>
-                    </td>
+                <tr> 
+                    <td>{{$item['ID']}}</td>
+                    <td>{{$item['NAME'].' '.$item['LAST_NAME']}}</td>
+                    <td>{{$item['deals_all']}}</td>
+                    <td>{{$item['deal_created']}}</td>
+                    <td>{{$item['deals_staige_won']}}</td>
+                    <td>{{$item['deals_staige_loose']}}</td>
+                    <td>{{$item['deals_won_sum']}}</td>
+                    <td>{{$item['company_cold_count']}}</td>
+            
+ 
        
                     
                 </tr>
