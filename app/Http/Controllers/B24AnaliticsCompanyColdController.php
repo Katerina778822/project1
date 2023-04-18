@@ -140,21 +140,6 @@ class B24AnaliticsCompanyColdController extends Controller
         $res = $this->companiesDate($request, $userCompanies);
 
 
-        //  C19:LOSE  C19:APOLOGY  C19:2  C19:3  C19:4 C19:14 C19:7 C19:6  C19:5      
-        //  C23:LOSE  C23:APOLOGY  C23:3  C23:6  C23:7  C23:8  C23:14  C23:15 C23:16        
-        foreach ($users as $user) {
-        }
-
-
-
-        //
-        $items = Company::leftJoin('b24_analitics_company_colds', 'companies.ID', '=', 'b24_analitics_company_colds.company_id');
-        $items = $items->where('b24_analitics_company_colds.date', $date);
-        $items = $items->leftJoin('b24_users', 'companies.ASSIGNED_BY_ID', '=', 'b24_users.ID');
-        $items = $items->select('companies.ID', 'companies.TITLE', 'b24_users.NAME', 'b24_users.LAST_NAME');
-        $items = $items->groupBy('b24_users.NAME', 'b24_users.LAST_NAME', 'companies.ID', 'companies.TITLE')
-            ->get(); //dd($items[0]);
-
         return view('bitrix24.b24analitics.companies_date.showRaport', [
             'items' => $items,
             //   'id_node' => $id
@@ -163,8 +148,6 @@ class B24AnaliticsCompanyColdController extends Controller
 
     public function show($date)
     {
-
-        //     dd($date);
         $data = B24AnaliticsCompanyCold::where('since_date', $date)->get();
         $items = array();
         $i = 0;
@@ -332,8 +315,6 @@ class B24AnaliticsCompanyColdController extends Controller
                         //              'dateLastDealsCreated'=> null,
                         //              'dateLastDealsClosed'=> null,
                     ];
-
-
                     $B24AnaliticsItem = B24AnaliticsCompanyCold::where('company_id', $Company_id)->where('check_date', $check_date)->first();
                     if (empty($B24AnaliticsItem)) {
                         $res = B24AnaliticsCompanyCold::create($DatesArray);
