@@ -31,14 +31,20 @@
                 @if(count($items))
                 @foreach($items as $item)
                 <tr> 
-                    <td>{{$item['ID']}}</td>
+                    <td> {{$item['ID']}}</td>
                     <td>{{$item['NAME'].' '.$item['LAST_NAME']}}</td>
-                    <td>{{$item['deals_all']}}</td>
-                    <td>{{$item['deal_created']}}</td>
-                    <td>{{$item['deals_staige_won']}}</td>
-                    <td>{{$item['deals_staige_loose']}}</td>
-                    <td>{{$item['deals_won_sum']}}</td>
-                    <td>{{$item['company_cold_count']}}</td>
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[$item['COMPANY_ALL']]) }}">
+                        {{$item['deals_all']}}</td>
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[$item['OPEN_DEAL_COMPANY']]) }}">
+                        {{$item['deal_created']}}</td>
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[$item['CLOSE_DEAL_COMPANY']]) }}">
+                        {{$item['deals_staige_won']}}</td>
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[$item['LOOSE_DEAL_COMPANY']]) }}">
+                        {{$item['deals_staige_loose']}}</td>
+                    <td>
+                        {{$item['deals_won_sum']}}</td>
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[$item['COLD_DEAL_COMPANY']]) }}">
+                        {{$item['company_cold_count']}}</td>
             
  
        

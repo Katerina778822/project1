@@ -15,6 +15,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>N</th>
                     <th>ID</th>
                     <th>TITLE</th>
                     <th>COMMENTS</th>
@@ -28,11 +29,12 @@
                 @if(isset   ($companies))
                 @foreach($companies as $companie)
                 <tr class="border-separate">
+                    <td>{{$loop->iteration}}</td>
                     <td>{{$companie->ID}}</td>
                     <td>
-
+                    <a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/company/details/'.$companie->ID.'/'}}">
                         {{$companie->TITLE}}
-
+                    </a>
                     </td>
                     <td>
                         <p>{{$companie->COMMENTS}}</p>
@@ -53,7 +55,7 @@
             </tbody>
 
         </table>
-        {{ $companies->setPath('/public/bitrix24')->links() }}
+     
 
 
     </div>

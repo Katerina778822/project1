@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\B24AnaliticsCompanyCold;
 use App\Models\B24Contact;
+use App\Models\B24Deal;
 use App\Models\B24Ring;
 use App\Models\B24Task;
 use App\Models\B24User;
@@ -62,10 +63,12 @@ class B24AnaliticsCompanyColdController extends Controller
      */
     public function showRaport($date)
     {
-
         // получить список уникальных b24_users
-        $items = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
-            ->where('b24_analitics_company_colds.since_date', $date)
+        $items = B24AnaliticsCompanyCold::where([
+            ['b24_analitics_company_colds.check_date', '=', $date],
+            ['b24_analitics_company_colds.since_date', '=', $date]
+        ])
+            ->join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
             ->join('b24_users', 'companies.ASSIGNED_BY_ID', '=', 'b24_users.ID')
             ->get()->unique('NAME');
         $users = $items->map(function ($item) {
@@ -78,13 +81,26 @@ class B24AnaliticsCompanyColdController extends Controller
 
         $result = [];
         $looseStateArray = ['C19:LOSE', 'C19:APOLOGY', 'C19:2', 'C19:3', 'C19:4', 'C19:14', 'C19:7', 'C19:6', 'C19:5', 'C23:LOSE', 'C23:APOLOGY', 'C23:3', 'C23:6', 'C23:7', 'C23:8', 'C23:14', 'C23:15', 'C23:16'];
+        $workStateArray = [
+            'C23:NEW', 'C23:EXECUTING', 'C23:FINAL_INVOICE', 'C23:9', 'C23:10', 'C23:11', 'C23:12', 'C23:13',
+            'C19:NEW', 'C19:PREPARATION', 'C19:EXECUTING', 'C19:FINAL_INVOICE', 'C19:1', 'C19:9', 'C19:10', 'C19:11', 'C19:12', 'C19:13'
+        ];
+        $winStateArray = ['C23:WON', 'C19:WON',];
+
+        $request = new Request([
+            'since_date' => $date,
+        ]);
+        // $userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
+        //   $res = $this->companiesDate($request, $date);
 
         foreach ($users as $user) {
             //посчитать к-во компаний по каждому
             $user_deals = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
-                ->where('b24_analitics_company_colds.since_date', $date)
-                ->join('b24_users', 'companies.ASSIGNED_BY_ID', '=', 'b24_users.ID')
-                ->where('b24_users.ID', '=', $user['ID'])
+                ->where([
+                    ['b24_analitics_company_colds.check_date', '=', $date],
+                    ['b24_analitics_company_colds.since_date', '=', $date],
+                    ['companies.ASSIGNED_BY_ID', '=', $user['ID']],
+                ])
                 ->get();
             $counts = $user_deals->count();
             $result[$user['ID']] = [
@@ -92,54 +108,80 @@ class B24AnaliticsCompanyColdController extends Controller
                 'ID' => $user['ID'],
                 'NAME' => $user['NAME'],
                 'LAST_NAME' => $user['LAST_NAME'],
+                'COMPANY_ALL' => $user_deals->pluck('ID')
             ];
-            //посчитать к-во компаний c созданной сделкой по каждому
+            //посчитать к-во компаний c открытой сделкой по каждому
             $deals_count = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
-                ->where('b24_analitics_company_colds.since_date', $date)
-                ->join('b24_users', 'companies.ASSIGNED_BY_ID', '=', 'b24_users.ID')
                 ->join('b24_deals', 'companies.ID', '=', 'b24_deals.COMPANY_ID')
-                ->where('b24_deals.DATE_CREATE', '>', $date)
-                ->where('b24_users.ID', '=', $user['ID'])
-                ->get()->count();
+                ->where([
+                    ['b24_analitics_company_colds.check_date', '=', $date],
+                    ['b24_analitics_company_colds.since_date', '=', $date],
+                    ['b24_deals.DATE_CREATE', '>=', $date],
+                    ['companies.ASSIGNED_BY_ID', '=', $user['ID']],
+                ])
+                ->whereIn('b24_deals.STAGE_ID', $workStateArray)
+                ->get()->unique('COMPANY_ID');
+            $openDealCompany = $deals_count->pluck('COMPANY_ID');
+            $deals_count = $deals_count->count();
             $result[$user['ID']]['deal_created'] = $deals_count;
+            $result[$user['ID']]['OPEN_DEAL_COMPANY'] = $openDealCompany;
 
             //посчитать к-во компаний c закрытой сделкой по каждому
             //посчитать сумму продаж c закрытых сделкой по каждому
-            $deals = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
-                ->where('b24_analitics_company_colds.since_date', $date)
+            $deals_count = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
                 ->join('b24_users', 'companies.ASSIGNED_BY_ID', '=', 'b24_users.ID')
                 ->join('b24_deals', 'companies.ID', '=', 'b24_deals.COMPANY_ID')
-                ->where('b24_deals.DATE_CREATE', '>=', $date)
-                ->whereIn('b24_deals.STAGE_ID', ['C19:WON', 'C23:WON'])
-                ->where('b24_users.ID', '=', $user['ID'])
-                ->get();
-            $sum = $deals->sum('OPPORTUNITY');
-            $deals_count = $deals->count();
+                ->where([
+                    ['b24_analitics_company_colds.check_date', '=', $date],
+                    ['b24_analitics_company_colds.since_date', '=', $date],
+                    ['b24_deals.DATE_CREATE', '>=', $date],
+                    ['companies.ASSIGNED_BY_ID', '=', $user['ID']],
+                ])
+                ->whereIn('b24_deals.STAGE_ID', $winStateArray)
+                ->get()->unique('COMPANY_ID');
+            // dd($deals_count);
+            $sum = $deals_count->sum('OPPORTUNITY');
+            $closeDeal = $deals_count->pluck('COMPANY_ID');
+            $deals_count = $deals_count->count();
             $result[$user['ID']]['deals_staige_won'] = $deals_count;
             $result[$user['ID']]['deals_won_sum'] = $sum;
+            $result[$user['ID']]['CLOSE_DEAL_COMPANY'] = $closeDeal;
 
             //посчитать к-во компаний c проваленной сделкой по каждому
-            $deals_count = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
-                ->where('b24_analitics_company_colds.since_date', $date)
+            $deals_count     = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
                 ->join('b24_users', 'companies.ASSIGNED_BY_ID', '=', 'b24_users.ID')
                 ->join('b24_deals', 'companies.ID', '=', 'b24_deals.COMPANY_ID')
-                ->where(function ($query) use ($date, $looseStateArray) {
-                    $query->where('b24_deals.DATE_CREATE', '>=', $date)
-                        ->whereIn('b24_deals.STAGE_ID', $looseStateArray);
-                })
-                ->where('b24_users.ID', '=', $user['ID'])
-                ->get()->count();
+                ->where([
+                    ['b24_analitics_company_colds.check_date', '=', $date],
+                    ['b24_analitics_company_colds.since_date', '=', $date],
+                    ['b24_deals.DATE_CREATE', '>=', $date],
+                    ['companies.ASSIGNED_BY_ID', '=', $user['ID']],
+                ])
+                ->whereIn('b24_deals.STAGE_ID', $looseStateArray)
+                ->get()->unique('COMPANY_ID');
+            $looseDeal = $deals_count->pluck('COMPANY_ID');
+            //проверка, была ли успешно закрытая сделка
+            foreach ($looseDeal as $key => $currentDeal) {
+                if (in_array($currentDeal, $closeDeal->toArray()))
+                unset($looseDeal[$key]);
+            }
+            
+            $deals_count = $looseDeal->count();
             $result[$user['ID']]['deals_staige_loose'] = $deals_count;
+            $result[$user['ID']]['LOOSE_DEAL_COMPANY'] = $looseDeal;
 
             //посчитать к-во компаний без движения по каждому
-            $request = new Request([
-                'since_date' => $date,
-            ]);
-
-            $userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
-
-            $res = $this->companiesDate($request, $userCompanies);
-            $result[$user['ID']]['company_cold_count'] = B24AnaliticsCompanyCold::where('check_date', Carbon::today());
+            $deals_count = B24AnaliticsCompanyCold::join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
+                ->where([
+                    ['b24_analitics_company_colds.check_date', '=', Carbon::today()],
+                    ['b24_analitics_company_colds.since_date', '=', $date],
+                    ['companies.ASSIGNED_BY_ID', '=', $user['ID']],
+                ])
+                ->get()->unique('ID');
+            $coldDeal = $looseDeal = $deals_count->pluck('ID');
+            $deals_count = $deals_count->count();
+            $result[$user['ID']]['company_cold_count'] = $deals_count;
+            $result[$user['ID']]['COLD_DEAL_COMPANY'] = $coldDeal;
         }
 
         return view('bitrix24.b24analitics.companies_date.showRaport', [
@@ -148,6 +190,17 @@ class B24AnaliticsCompanyColdController extends Controller
         ]);
     }
 
+    public function showColdCompaniesInfo($item)
+    {
+        $item = str_replace(['[', ']'], '', explode(',', $item));
+        $companies = NULL;
+
+        $companies = Company::wherein('ID', $item)->get();
+        return view('bitrix24.company.index', [
+            'companies' => $companies,
+            //   'id_node' => $id
+        ]);
+    }
     public function show($date)
     {
         $data = B24AnaliticsCompanyCold::where('since_date', $date)->get();
@@ -227,20 +280,26 @@ class B24AnaliticsCompanyColdController extends Controller
         $items = B24AnaliticsCompanyCold::where('since_date', $since_date)->delete();
         return $this->index();
     }
-    //fill array of stattes of each company (and upload to current DB) which dont have tasks, rings, deals after the date
 
-    public function companiesDate(Request $request, $checkCompanies = null)
-    { //выходим если не заполнена дата since_date - дата, с которой начинается проверка компаний без движений
-        $since_date = $request->since_date;
-        if (empty($request->since_date))
+
+
+    //fill array of stattes of each company (and upload to current DB) which dont have tasks, rings, deals after the date
+    public function companiesDate(Request $request, $since_date = null)
+    {
+        if (empty($request->since_date)) //выходим если не заполнена дата since_date - дата, с которой начинается проверка компаний без движений
+
             return;
 
-        if (!empty($checkCompanies)) {
-            $companies = $checkCompanies;
-            $check_date = Carbon::today();
+        if (!empty($since_date)) {
             $items = B24AnaliticsCompanyCold::whereColumn('since_date', '!=', 'check_date')->delete();
+            $check_date = Carbon::today();
+            $companies = B24AnaliticsCompanyCold::where('since_date', $since_date)
+                ->join('companies', 'b24_analitics_company_colds.company_id', '=', 'companies.ID')
+                ->get();
+
             //  $items = $items
         } else {
+            $since_date = $request->since_date;
             $check_date = $since_date;
             $companies = Company::where('COMPANY_TYPE', 'CUSTOMER')->get();
         }
@@ -251,6 +310,8 @@ class B24AnaliticsCompanyColdController extends Controller
             $dateLastContactsRings = null;
             $dateLastTasksDeadline = null;
             $dateLastTasksClosed = null;
+            $dateLastDealsCreated = null;
+            $dateLastDealsClosed = null;
             $Company_id = $companie->ID;
             $Ring_id = 0;
             $ContactsRings_id = 0;
@@ -291,17 +352,18 @@ class B24AnaliticsCompanyColdController extends Controller
                 }
             }
             ////4 deals
-            /*        $deals = B24Deal::where('COMPANY_ID', $companie->ID)->get();
+            $deals = B24Deal::where('COMPANY_ID', $companie->ID)->get();
             foreach ($deals as $deal) {
                 if ($deal->DATE_CREATE > $dateLastDealsCreated)
                     $dateLastDealsCreated = $deal->DATE_CREATE;
                 if ($deal->CLOSEDATE > $dateLastDealsClosed)
                     $dateLastDealsClosed = $deal->CLOSEDATE;
-            }*/
+            }
             if ($dateLastRings || $dateLastContactsRings || $dateLastTasksDeadline || $dateLastTasksClosed)
                 if (
                     $dateLastRings < $since_date && $dateLastContactsRings < $since_date && $dateLastTasksDeadline < $since_date
-                    &&  $dateLastTasksClosed < $since_date
+                    &&  $dateLastTasksClosed < $since_date &&
+                    $dateLastDealsCreated < $since_date && $dateLastDealsClosed < $since_date
                 ) {
 
                     $DatesArray = [
