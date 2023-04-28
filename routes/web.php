@@ -112,8 +112,10 @@ Route::get('/Bitrix24/analitics/companies_date', [App\Http\Controllers\B24Analit
 Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_index', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDateShow'])->middleware(['auth'])
 ->name('b24contact.analitics.companies_date_show');
 
-Route::get('/Bitrix24/analitics/company_cold_show_raport/{date}', [App\Http\Controllers\B24AnaliticsCompanyColdController::class, 'showRaport'])->middleware(['auth'])
+Route::get('/Bitrix24/analitics/company_cold_show_raport/{date}', [App\Http\Controllers\B24AnaliticsCompanyColdController::class, 'showColdCompanies'])->middleware(['auth'])
 ->name('company_cold_show_raport');
+Route::get('/Bitrix24/analitics/company_cold_show_calculate/{date}', [App\Http\Controllers\B24AnaliticsCompanyColdController::class, 'CalcRaport'])->middleware(['auth'])
+->name('company_cold_show_calculate');
 Route::get('/Bitrix24/analitics/companies_cold_date', [App\Http\Controllers\B24AnaliticsCompanyColdController::class, 'companiesDate'])->middleware(['auth'])
 ->name('b24contact.analitics.companies_cold_date');
 Route::get('/Bitrix24/analitics/companies_cold_date/details/{item}', [App\Http\Controllers\B24AnaliticsCompanyColdController::class, 'showColdCompaniesInfo'])->middleware(['auth'])

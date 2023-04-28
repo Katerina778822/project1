@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\B24Analitics;
 use App\Models\B24AnaliticsCompanyCold;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
@@ -12,6 +13,8 @@ use App\Models\Company;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Hamcrest\Arrays\IsArray;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -61,7 +64,7 @@ class B24AnaliticsCompanyColdController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showRaport($date)
+    public function CalcRaport($date)
     {
         // получить список уникальных b24_users
         $items = B24AnaliticsCompanyCold::where([
@@ -90,8 +93,8 @@ class B24AnaliticsCompanyColdController extends Controller
         $request = new Request([
             'since_date' => $date,
         ]);
-        // $userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
-        //   $res = $this->companiesDate($request, $date);
+        //$userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
+           $res = $this->companiesDate($request, $date);
 
         foreach ($users as $user) {
             //посчитать к-во компаний по каждому
@@ -163,9 +166,9 @@ class B24AnaliticsCompanyColdController extends Controller
             //проверка, была ли успешно закрытая сделка
             foreach ($looseDeal as $key => $currentDeal) {
                 if (in_array($currentDeal, $closeDeal->toArray()))
-                unset($looseDeal[$key]);
+                    unset($looseDeal[$key]);
             }
-            
+
             $deals_count = $looseDeal->count();
             $result[$user['ID']]['deals_staige_loose'] = $deals_count;
             $result[$user['ID']]['LOOSE_DEAL_COMPANY'] = $looseDeal;
@@ -183,13 +186,28 @@ class B24AnaliticsCompanyColdController extends Controller
             $result[$user['ID']]['company_cold_count'] = $deals_count;
             $result[$user['ID']]['COLD_DEAL_COMPANY'] = $coldDeal;
         }
+        //   B24Analitics::where('AIM', 7)->delete();
 
+        $file = 'userfiles/'.$date . 'json';
+        $json = json_encode($result);
+        file_put_contents($file, $json);
+
+
+        // проверка
+        // dd('1 - ',$result,' 2 - ',$arr2);
+    }
+
+    public function showColdCompanies($date)
+    {
+        $file = 'userfiles/'.$date . 'json';
+        // чтение массива из файла
+        $json = file_get_contents($file);
+        $items = json_decode($json, true);
         return view('bitrix24.b24analitics.companies_date.showRaport', [
-            'items' => $result,
+            'items' => $items,
             //   'id_node' => $id
         ]);
     }
-
     public function showColdCompaniesInfo($item)
     {
         $item = str_replace(['[', ']'], '', explode(',', $item));
@@ -244,6 +262,45 @@ class B24AnaliticsCompanyColdController extends Controller
             'items' => $items,
             //   'id_node' => $id
         ]);
+    }
+
+
+    //B24Analitics Aim=7
+    private function saveToDB(array $array, $date)
+    {
+        foreach ($array as $key => $item) {
+            if (is_array($item)) {
+                foreach ($item as $subkey => $subItem) {
+                    if ($subItem instanceof Collection) {
+                        foreach ($subItem as $subsubkey => $subsubItem) {
+                            $B24Analitics = B24Analitics::create([
+                                'AIM' => 7,
+                                'id_item' => $key,
+                                'string1' => $subkey,
+                                //'string2' => $subItem,
+                                'string3' => $subsubItem,
+                                'date1' => $date
+                            ]);
+                        }
+                    } else {
+                        $B24Analitics = B24Analitics::create([
+                            'AIM' => 7,
+                            'id_item' => $key,
+                            'string1' => $subkey,
+                            'string2' => $subItem,
+                            'date1' => $date
+                        ]);
+                    }
+                }
+            } else {
+                $B24Analitics = B24Analitics::create([
+                    'AIM' => 7,
+                    'string1' => $key,
+                    'string2' => $item,
+                    'date1' => $date
+                ]);
+            }
+        }
     }
 
     /**
