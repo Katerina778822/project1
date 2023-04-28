@@ -186,6 +186,7 @@ class B24AnaliticsCompanyColdController extends Controller
             $result[$user['ID']]['company_cold_count'] = $deals_count;
             $result[$user['ID']]['COLD_DEAL_COMPANY'] = $coldDeal;
         }
+        error_log('Point2');
         //   B24Analitics::where('AIM', 7)->delete();
 try{
     $file = '/userfiles/'.$date . 'json';//test
