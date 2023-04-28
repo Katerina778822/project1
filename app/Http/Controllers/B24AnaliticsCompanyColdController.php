@@ -187,10 +187,16 @@ class B24AnaliticsCompanyColdController extends Controller
             $result[$user['ID']]['COLD_DEAL_COMPANY'] = $coldDeal;
         }
         //   B24Analitics::where('AIM', 7)->delete();
-
-        $file = '//userfiles/'.$date . 'json';//test
-        $json = json_encode($result);
-        file_put_contents($file, $json);
+try{
+    $file = '//userfiles/'.$date . 'json';//test
+    $json = json_encode($result);
+    file_put_contents($file, $json);
+}
+catch(Exception $e)
+{
+    echo 'Ошибка: ' . $e->getMessage();
+}
+      
 
 
         // проверка
