@@ -30,7 +30,7 @@ class B24AnaliticsCompanyColdController extends Controller
     public function index()
     {
         // выбрать, посчитать и сгруппировать по дате
-        $items = B24AnaliticsCompanyCold::select('since_date', DB::raw('count(*) as total'))->groupBy('since_date')->get();
+        $items = B24AnaliticsCompanyCold::where('since_date','=', DB::raw('check_date'))->select('since_date', DB::raw('count(*) as total'))->groupBy('since_date')->get();
 
         return view('bitrix24.b24analitics.companies_date.index', [
             'items' => $items,
