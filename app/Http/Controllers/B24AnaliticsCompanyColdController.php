@@ -196,8 +196,8 @@ try{
 }
 catch(Exception $e)
 {
-    $message = 'Ошибка: ' . $e->getMessage();
-    error_log($message, 3, 'error.log');
+    
+    Log::error('An error occurred: ' . $e->getMessage());
 }
       
 
