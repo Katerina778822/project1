@@ -33,17 +33,17 @@
                 <tr> 
                     <td> {{$item['ID']}}</td>
                     <td>{{$item['NAME'].' '.$item['LAST_NAME']}}</td>
-                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[implode($item['COMPANY_ALL']),',']) }}">
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[',',implode($item['COMPANY_ALL'])]) }}">
                         {{$item['deals_all']}}</td>
-                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[implode($item['OPEN_DEAL_COMPANY']),',']) }}">
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[',',implode($item['OPEN_DEAL_COMPANY'])]) }}">
                         {{$item['deal_created']}}</td>
-                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[implode($item['CLOSE_DEAL_COMPANY']),',']) }}">
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[',',implode($item['CLOSE_DEAL_COMPANY'])]) }}">
                         {{$item['deals_staige_won']}}</td>
-                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[implode($item['LOOSE_DEAL_COMPANY']),',']) }}">
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[',',implode($item['LOOSE_DEAL_COMPANY'])]) }}">
                         {{$item['deals_staige_loose']}}</td>
                     <td>
                         {{$item['deals_won_sum']}}</td>
-                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[implode($item['COLD_DEAL_COMPANY']),',']) }}">
+                    <td><a href="{{ route('b24analitics_companies_date.showColdCompaniesInfo',[',',implode($item['COLD_DEAL_COMPANY'])]) }}">
                         {{$item['company_cold_count']}}</td>
             
  
