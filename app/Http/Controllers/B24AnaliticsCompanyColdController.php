@@ -194,7 +194,8 @@ try{
 }
 catch(Exception $e)
 {
-    echo 'Ошибка: ' . $e->getMessage();
+    $message = 'Ошибка: ' . $e->getMessage();
+    error_log($message, 3, 'error.log');
 }
       
 
