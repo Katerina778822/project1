@@ -188,7 +188,7 @@ class B24AnaliticsCompanyColdController extends Controller
         }
         //   B24Analitics::where('AIM', 7)->delete();
 
-        $file = '//userfiles/'.$date . 'json';
+        $file = '//userfiles/'.$date . 'json';//test
         $json = json_encode($result);
         file_put_contents($file, $json);
 
