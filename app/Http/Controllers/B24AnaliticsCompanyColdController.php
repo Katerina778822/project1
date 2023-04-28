@@ -93,6 +93,7 @@ class B24AnaliticsCompanyColdController extends Controller
         $request = new Request([
             'since_date' => $date,
         ]);
+        error_log('Point1');
         //$userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
            $res = $this->companiesDate($request, $date);
 
