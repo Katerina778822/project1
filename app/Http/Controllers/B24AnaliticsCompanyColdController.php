@@ -93,7 +93,7 @@ class B24AnaliticsCompanyColdController extends Controller
         $request = new Request([
             'since_date' => $date,
         ]);
-        error_log('Point1');
+
         //$userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
            $res = $this->companiesDate($request, $date);
 
@@ -187,10 +187,10 @@ class B24AnaliticsCompanyColdController extends Controller
             $result[$user['ID']]['company_cold_count'] = $deals_count;
             $result[$user['ID']]['COLD_DEAL_COMPANY'] = $coldDeal;
         }
-        error_log('Point2');
+ 
         //   B24Analitics::where('AIM', 7)->delete();
 try{
-    $file = '/userfiles/'.$date . 'json';//test
+    $file = 'userfiles/'.$date . 'json';//test
     $json = json_encode($result);
     file_put_contents($file, $json);
 }
