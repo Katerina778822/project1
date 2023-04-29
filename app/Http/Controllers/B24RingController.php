@@ -142,7 +142,7 @@ class B24RingController extends AbstractB24Controller
                 $item['CALL_START_DATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CALL_START_DATE'])->format('Y-m-d H:i:s');
                 switch ($item['CRM_ENTITY_TYPE']) {
                     case 'CONTACT': {
-                            $item['CRM_LEAD_ID'] = $item['CRM_ENTITY_ID'];
+                            $item['CRM_CONTACT_ID'] = $item['CRM_ENTITY_ID'];
                             break;
                         }
                     case 'COMPANY': {

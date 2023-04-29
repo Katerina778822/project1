@@ -6,6 +6,7 @@ use App\Models\B24Analitics;
 use App\Models\B24AnaliticsCompanyCold;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
+use App\Models\B24Lead;
 use App\Models\B24Ring;
 use App\Models\B24Task;
 use App\Models\B24User;
@@ -30,7 +31,7 @@ class B24AnaliticsCompanyColdController extends Controller
     public function index()
     {
         // выбрать, посчитать и сгруппировать по дате
-        $items = B24AnaliticsCompanyCold::where('since_date','=', DB::raw('check_date'))->select('since_date', DB::raw('count(*) as total'))->groupBy('since_date')->get();
+        $items = B24AnaliticsCompanyCold::where('since_date', '=', DB::raw('check_date'))->select('since_date', DB::raw('count(*) as total'))->groupBy('since_date')->get();
 
         return view('bitrix24.b24analitics.companies_date.index', [
             'items' => $items,
@@ -95,7 +96,7 @@ class B24AnaliticsCompanyColdController extends Controller
         ]);
 
         //$userCompanies = Company::where('ASSIGNED_BY_ID', $user['ID'])->get();
-           $res = $this->companiesDate($request, $date);
+        $res = $this->companiesDate($request, $date);
 
         foreach ($users as $user) {
             //посчитать к-во компаний по каждому
@@ -187,19 +188,17 @@ class B24AnaliticsCompanyColdController extends Controller
             $result[$user['ID']]['company_cold_count'] = $deals_count;
             $result[$user['ID']]['COLD_DEAL_COMPANY'] = $coldDeal;
         }
- 
+
         //   B24Analitics::where('AIM', 7)->delete();
-try{
-    $file = 'userfiles/'.$date . 'json';//test
-    $json = json_encode($result);
-    file_put_contents($file, $json);
-}
-catch(Exception $e)
-{
-    
-    Log::error('An error occurred: ' . $e->getMessage());
-}
-      
+        try {
+            $file = 'userfiles/' . $date . 'json'; //test
+            $json = json_encode($result);
+            file_put_contents($file, $json);
+        } catch (Exception $e) {
+
+            Log::error('An error occurred: ' . $e->getMessage());
+        }
+
 
 
         // проверка
@@ -208,7 +207,7 @@ catch(Exception $e)
 
     public function showColdCompanies($date)
     {
-        $file = 'userfiles/'.$date . 'json';
+        $file = 'userfiles/' . $date . 'json';
         // чтение массива из файла
         $json = file_get_contents($file);
         $items = json_decode($json, true);
@@ -378,10 +377,12 @@ catch(Exception $e)
             $dateLastTasksClosed = null;
             $dateLastDealsCreated = null;
             $dateLastDealsClosed = null;
+            $dateLastLeadsCreated = null;
             $Company_id = $companie->ID;
             $Ring_id = 0;
             $ContactsRings_id = 0;
             $Task_id = 0;
+            $Deal_id = 0;
             //        $dateLastDealsCreated=null;
             //        $dateLastDealsClosed=null;
 
@@ -420,16 +421,34 @@ catch(Exception $e)
             ////4 deals
             $deals = B24Deal::where('COMPANY_ID', $companie->ID)->get();
             foreach ($deals as $deal) {
-                if ($deal->DATE_CREATE > $dateLastDealsCreated)
+                if ($deal->DATE_CREATE > $dateLastDealsCreated) {
                     $dateLastDealsCreated = $deal->DATE_CREATE;
-                if ($deal->CLOSEDATE > $dateLastDealsClosed)
+                    $Deal_id = $deal->ID;
+                }
+                if ($deal->CLOSEDATE > $dateLastDealsClosed) {
                     $dateLastDealsClosed = $deal->CLOSEDATE;
+                    $Deal_id = $deal->ID;
+                }
             }
+            //5 leads
+            $leads = B24Lead::where('COMPANY_ID', $companie->ID)->get();
+            foreach ($leads as $lead) {
+                $rings = B24Ring::where('CRM_LEAD_ID', $lead->ID)->get();
+                foreach ($rings as $ring) {
+                    if ($ring->CALL_START_DATE > $dateLastLeadsCreated) {
+                        $dateLastLeadsCreated = $ring->CALL_START_DATE;
+                        $LeadRings_id = $ring->ID;
+                    }
+                }
+            }
+
+
             if ($dateLastRings || $dateLastContactsRings || $dateLastTasksDeadline || $dateLastTasksClosed)
                 if (
                     $dateLastRings < $since_date && $dateLastContactsRings < $since_date && $dateLastTasksDeadline < $since_date
                     &&  $dateLastTasksClosed < $since_date &&
-                    $dateLastDealsCreated < $since_date && $dateLastDealsClosed < $since_date
+                    $dateLastDealsCreated < $since_date && $dateLastDealsClosed < $since_date &&
+                    $dateLastLeadsCreated < $since_date
                 ) {
 
                     $DatesArray = [
@@ -438,7 +457,8 @@ catch(Exception $e)
                         'ring_id' => $Ring_id,
                         'task_id' => $Task_id,
                         'ringContact_id' => $ContactsRings_id,
-                        //   'deal_id' => $dateLastRings,
+                        'deal_id' => $Deal_id,
+                        //   'lead_id' => $LeadRings_id,
                         'check_date' => $check_date,
                         'since_date' => $since_date,
 

@@ -28,7 +28,7 @@ class b24OriginAPI
     public function __construct($base_uri = null)
     {
         $client = HttpClient::create();
-        $url = 'https://geleon.bitrix24.ua/rest/1/' . env('B24_TOKEN'); // ваш URL
+        $url = env('B24_MAIN1_URI').'rest/1/'. env('B24_TOKEN'); // ваш URL
         $accessToken = env('B24_TOKEN'); // ваш access token
         $app_id = env('BITRIX24_APP_ID');
         $app_secret = env('BITRIX24_APP_SECRET');
@@ -36,7 +36,7 @@ class b24OriginAPI
         $accessTokenObj = new AccessToken($accessToken, "", 0);
         $scope = new Scope(array('tasks'));
         $applicationProfile = new ApplicationProfile($app_id, $app_secret, $scope);
-        $credentials = new Credentials($webhookUrl, $accessTokenObj, $applicationProfile, 'https://geleon.bitrix24.ua');
+        $credentials = new Credentials($webhookUrl, $accessTokenObj, $applicationProfile, env('B24_MAIN1_URI'));
         $this->apiClient = new ApiClient($credentials, $client, new NullLogger());
     }
 
