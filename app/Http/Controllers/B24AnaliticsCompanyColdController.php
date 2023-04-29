@@ -342,7 +342,14 @@ class B24AnaliticsCompanyColdController extends Controller
      */
     public function destroy($since_date)
     {
+        $file = 'userfiles/' . $since_date . 'json'; 
+        if (file_exists($file)) {
+            unlink($file);
+        }
+
         $items = B24AnaliticsCompanyCold::where('since_date', $since_date)->delete();
+
+
         return $this->index();
     }
 
