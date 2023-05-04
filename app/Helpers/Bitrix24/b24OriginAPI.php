@@ -28,7 +28,7 @@ class b24OriginAPI
     public function __construct($base_uri = null)
     {
         $client = HttpClient::create();
-        $url = env('B24_MAIN1_URI').'rest/1/'. env('B24_TOKEN'); // ваш URL
+        $url = env('B24_MAIN1_URI') . 'rest/1/' . env('B24_TOKEN'); // ваш URL
         $accessToken = env('B24_TOKEN'); // ваш access token
         $app_id = env('BITRIX24_APP_ID');
         $app_secret = env('BITRIX24_APP_SECRET');
@@ -124,19 +124,18 @@ class b24OriginAPI
         // 
     }
 
-    public function getQuantity($itemType,  $date = null, $apiUrl = null,)
+    public function getQuantity($itemType, $date = null, $apiUrl = null, $requestArray = null)
     {
-
+        $requestArray['DATE'] = $date;
         $apiUrl = $this->getApiUrl($itemType);
-        $dateCreate = $this->getDateString($itemType);
-        if(!$date)
-            $date=$this->getDate($itemType);
+        if (!$date)
+            $date = $this->getDate($itemType);
+        if ($requestArray['DATE'])
+            $requestArray['filter']['>' . $this->getDateString($itemType)] = $requestArray["DATE"];
+        else
+            $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
         if ($apiUrl) {
-            $response = $this->apiClient->getResponse($apiUrl, [
-                'filter' => [
-                    '>' . $dateCreate => $date,
-                ]
-            ],);
+            $response = $this->apiClient->getResponse($apiUrl, $requestArray);
             $responseContent = $response->getContent();
             $result = json_decode($responseContent, true);
             if (!empty($result['total']))
@@ -147,25 +146,25 @@ class b24OriginAPI
         return  0;
         // 
     }
-    public function getQuantityUpdate($itemType,  $date = null, $apiUrl = null,)
+    public function getQuantityUpdate($itemType,  $date = null, $apiUrl = null, $requestArray = null)
     {
-
+        $requestArray['DATE'] = $date;
+        $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
         $apiUrl = $this->getApiUrl($itemType);
-        $dateCreate = $this->getDateModifyString($itemType);
-        if(!$date)
-            $date=$this->getDate($itemType);
+        if (!$date)
+            $date = $this->getDate($itemType);
+        if ($requestArray['DATE'])
+            $requestArray['filter']['>' . $this->getDateModifyString($itemType)] = $requestArray["DATE"];
+        else
+            $requestArray['filter']['>' . $this->getDateModifyString($itemType)]  = $this->getDate($itemType);
+
         if ($apiUrl) {
-            $response = $this->apiClient->getResponse($apiUrl, [
-                'filter' => [
-                    '>' . $dateCreate => $date,
-                ]
-            ],);
+            $response = $this->apiClient->getResponse($apiUrl, $requestArray);
             $responseContent = $response->getContent();
             $result = json_decode($responseContent, true);
             if (!empty($result['total']))
                 return $result['total'];
         }
-
 
         return  0;
         // 
@@ -193,11 +192,12 @@ class b24OriginAPI
     public function getItemUpdate($itemType, $requestArray, $apiUrl = null)
     {
         usleep(800000);
+          $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
         //$requestArray['filter']['start']=  intdiv( $requestArray['filter']['start'], 50)*50;//целочисленное деление на 50 и умножение для нарезки блоков items строго по 50 в запросе.
         if ($requestArray['DATE'])
-            $requestArray['filter']['>' . $this->getDateModifyString($itemType)]= $requestArray["DATE"];
+            $requestArray['filter']['>' . $this->getDateModifyString($itemType)] = $requestArray["DATE"];
         else
-            $requestArray['filter']['>' . $this->getDateModifyString($itemType)]= $this->getDate($itemType);
+            $requestArray['filter']['>' . $this->getDateModifyString($itemType)] = $this->getDate($itemType);
 
         $response = $this->apiClient->getResponse($this->getApiUrl($itemType), $requestArray);
         $responseContent = $response->getContent();
@@ -209,6 +209,27 @@ class b24OriginAPI
         // 
     }
 
+    public function getItemUpdateTemp()
+    {
+        
+   /*     [
+            'filter' => [  '>CREATED' => '20-01-01T00:00:00+03:00' ],
+
+        ]*/
+        $response = $this->apiClient->getResponse('crm.activity.list', [
+            
+            'filter' => [
+                'PROVIDER_ID' => 'IMOPENLINES_SESSION', 'CRM_TODO',
+                '>CREATED' => '2022-01-01T00:00:00+03:00',
+                '>LAST_UPDATED' => '2023-05-02T00:00:00+03:00'
+            ]
+
+
+        ]);
+        $responseContent = $response->getContent();
+        $result = json_decode($responseContent, true);
+        return  $result['result'];
+    }
 
 
 
@@ -217,6 +238,7 @@ class b24OriginAPI
         switch ($itemType) {
             case 'task': {
                     return 'tasks.task.list';
+                    //return 'crm.activity.list';temp
                     break;
                 }
             case 'ring': {
@@ -245,6 +267,10 @@ class b24OriginAPI
                 }
             case 'lead': {
                     return 'crm.lead.list';
+                    break;
+                }
+            case 'activity': {
+                    return 'crm.activity.list';
                     break;
                 }
             default:
@@ -286,6 +312,10 @@ class b24OriginAPI
                     return 'DATE_CREATE';
                     break;
                 }
+            case 'activity': {
+                    return 'CREATED';
+                    break;
+                }
             default:
                 return false;
         }
@@ -298,7 +328,7 @@ class b24OriginAPI
                     break;
                 }
             case 'ring': {
-                    return '';
+                    return 'CALL_START_DATE';
                     break;
                 }
             case 'contact': {
@@ -323,6 +353,10 @@ class b24OriginAPI
                 }
             case 'lead': {
                     return 'DATE_MODIFY';
+                    break;
+                }
+            case 'activity': {
+                    return 'LAST_UPDATED';
                     break;
                 }
             default:
@@ -363,6 +397,10 @@ class b24OriginAPI
                 }
             case 'lead': {
                     return '2016-01-01T00:00:00+03:00';
+                    break;
+                }
+            case 'activity': {
+                    return '2022-01-01T00:00:00+03:00';
                     break;
                 }
             default:

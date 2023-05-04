@@ -91,11 +91,8 @@ class B24TaskController extends AbstractB24Controller
     {
         $b24Item = B24Task::find($item['id']);
 
-        if (!empty($b24Item)) {
-            if ($item['changedDate'] == $b24Item->DATE_MODIFY) {
-                return;
-            } else
-                $b24Item->update($item);
+        if (B24Task::where('ID', $item['id'])->exists()) {
+            $b24Item->update($item);
         } else
             $this->store($item);
     }

@@ -15,44 +15,65 @@
     </x-slot>
     <div>
         <div>
-            <div class="bg-blue-300 rounded-lg  p-6 flex">
+            <div class="bg-blue-300 rounded-lg  p-6">
 
-                
+                <p>
                 <form action="{{ route('b24fetch.updateDataCompany') }}" method="POST">
                     @csrf
                     <button class="btn-main"> Update DATA Company</button>
                     <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
-
+                </p>
+                
+                <p>
+                <form action="{{ route('b24fetch.updateDataRing') }}" method="POST">
+                    @csrf
+                    <button class="btn-main"> Update Ring</button>
+                    <input type="date" class="field-main" id="date" name="date">
+                    
+                </form>
+                </p>
+                <p>
                 <form action="{{ route('b24fetch.updateDataTask') }}" method="POST">
                     @csrf
                     <button class="btn-main"> Update Task</button>
                     <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
-
+                </p>
+                <p>
+                <form action="{{ route('b24fetch.updateDataActivity') }}" method="POST">
+                    @csrf
+                    <button class="btn-main"> Update Activity</button>
+                    <input type="date" class="field-main" id="date" name="date">
+                    
+                </form>
+                </p>
+                <p>
                 <form action="{{ route('b24fetch.updateDataDeal') }}" method="POST">
                     @csrf
                     <button class="btn-main"> Update DATA Deal</button>
                     <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
-
+                </p>
+                <p>
                 <form action="{{ route('b24fetch.updateDataLead') }}" method="POST">
                     @csrf
                     <button class="btn-main"> Update Lead</button>
                     <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
-
+                </p>
+                <p>
                 <form action="{{ route('b24fetch.updateData') }}" method="POST" class="mx-10 ">
                     @csrf
                     <button class="btn-main"> Update ALL</button>
                     <input type="date" class="field-main" id="date" name="date">
                     
                 </form>
-
+                </p>
 
             </div>
 

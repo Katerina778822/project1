@@ -86,10 +86,7 @@ class B24DealController extends AbstractB24Controller
     {
         $b24Item = B24Deal::find($item['ID']);
 
-        if (!empty($b24Item)) {
-            if ($item['DATE_MODIFY'] == $b24Item->DATE_MODIFY) {
-                return;
-            } else
+       if(B24Deal::where('ID', $item['ID'])->exists()) {
                 $b24Item->update($item);
         } else
             $this->store($item);

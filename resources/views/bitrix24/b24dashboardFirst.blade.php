@@ -11,6 +11,7 @@
                 <a href="analitics" class="btn-main">Analitics</a>
             </h2>
         </div>
+        
 
     </x-slot>
     <div>
@@ -57,6 +58,14 @@
                             @csrf
                         </form>
                         {{$countArray['tasksDB']??''}}/{{$countArray['tasksB24']??''}}
+                    </div>
+
+                    <div>
+                        <form action="{{ route('b24activity.fetchAll') }}" method="POST">
+                            <button class="btn-main my-4">Fetch activity</button>
+                            @csrf
+                        </form>
+                        {{$countArray['activityDB']??''}}/{{$countArray['activityB24']??''}}
                     </div>
 
 

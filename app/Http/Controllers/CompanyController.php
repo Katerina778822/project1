@@ -47,23 +47,20 @@ class CompanyController extends AbstractB24Controller
      */
     public function store(array $companie)
     {
-        
-        $modelCompanie=null;
-        $modelCompanie=Company::where('ID',$companie['ID'])->get();
-        if(count($modelCompanie)){
+
+        $modelCompanie = null;
+        $modelCompanie = Company::where('ID', $companie['ID'])->get();
+        if (count($modelCompanie)) {
             return;
-            
         }
         $modelCompanie = Company::create($companie);
 
         try {
         } catch (Exception $e) {
             $e->getMessage();
-        }
-        finally{
+        } finally {
             return;
         }
-      
     }
 
     /**
@@ -99,11 +96,8 @@ class CompanyController extends AbstractB24Controller
     {
         $b24Item = Company::find($item['ID']);
 
-        if (!empty($b24Item)) {
-            if ($item['DATE_MODIFY'] == $b24Item->DATE_MODIFY) {
-                return;
-            } else
-                $b24Item->update($item);
+        if (Company::where('ID', $item['ID'])->exists()) {
+            $b24Item->update($item);
         } else
             $this->store($item);
     }
@@ -126,9 +120,9 @@ class CompanyController extends AbstractB24Controller
 
     public function fetchData()
     {
-     
+
         //  $count = 0;
-        $checkDate = null;//'2016-01-01T00:00:00+03:00';
+        $checkDate = null; //'2016-01-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantity('company', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = Company::count();
@@ -168,12 +162,12 @@ class CompanyController extends AbstractB24Controller
 
     public function updateData($checkDate)
     {
-     
+
         //  $count = 0;
         //$checkDate = null;//'2016-01-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantityUpdate('company', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
-        $count = 0; 
+        $count = 0;
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = [
             'ID', 'TITLE', 'UF_CRM_1597826997473', 'ASSIGNED_BY_ID', 'COMPANY_TYPE', 'DATE_CREATE', 'DATE_MODIFY', 'LAST_ACTIVITY_TIME',
@@ -190,7 +184,11 @@ class CompanyController extends AbstractB24Controller
                 $item['DATE_CREATE'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CREATE'])->format('Y-m-d H:i:s');
                 $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 $item['LAST_ACTIVITY_TIME'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['LAST_ACTIVITY_TIME'])->format('Y-m-d H:i:s');
-                $this->update($item);
+                $existItem = Company::where('ID', $item['ID'])->exists();
+                if ($existItem)
+                    $this->update($item);
+                else
+                    $this->store($item);
                 $count++;
             }
             //$b24count = Company::count(); //save result count

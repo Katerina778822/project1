@@ -89,6 +89,8 @@ Route::post('/Bitrix24/b24ring', [App\Http\Controllers\B24RingController::class,
 ->name('b24ring.fetchAll');
 Route::post('/Bitrix24/b24task', [App\Http\Controllers\B24TaskController::class, 'fetchAll'])->middleware(['auth'])
 ->name('b24task.fetchAll');
+Route::post('/bitrix24/b24activity', [App\Http\Controllers\B24ActivityController::class, 'index'])->middleware(['auth'])
+->name('b24activity.fetchAll');
 Route::post('/Bitrix24/b24deal', [App\Http\Controllers\B24DealController::class, 'fetchAll'])->middleware(['auth'])
 ->name('b24deal.fetchAll');
 Route::post('/Bitrix24/b24lead', [App\Http\Controllers\B24LeadController::class, 'fetchAll'])->middleware(['auth'])
@@ -130,8 +132,12 @@ Route::post('/bitrix24/fetchstate', [App\Http\Controllers\B24FetchController::cl
 Route::post('/bitrix24/updateData', [App\Http\Controllers\B24FetchController::class, 'updateData'])->middleware(['auth'])
 ->name('b24fetch.updateData');
 
+Route::post('/bitrix24/updateDataRing', [App\Http\Controllers\B24FetchController::class, 'updateDataRing'])->middleware(['auth'])
+->name('b24fetch.updateDataRing');
 Route::post('/bitrix24/updateDataTask', [App\Http\Controllers\B24FetchController::class, 'updateDataTask'])->middleware(['auth'])
 ->name('b24fetch.updateDataTask');
+Route::post('/bitrix24/updateDataActivity', [App\Http\Controllers\B24FetchController::class, 'updateDataActivity'])->middleware(['auth'])
+->name('b24fetch.updateDataActivity');
 Route::post('/bitrix24/updateDataCompany', [App\Http\Controllers\B24FetchController::class, 'updateDataCompany'])->middleware(['auth'])
 ->name('b24fetch.updateDataCompany');
 Route::post('/bitrix24/updateDataDeal', [App\Http\Controllers\B24FetchController::class, 'updateDataDeal'])->middleware(['auth'])
