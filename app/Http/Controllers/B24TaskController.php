@@ -116,23 +116,23 @@ class B24TaskController extends AbstractB24Controller
 
     public function fetchData()
     {
-      //  $count = 0;
-      $checkDate=null;//'2022-01-01T00:00:00+03:00';
-        $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate);
+        //  $count = 0;
+        $checkDate = null; //'2022-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantity('task', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24Task::count();
 
 
 
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
-        $requestArray['DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
         $requestArray['start'] = $b24count;
 
-  //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-        $items = $this->helperOriginAPI->getItem('task',$requestArray);
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItem('task', $requestArray);
         //dd($items);
-        while (count($items)&&$b24countItems> $b24count) {
+        while (count($items) && $b24countItems > $b24count) {
             foreach ($items as $item) {
                 //      dd($item);
                 //     $item = get_object_vars($item);
@@ -187,15 +187,15 @@ class B24TaskController extends AbstractB24Controller
                             }
 
                 $this->update($item);
-               // $count++;
+                // $count++;
             }
-            $b24count =B24Task::count(); //save result count
+            $b24count = B24Task::count(); //save result count
             //$b24count->save();
-           // $count = 0;
-           $requestArray['start'] = $b24count;
-            $items = $this->helperOriginAPI->getItem('task',$requestArray);
-           // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems=$this->helperOriginAPI->getQuantity('task',$checkDate);
+            // $count = 0;
+            $requestArray['start'] = $b24count;
+            $items = $this->helperOriginAPI->getItem('task', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantity('task', $checkDate);
         }
 
         return redirect()->back();
@@ -203,23 +203,23 @@ class B24TaskController extends AbstractB24Controller
 
     public function updateData($checkDate)
     {
-      //  $count = 0;
-      //$checkDate=null;//'2022-01-01T00:00:00+03:00';
-        $b24countItems=$this->helperOriginAPI->getQuantityUpdate('task',$checkDate);
+        //  $count = 0;
+        //$checkDate=null;//'2022-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantityUpdate('task', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
-        $count=0;
+        $count = 0;
 
 
 
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
-        $requestArray['DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
         $requestArray['start'] = $count;
 
-  //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-        $items = $this->helperOriginAPI->getItemUpdate('task',$requestArray);
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItemUpdate('task', $requestArray);
         //dd($items);
-        while (count($items)&&$b24countItems> $count) {
+        while (count($items) && $b24countItems > $count) {
             foreach ($items as $item) {
                 //      dd($item);
                 //     $item = get_object_vars($item);
@@ -278,14 +278,13 @@ class B24TaskController extends AbstractB24Controller
             }
             //$b24count =B24Task::count(); //save result count
             //$b24count->save();
-           // $count = 0;
-           $requestArray['start'] = $count;
-            $items = $this->helperOriginAPI->getItemUpdate('task',$requestArray);
-           // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems=$this->helperOriginAPI->getQuantityUpdate('task',$checkDate);
+            // $count = 0;
+            $requestArray['start'] = $count;
+            $items = $this->helperOriginAPI->getItemUpdate('task', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantityUpdate('task', $checkDate);
         }
 
         return redirect()->back();
     }
-
 }

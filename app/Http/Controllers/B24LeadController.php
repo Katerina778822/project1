@@ -91,10 +91,7 @@ class B24LeadController extends AbstractB24Controller
         $lead = B24Lead::find($item['ID']);
 
         if (!empty($lead)) {
-            if ($item['DATE_MODIFY'] == $lead->DATE_MODIFY) {
-                return;
-            } else
-                $lead->update($item);
+            $lead->update($item);
         } else
             $this->store($item);
     }
@@ -204,8 +201,8 @@ class B24LeadController extends AbstractB24Controller
                     $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 else $item['DATE_MODIFY'] = NULL;
                 if (!empty($item['DATE_CLOSED']))
-                    $item['DATE_CLOSED'] = Carbon::createFromFormat('Y-m-d\TH:i:sP',$item['DATE_CLOSED'])->format('Y-m-d H:i:s');//DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CLOSED']);
-                    //Carbon::createFromFormat('Y-m-d\TH:i:sP', '2023-04-03T01:38:42+03:00')->format('Y-m-d H:i:s');
+                    $item['DATE_CLOSED'] = Carbon::createFromFormat('Y-m-d\TH:i:sP', $item['DATE_CLOSED'])->format('Y-m-d H:i:s'); //DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_CLOSED']);
+                //Carbon::createFromFormat('Y-m-d\TH:i:sP', '2023-04-03T01:38:42+03:00')->format('Y-m-d H:i:s');
                 else $item['DATE_CLOSED'] = NULL;
 
                 if (

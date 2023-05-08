@@ -10,6 +10,9 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
                 <a href="analitics" class="btn-main">Analitics</a>
             </h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
+                <a href="{{ route('agenda.index') }}" class="btn-main">Agenda</a>
+            </h2>
     </div>  
     
     </x-slot>

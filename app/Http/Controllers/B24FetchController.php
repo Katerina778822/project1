@@ -5,6 +5,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Bitrix24\b24Companies;
+use App\Jobs\B24UpdateFetch;
 use App\Models\B24Activity;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
@@ -26,7 +27,6 @@ use Illuminate\Pagination\Paginator;
 
 class B24FetchController extends AbstractB24Controller
 {
-
     function fetchState()
     {
         $countArray['usersDB'] = B24User::count();
@@ -63,18 +63,20 @@ class B24FetchController extends AbstractB24Controller
         ]);
     }
 
-    public function fetchAll()
+    public function fetchAll($date = null)
     {
+        $job = new B24UpdateFetch();
+        $this->dispatch($job);
     }
 
     public function updateData($checkDate = null)
     {
         $date = new DateTime('-3 days');
         $date = $date->format('Y-m-d');
-        if(!empty($checkDate)){
+        if (!empty($checkDate)) {
             $date = $checkDate;
         }
-       
+
         if (!empty($_POST['date']))
             if ($_POST['date'] > $date)
                 $date = $_POST['date'];
@@ -96,7 +98,7 @@ class B24FetchController extends AbstractB24Controller
 
         $controller = new B24ActivityController;
         $controller->updateData($date);
-        
+
         $controller = new B24ContactController;
         $controller->fetchData($date);
     }

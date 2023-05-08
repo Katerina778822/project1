@@ -30,16 +30,16 @@ class B24ActivityController extends AbstractB24Controller
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
         $requestArray['DATE'] = $checkDate;
         $requestArray['filter'] = [
-            'PROVIDER_ID' => ['IMOPENLINES_SESSION','CRM_TODO']
+            'PROVIDER_ID' => ['IMOPENLINES_SESSION', 'CRM_TODO']
         ];
         // $requestArray['select'] = [ "*", "COMMUNICATIONS" ];
         $requestArray['select'] =  [
             'ID', 'OWNER_ID', 'OWNER_TYPE_ID', 'ASSOCIATED_EN', 'AUTHOR_ID', 'EDITOR_ID', 'PROVIDER_ID',
             'PROVIDER_TYPE_ID', 'SUBJECT', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'CREATED', 'LAST_UPDATED',
-            'START_TIME', 'END_TIME', 'DEADLINE',
+            'START_TIME', 'END_TIME', 'DEADLINE', 'COMPLETED', 'DESCRIPTION'
         ];
-        $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate,null, $requestArray);
-        
+        $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate, null, $requestArray);
+
         $requestArray['start'] = $b24count;
 
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
@@ -65,20 +65,20 @@ class B24ActivityController extends AbstractB24Controller
 
                 switch ($item['OWNER_TYPE_ID']) {
                     case '1': {
-                        $item['LEAD_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['LEAD_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                     case '2': {
-                        $item['DEAL_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['DEAL_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                     case '3': {
-                        $item['CONTACT_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['CONTACT_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                     case '4': {
-                        $item['COMPANY_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['COMPANY_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                 }
 
@@ -90,7 +90,7 @@ class B24ActivityController extends AbstractB24Controller
             $requestArray['start'] = $b24count;
             $items = $this->helperOriginAPI->getItem('activity', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate,null,$requestArray);
+            $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate, null, $requestArray);
         }
 
         return redirect()->back();
@@ -98,23 +98,23 @@ class B24ActivityController extends AbstractB24Controller
 
     public function updateData($checkDate)
     {
-        $items = $this->helperOriginAPI->getItemUpdateTemp();
-        $count=0;
+
+        $count = 0;
         $requestArray['DATE'] = $checkDate;
-      //  $requestArray['DATE'] = $requestArray['DATE']->format('Y-01-01\TH:i:sP');
+        //  $requestArray['DATE'] = $requestArray['DATE']->format('Y-01-01\TH:i:sP');
         $requestArray['filter'] = [
-            'PROVIDER_ID' => ['IMOPENLINES_SESSION','CRM_TODO']
+            'PROVIDER_ID' => ['IMOPENLINES_SESSION', 'CRM_TODO']
         ];
         // $requestArray['select'] = [ "*", "COMMUNICATIONS" ];
-  /*      $requestArray['select'] =  [
+        $requestArray['select'] =  [
             'ID', 'OWNER_ID', 'OWNER_TYPE_ID', 'ASSOCIATED_ENTITY_ID', 'AUTHOR_ID', 'EDITOR_ID', 'PROVIDER_ID',
             'PROVIDER_TYPE_ID', 'SUBJECT', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'CREATED', 'LAST_UPDATED',
-            'START_TIME', 'END_TIME', 'DEADLINE',
-        ]; */
-        $b24countItems = $this->helperOriginAPI->getQuantityUpdate('activity', $checkDate,null, $requestArray);
-        
+            'START_TIME', 'END_TIME', 'DEADLINE', 'COMPLETED', 'DESCRIPTION'
+        ];
+        $b24countItems = $this->helperOriginAPI->getQuantityUpdate('activity', $checkDate, null, $requestArray);
+
         $items = $this->helperOriginAPI->getItemUpdate('activity', $requestArray);
-        dd($items);
+        //dd($items);
         while (count($items) && $b24countItems > $count) {
             foreach ($items as $item) {
                 //      dd($item);
@@ -135,24 +135,24 @@ class B24ActivityController extends AbstractB24Controller
 
                 switch ($item['OWNER_TYPE_ID']) {
                     case '1': {
-                        $item['LEAD_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['LEAD_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                     case '2': {
-                        $item['DEAL_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['DEAL_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                     case '3': {
-                        $item['CONTACT_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['CONTACT_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                     case '4': {
-                        $item['COMPANY_ID'] = $item['OWNER_ID'];
-                        break;
+                            $item['COMPANY_ID'] = $item['OWNER_ID'];
+                            break;
                         }
                 }
-
-                $this->store($item);
+                $this->update($item);
+                $count++; //save result count
             }
             $b24count = B24Activity::count(); //save result count
             //$b24count->save();
@@ -160,7 +160,7 @@ class B24ActivityController extends AbstractB24Controller
             $requestArray['start'] = $b24count;
             $items = $this->helperOriginAPI->getItem('activity', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate,null,$requestArray);
+            $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate, null, $requestArray);
         }
 
         return redirect()->back();
@@ -244,9 +244,20 @@ class B24ActivityController extends AbstractB24Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(array $item)
     {
-        //
+        $activity = B24Activity::find($item['ID']);
+        if (!empty($activity)) {
+            $activity->fill($item); // Заполняем модель данными из $item
+            $activity->timestamps = false; // Отключаем автоматические метки времени
+            $activity->DEADLINE = "2023-04-30 10:00:00"; // Устанавливаем новое значение DEADLINE
+            $res = $activity->save(); // Сохраняем модель в базу данных
+        } else {
+            $this->store($item);
+        }
+        
+        $activity = B24Activity::find($item['ID']);
+        dd($activity->DEADLINE);
     }
 
     /**

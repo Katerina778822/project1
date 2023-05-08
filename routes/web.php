@@ -42,6 +42,7 @@ Route::get('/tail', function () {
 
 
 
+Route::resource('agenda','App\Http\Controllers\B24AgendaController');
 Route::resource('company','App\Http\Controllers\CompanyController');
 Route::resource('node','App\Http\Controllers\NodeController');
 Route::resource('catalog','App\Http\Controllers\CatalogController');
@@ -109,6 +110,8 @@ Route::get('/bitrix24/new', function () {
 Route::get('/bitrix24/analitics', function () {
     return view('bitrix24.b24dashboardAnalitics ');
 })->middleware(['auth'])->name('/bitrix24/analitics');
+
+
 Route::get('/Bitrix24/analitics/companies_date', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDate'])->middleware(['auth'])
 ->name('b24contact.analitics.companies_date');
 Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_index', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDateShow'])->middleware(['auth'])
@@ -129,7 +132,7 @@ Route::get('/Bitrix24/analitics/companies_cold_date/details/{item}', [App\Http\C
 Route::post('/bitrix24/fetchstate', [App\Http\Controllers\B24FetchController::class, 'fetchState'])->middleware(['auth'])
 ->name('b24fetch.state');
 
-Route::post('/bitrix24/updateData', [App\Http\Controllers\B24FetchController::class, 'updateData'])->middleware(['auth'])
+Route::post('/bitrix24/updateData', [App\Http\Controllers\B24FetchController::class, 'fetchAll'])->middleware(['auth'])
 ->name('b24fetch.updateData');
 
 Route::post('/bitrix24/updateDataRing', [App\Http\Controllers\B24FetchController::class, 'updateDataRing'])->middleware(['auth'])
