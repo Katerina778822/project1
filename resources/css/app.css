@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+    table agenda-0{
+      @apply border-collapse border-2 border-blue-400 bg-blue-800;
+    }
     table {
       @apply border-collapse border-2 border-blue-400 bg-blue-200;
     }
@@ -29,4 +32,5 @@
     .field-main {
       @apply border-blue-300  border-2   bg-blue-50 w-64;
     }
+
   }

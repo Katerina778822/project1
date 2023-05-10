@@ -14,7 +14,8 @@ class CreateB24ActivityTable extends Migration
     public function up()
     {
         Schema::create('b24_activity', function (Blueprint $table) {
-            $table->bigInteger('ID')->primary();
+            $table->id();
+            $table->bigInteger('ID2')->unique();
             $table->bigInteger('OWNER_ID')->nullable()->default(0);
             $table->bigInteger('OWNER_TYPE_ID')->nullable()->default(0);
             $table->bigInteger('ASSOCIATED_ENTITY_ID')->nullable()->default(0);

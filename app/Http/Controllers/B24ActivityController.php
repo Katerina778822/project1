@@ -49,6 +49,7 @@ class B24ActivityController extends AbstractB24Controller
             foreach ($items as $item) {
                 //      dd($item);
                 //               $item = get_object_vars($item);
+                $item['ID2'] = $item['ID'];
                 $item['CREATED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CREATED'])->format('Y-m-d H:i:s');
                 if (!empty($item['LAST_UPDATED']))
                     $item['LAST_UPDATED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['LAST_UPDATED'])->format('Y-m-d H:i:s');
@@ -119,6 +120,7 @@ class B24ActivityController extends AbstractB24Controller
             foreach ($items as $item) {
                 //      dd($item);
                 //               $item = get_object_vars($item);
+                $item['ID2'] = $item['ID'];
                 $item['CREATED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CREATED'])->format('Y-m-d H:i:s');
                 if (!empty($item['LAST_UPDATED']))
                     $item['LAST_UPDATED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['LAST_UPDATED'])->format('Y-m-d H:i:s');
@@ -201,7 +203,7 @@ class B24ActivityController extends AbstractB24Controller
     public function store(array $item)
     {
         $modelItem = null;
-        $modelItem = B24Activity::where('ID', $item['ID'])->get();
+        $modelItem = B24Activity::where('ID2', $item['ID2'])->get();
         if (count($modelItem)) {
             return;
         }
@@ -246,18 +248,15 @@ class B24ActivityController extends AbstractB24Controller
      */
     public function update(array $item)
     {
-        $activity = B24Activity::find($item['ID']);
+        $activity = B24Activity::where('ID2',$item['ID2'])->first();
         if (!empty($activity)) {
-            $activity->fill($item); // Заполняем модель данными из $item
-            $activity->timestamps = false; // Отключаем автоматические метки времени
-            $activity->DEADLINE = "2023-04-30 10:00:00"; // Устанавливаем новое значение DEADLINE
-            $res = $activity->save(); // Сохраняем модель в базу данных
+            $activity->update($item); // Заполняем модель данными из $item
         } else {
             $this->store($item);
         }
         
-        $activity = B24Activity::find($item['ID']);
-        dd($activity->DEADLINE);
+       
+  
     }
 
     /**

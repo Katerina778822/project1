@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\B24AgendaFetch;
 use App\Models\B24Activity;
 use App\Models\B24Activity2;
 use App\Models\B24Agenda;
@@ -9,13 +10,41 @@ use App\Models\B24Contact;
 use App\Models\B24Deal;
 use App\Models\B24Task;
 use App\Models\B24test;
+use App\Models\B24User;
 use App\Models\Company;
 use Carbon\Carbon;
 use DateTime;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class B24AgendaController extends Controller
 {
+    private DateTime $today;
+    private DateTime $tomorrow;
+    private DateTime $tomorrowday1;
+    private DateTime $tomorrowday2;
+    private DateTime $yesterday1;
+    private DateTime $yesterday2;
+
+
+
+    public function __construct()
+    {
+        $this->today = new DateTime();
+        $this->today = $this->today->setTime(0, 0, 0);
+        //$date->modify('+1 month');
+        $this->tomorrow = new DateTime();
+        $this->tomorrow->setTime(23, 59, 59);
+        $this->tomorrowday1 = new DateTime();
+        $this->tomorrowday2 = new DateTime();
+        $this->yesterday1 = new DateTime();
+        $this->yesterday2 = new DateTime();
+        $this->tomorrowday1->modify('+1 day')->setTime(0, 0, 0);
+        $this->tomorrowday2->modify('+180 day')->setTime(23, 59, 59);
+        $this->yesterday1->modify('-1 day')->setTime(23, 59, 59);
+        $this->yesterday2->modify('-60 day')->setTime(23, 59, 59);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -24,106 +53,204 @@ class B24AgendaController extends Controller
     public function index()
     {
 
-
-        $activity = B24Contact::find(4437);
-        $activity->NAME = 'Юра Черкассы Тэч'; // Устанавливаем новое значение
-        $activity->save();
-       
-        $activity = B24Contact::find(4437);
-        dd($activity->NAME);
-
-
-        $date = Carbon::today();
-        $date2 = new DateTime();
-        $date2 = $date2->setTime(0, 0, 0);
-        //$date->modify('+1 month');
-        $tomorrow = new DateTime();
-        $tomorrow = $tomorrow->setTime(23, 59, 59);
         // получить список компаний по пользователю
-        $user_id = 1;
-        $userCompanies = Company::where('ASSIGNED_BY_ID', $user_id)->get();
-        //перебор компаний на предмет наличия задач
-        //  $date2->modify('-4 day'); //temp
+        $items = B24User::WHERE('ACTIVE', 1)->get();
 
-        foreach ($userCompanies as $userCompany) {
-            //актуальность компании на сегодня
-            // задача в компании
-            $companyTasks = B24Task::where('UF_CRM_TASK_COMPANY', $userCompany->ID)
-                ->whereBetween('b24_tasks.deadline', [$date2, $tomorrow])
+
+
+
+        return view('bitrix24.b24agenda.index', [
+            'items' => $items,
+            //   'id_node' => $id
+        ]);
+    }
+
+    private function checkUserCompanyToday(Company $userCompany)
+    {
+        // задача в компании
+        $companyTasks = B24Task::where('UF_CRM_TASK_COMPANY', $userCompany->ID)
+            ->whereBetween('b24_tasks.deadline', [$this->today, $this->tomorrow])
+            ->where('closedDate', '=', null)
+            ->get();
+        if (count($companyTasks)) {
+            $userCompany->STATUS = 1; // TODAY
+            $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                return $item->deadline;
+            });
+            return true;
+        } else { //дело (активность) в компании
+            $companyTasks = B24Activity::where('COMPANY_ID', $userCompany->ID)
+                ->whereBetween('b24_activity.DEADLINE', [$this->today, $this->tomorrow])
+                ->where('COMPLETED', 'N')
                 ->get();
             if (count($companyTasks)) {
                 $userCompany->STATUS = 1; // TODAY
                 $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
-                    return $item->deadline;
+                    return $item->DEADLINE;
                 });
-            } else { //дело (активность) в компании
-                $companyTasks = B24Activity::where('COMPANY_ID', $userCompany->ID)
-                    ->whereBetween('b24_activity.DEADLINE', [$date2, $tomorrow])->get();
+                return true;
+            } else { // задача в сделке
+                $deals = B24Deal::where('COMPANY_ID', $userCompany->ID)->get();
+                $dealIds = $deals->pluck('ID');
+                $companyTasks = B24Task::whereIn('UF_CRM_TASK_DEAL',  $dealIds)
+                    ->whereBetween('b24_tasks.deadline', [$this->today, $this->tomorrow])
+                    ->where('closedDate', '=', null)
+                    ->get();
                 if (count($companyTasks)) {
                     $userCompany->STATUS = 1; // TODAY
                     $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
-                        return $item->DEADLINE;
+                        return $item->deadline;
                     });
-                    $i = 0; //temp
-                } else { // задача в сделке
-                    $deals = B24Deal::where('COMPANY_ID', $userCompany->ID)->get();
-                    $dealIds = $deals->pluck('ID');
-                    $companyTasks = B24Task::whereIn('UF_CRM_TASK_DEAL',  $dealIds)
-                        ->whereBetween('b24_tasks.deadline', [$date2, $tomorrow])->get();
+                    return true;
+                } else { // дело в сделке
+                    $companyTasks = B24Activity::whereIn('DEAL_ID',  $dealIds)
+                        ->whereBetween('b24_activity.DEADLINE', [$this->today, $this->tomorrow])
+                        ->where('COMPLETED', 'N')
+                        ->get();
                     if (count($companyTasks)) {
                         $userCompany->STATUS = 1; // TODAY
                         $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                             return $item->DEADLINE;
                         });
-                    } else { // дело в сделке
-                        $companyTasks = B24Activity::whereIn('DEAL_ID',  $dealIds)
-                            ->whereBetween('b24_activity.DEADLINE', [$date2, $tomorrow])
-                            ->where('COMPLETED', 'N')
-                            ->get();
-                        if (count($companyTasks)) {
-                            $userCompany->STATUS = 1; // TODAY
-                            $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
-                                return $item->DEADLINE;
-                            });
-                            $i = 0; //temp
-                        }
+                        return true;
                     }
                 }
             }
         }
-
-        //получить список компаний для данного юзера с актуальной задачей/активностью в компании, сделке
-        // актуальная задача в компании 
-        $t = Company::join('b24_tasks', 'companies.ID', '=', 'b24_tasks.UF_CRM_TASK_COMPANY')
-            // ->where('ASSIGNED_BY_ID', $user_id)
-            ->whereBetween('b24_tasks.deadline', [$date2, $tomorrow])
-            /*       ->where([
-                ['b24_tasks.deadline', '>',  '2023-05-05 00:00:00'],
-                ['b24_tasks.deadline', '<', '2023-05-06 00:00:00'],
-            ])*/
-            ->select('companies.*', 'b24_tasks.UF_CRM_TASK_COMPANY', 'b24_tasks.title')
-            ->distinct()
+        return false;
+    }
+    private function checkUserCompanyTomorrow(Company $userCompany)
+    {
+        // задача в компании
+        $companyTasks = B24Task::where('UF_CRM_TASK_COMPANY', $userCompany->ID)
+            ->whereBetween('b24_tasks.deadline', [$this->tomorrowday1, $this->tomorrowday2])
+            ->where('closedDate', '=', null)
             ->get();
-        // dd($t);
-        //актуальная задача в сделке
-        $t2 = Company::join('b24_deals', 'companies.ID', '=', 'b24_deals.COMPANY_ID')
-            ->join('b24_tasks', 'b24_deals.ID', '=', 'b24_tasks.UF_CRM_TASK_DEAL')
-            //           ->where('companies.ASSIGNED_BY_ID', $user_id)
+        if (count($companyTasks)) {
+            $userCompany->STATUS = 0; // TODAY
+            $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                return $item->deadline;
+            });
+            return true;
+        } else { //дело (активность) в компании
+            $companyTasks = B24Activity::where('COMPANY_ID', $userCompany->ID)
+                ->whereBetween('b24_activity.DEADLINE', [$this->tomorrowday1, $this->tomorrowday2])
+                ->where('COMPLETED', 'N')
+                ->get();
+            if (count($companyTasks)) {
+                $userCompany->STATUS = 0; // TODAY
+                $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                    return $item->DEADLINE;
+                });
+                return true;
+            } else { // задача в сделке
+                $deals = B24Deal::where('COMPANY_ID', $userCompany->ID)->get();
+                $dealIds = $deals->pluck('ID');
+                $companyTasks = B24Task::whereIn('UF_CRM_TASK_DEAL',  $dealIds)
+                    ->whereBetween('b24_tasks.deadline', [$this->tomorrowday1, $this->tomorrowday2])
+                    ->where('closedDate', '=', null)
+                    ->get();
+                if (count($companyTasks)) {
+                    $userCompany->STATUS = 0; // TODAY
+                    $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                        return $item->deadline;
+                    });
+                    return true;
+                } else { // дело в сделке
+                    $companyTasks = B24Activity::whereIn('DEAL_ID',  $dealIds)
+                        ->whereBetween('b24_activity.DEADLINE', [$this->tomorrowday1, $this->tomorrowday2])
+                        ->where('COMPLETED', 'N')
+                        ->get();
+                    if (count($companyTasks)) {
+                        $userCompany->STATUS = 0; // TODAY
+                        $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                            return $item->DEADLINE;
+                        });
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    private function checkUserCompanyYesterday(Company $userCompany)
+    {
+        // задача в компании
+        $companyTasks = B24Task::where('UF_CRM_TASK_COMPANY', $userCompany->ID)
             ->where([
-                ['b24_tasks.deadline', '>',  $date],
-                ['b24_tasks.deadline', '<', $date->copy()->addDay()],
+                ['closedDate', '=', null],
+                ['b24_tasks.deadline', '<', $this->yesterday1],
             ])
-            //           ->whereBetween('b24_tasks.deadline', [$date . ' 00:00:00', $date . ' 23:59:59'])
-            ->select('companies.*', 'b24_tasks.UF_CRM_TASK_COMPANY', 'b24_tasks.title')
-            ->distinct()
             ->get();
-        //   dd($t2);
-        //актуальная активность в компании
-        //актуальная активность в сделке
-        return view('bitrix24.b24agenda.index', [
-            'items' => $t,
-            //   'id_node' => $id
-        ]);
+        if (count($companyTasks)) {
+            $userCompany->STATUS = 2; // TODAY
+            $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                return $item->deadline;
+            });
+            return true;
+        } else { //дело (активность) в компании
+            $companyTasks = B24Activity::where('COMPANY_ID', $userCompany->ID)
+                ->where([
+                    ['COMPLETED', 'N'],
+                    ['b24_activity.DEADLINE', '<', $this->yesterday1],
+                ])
+                ->get();
+            if (count($companyTasks)) {
+                $userCompany->STATUS = 2; // TODAY
+                $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                    return $item->DEADLINE;
+                });
+                return true;
+            } else { // задача в сделке
+                $deals = B24Deal::where('COMPANY_ID', $userCompany->ID)->get();
+                $dealIds = $deals->pluck('ID');
+                $companyTasks = B24Task::whereIn('UF_CRM_TASK_DEAL',  $dealIds)
+                    ->where([
+                        ['closedDate', '=', null],
+                        ['b24_tasks.deadline', '<', $this->yesterday1],
+                    ])
+                    ->get();
+                if (count($companyTasks)) {
+                    $userCompany->STATUS = 2; // TODAY
+                    $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                        return $item->deadline;
+                    });
+                    return true;
+                } else { // дело в сделке
+                    $companyTasks = B24Activity::whereIn('DEAL_ID',  $dealIds)
+                        ->where([
+                            ['COMPLETED', 'N'],
+                            ['b24_activity.DEADLINE', '<', $this->yesterday1],
+                        ])
+                        ->get();
+                    if (count($companyTasks)) {
+                        $userCompany->STATUS = 2; // TODAY
+                        $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
+                            return $item->DEADLINE;
+                        });
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private function checkUserCompanyLastDealWon(Company $userCompany)
+    {
+        //последняя сделка успешная
+        $winStateArray = ['C23:WON', 'C19:WON',];
+        $companyDeals = B24Deal::where('COMPANY_ID', $userCompany->ID)
+            ->whereBetween('CLOSEDATE', [$this->yesterday2, $this->yesterday1])
+            ->whereIn('STAGE_ID', $winStateArray)
+            ->get();
+        if (count($companyDeals)) {
+            $userCompany->STATUS = 3; // TODAY
+            $userCompany->AGENDA_DATE = $companyDeals->max(function ($item) {
+                return $item->CLOSEDATE;
+            });
+            return true;
+        }
     }
 
     /**
@@ -153,9 +280,16 @@ class B24AgendaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($user_id)
     {
-        //
+        $file = 'userfiles/' . $user_id . 'json';
+        // чтение массива из файла
+        $json = file_get_contents($file);
+        $userCompanies = json_decode($json, true);
+        return view('bitrix24.b24agenda.show', [
+            'items' => $userCompanies,
+            //   'id_node' => $id
+        ]);
     }
 
     /**
@@ -164,9 +298,43 @@ class B24AgendaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($user_id)
     {
-        //
+
+        $job = new B24AgendaFetch($user_id);
+        $this->dispatch($job);
+        return redirect()->back();
+    }
+
+    public function fetchData($user_id)
+    {
+        $userCompanies = Company::where('ASSIGNED_BY_ID', $user_id)->get();
+        //перебор компаний на предмет наличия задач
+        //  $date2->modify('-4 day'); //temp
+        foreach ($userCompanies as $userCompany) {
+            //актуальность компании на сегодня
+            if ($userCompany->ID == 4495) //temp
+                $i = 0;
+            if (!$this->checkUserCompanyToday($userCompany))
+                if (!$this->checkUserCompanyTomorrow($userCompany))
+                    if (!$this->checkUserCompanyYesterday($userCompany))
+                        if (!$this->checkUserCompanyLastDealWon($userCompany)) {
+                            $userCompany->STATUS = 4;
+                        }
+            //if ($userCompany->ID == 4495)
+            //  dd($userCompany->STATUS, ' ', $userCompany->AGENDA_DATE);
+        }
+
+        //получить список компаний для данного юзера с актуальной задачей/активностью в компании, сделке
+        // актуальная задача в компании 
+        $userCompanies = $userCompanies->sortByDesc('AGENDA_DATE')->sortBy('STATUS');
+        try {
+            $file = 'userfiles/' . $user_id  . 'json'; //test
+            $json = json_encode($userCompanies);
+            file_put_contents($file, $json);
+        } catch (Exception $e) {
+            Log::error('An error occurred: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -190,5 +358,35 @@ class B24AgendaController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    private function old()
+    {
+        $t = Company::join('b24_tasks', 'companies.ID', '=', 'b24_tasks.UF_CRM_TASK_COMPANY')
+            // ->where('ASSIGNED_BY_ID', $user_id)
+            ->whereBetween('b24_tasks.deadline', [$this->today, $this->tomorrow])
+            /*       ->where([
+            ['b24_tasks.deadline', '>',  '2023-05-05 00:00:00'],
+            ['b24_tasks.deadline', '<', '2023-05-06 00:00:00'],
+        ])*/
+            ->select('companies.*', 'b24_tasks.UF_CRM_TASK_COMPANY', 'b24_tasks.title')
+            ->distinct()
+            ->get();
+        // dd($t);
+        //актуальная задача в сделке
+        $t2 = Company::join('b24_deals', 'companies.ID', '=', 'b24_deals.COMPANY_ID')
+            ->join('b24_tasks', 'b24_deals.ID', '=', 'b24_tasks.UF_CRM_TASK_DEAL')
+            //           ->where('companies.ASSIGNED_BY_ID', $user_id)
+            ->where([
+                ['b24_tasks.deadline', '>',  $this->today],
+                ['b24_tasks.deadline', '<', $this->tomorrow],
+            ])
+            //           ->whereBetween('b24_tasks.deadline', [$date . ' 00:00:00', $date . ' 23:59:59'])
+            ->select('companies.*', 'b24_tasks.UF_CRM_TASK_COMPANY', 'b24_tasks.title')
+            ->distinct()
+            ->get();
+        //   dd($t2);
+        //актуальная активность в компании
+        //актуальная активность в сделке
     }
 }

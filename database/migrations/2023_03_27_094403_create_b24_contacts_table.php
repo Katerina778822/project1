@@ -14,7 +14,7 @@ class CreateB24ContactsTable extends Migration
     public function up()
     {
         Schema::create('b24_contacts', function (Blueprint $table) {
-            $table->bigInteger('ID')->primary();
+            $table->id();
             $table->string('NAME')->nullable()->default('');
             $table->string('LAST_NAME')->nullable()->default('');
 
