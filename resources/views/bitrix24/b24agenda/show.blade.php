@@ -20,6 +20,7 @@
                 <th>Id</th>
                 <th>Название</th>
                 <th>Дата</th>
+                <th>Статус</th>
             </tr>
         </thead>
         <tbody >
@@ -33,6 +34,7 @@
                         {{$item['TITLE']}} </a>
                 </td>
                 <td>{{$item['AGENDA_DATE']??0}}</td>
+                <td>{{$item['STATUS']??0}}</td>
             </tr>
             @endif
             @if($item['STATUS']==1)
@@ -43,6 +45,7 @@
                          {{$item['TITLE']}} </a>
                 </td>
                 <td>{{$item['AGENDA_DATE']??0}}</td>
+                <td>{{$item['STATUS']??0}}</td>
             </tr>
             @endif
             @if($item['STATUS']==2)
@@ -53,6 +56,7 @@
                         {{$item['TITLE']}} </a>
                 </td>
                 <td>{{$item['AGENDA_DATE']??0}}</td>
+                <td>{{$item['STATUS']??0}}</td>
             </tr>
             @endif
             @if($item['STATUS']==3)
@@ -63,6 +67,7 @@
                         {{$item['TITLE']}} </a>
                 </td>
                 <td>{{$item['AGENDA_DATE']??0}}</td>
+                <td>{{$item['STATUS']??0}}</td>
             </tr>
             @endif
             @if($item['STATUS']==4)
@@ -73,6 +78,7 @@
                          {{$item['TITLE']}} </a>
                 </td>
                 <td>{{$item['AGENDA_DATE']??0}}</td>
+                <td>{{$item['STATUS']??0}}</td>
             </tr>
             @endif
 
