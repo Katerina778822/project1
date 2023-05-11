@@ -8,6 +8,7 @@ use App\Models\B24Activity2;
 use App\Models\B24Agenda;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
+use App\Models\B24Lead;
 use App\Models\B24Task;
 use App\Models\B24test;
 use App\Models\B24User;
@@ -308,7 +309,14 @@ class B24AgendaController extends Controller
 
     public function fetchData($user_id)
     {
-        $userCompanies = Company::where('ASSIGNED_BY_ID', $user_id)->get();
+
+        //получить список компаний для данного юзера с актуальной задачей/активностью в компании, сделке
+        // актуальная задача в компании 
+        $statusArr = [1617, 349, 1417, 1659, 1419, 1753]; //UF_CRM_1540465145514 - статусы клиента
+        $userCompanies = Company::where('ASSIGNED_BY_ID', $user_id)
+            ->whereIn('UF_CRM_1540465145514', $statusArr)
+            ->get();
+
         //перебор компаний на предмет наличия задач
         //  $date2->modify('-4 day'); //temp
         foreach ($userCompanies as $userCompany) {
@@ -323,10 +331,32 @@ class B24AgendaController extends Controller
                         }
             //if ($userCompany->ID == 4495)
             //  dd($userCompany->STATUS, ' ', $userCompany->AGENDA_DATE);
+
         }
 
-        //получить список компаний для данного юзера с актуальной задачей/активностью в компании, сделке
-        // актуальная задача в компании 
+        //перебор лидов на предмет наличия задач
+        $dealStage = ['NEW', '22'];
+        $userLeads = B24Lead::where([
+            ['ASSIGNED_BY_ID', $user_id],
+            ['STATUS_ID', '!=', 'CONVERTED']
+        ])
+            ->whereIn('STATUS_ID',  $dealStage)
+            ->get();
+        foreach ($userLeads as $userLead) {
+            if ($userLead->ID == 32495) //temp
+                $i = 0;
+            if (!$this->checkUserLeadToday($userLead, $userCompanies))
+                if (!$this->checkUserLeadTomorrow($userLead, $userCompanies))
+                    if (!$this->checkUserLeadYesterday($userLead, $userCompanies)) {
+                        $userLead->TITLE = 'ЛИД: ' . $userLead->TITLE;
+                        $userLead->STATUS = 4; // TODAY
+                        $userLead->URL = $userLead->ID; // TODAY
+                        $userCompanies->add($userLead);
+                    }
+        }
+
+
+
         $userCompanies = $userCompanies->sortByDesc('AGENDA_DATE')->sortBy('STATUS');
         try {
             $file = 'userfiles/' . $user_id  . 'json'; //test
@@ -388,5 +418,121 @@ class B24AgendaController extends Controller
         //   dd($t2);
         //актуальная активность в компании
         //актуальная активность в сделке
+    }
+
+    public function checkUserLeadToday($lead, $companyCollection)
+    {
+        $leadTasks = B24Task::where([
+            ['UF_CRM_TASK_LEAD', $lead->ID],
+            ['closedDate', '=', null]
+        ])
+            ->whereBetween('b24_tasks.deadline', [$this->today, $this->tomorrow])
+            ->get();
+        if (count($leadTasks)) {
+            $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
+            $lead->STATUS = 1; // TODAY
+            $lead->URL = $lead->ID; // TODAY
+            $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
+                return $item->deadline;
+            });
+            $companyCollection->add($lead);
+            return true;
+        } else { //дело (активность) в компании
+            $leadTasks = B24Activity::whereBetween('b24_activity.DEADLINE', [$this->today, $this->tomorrow])
+                ->where([
+                    ['LEAD_ID', $lead->ID],
+                    ['COMPLETED', 'N'],
+                ])
+                ->get();
+            if (count($leadTasks)) {
+
+                $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
+                $lead->STATUS = 1; // TODAY
+                $lead->URL = $lead->ID; // TODAY
+                $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
+                    return $item->DEADLINE;
+                });
+                $companyCollection->add($lead);
+                return true;
+            }
+        }
+    }
+    public function checkUserLeadTomorrow($lead, $companyCollection)
+    {
+
+        $leadTasks = B24Task::where([
+            ['UF_CRM_TASK_LEAD', $lead->ID],
+            ['closedDate', '=', null]
+        ])
+            ->whereBetween('b24_tasks.deadline', [$this->tomorrowday1, $this->tomorrowday2])
+            ->get();
+        if (count($leadTasks)) {
+            $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
+            $lead->STATUS = 0; // TODAY
+            $lead->URL = $lead->ID; // TODAY
+            $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
+                return $item->deadline;
+            });
+            $companyCollection->add($lead);
+            return true;
+        } else { //дело (активность) в компании
+            $leadTasks = B24Activity::whereBetween('b24_activity.DEADLINE', [$this->tomorrowday1, $this->tomorrowday2])
+                ->where([
+                    ['LEAD_ID', $lead->ID],
+                    ['COMPLETED', 'N'],
+                ])
+                ->get();
+            if (count($leadTasks)) {
+
+                $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
+                $lead->STATUS = 0; // TODAY
+                $lead->URL = $lead->ID; // TODAY
+                $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
+                    return $item->DEADLINE;
+                });
+                $companyCollection->add($lead);
+                return true;
+            }
+        }
+    }
+    public function checkUserLeadYesterday($lead, $companyCollection)
+    { {
+
+            $leadTasks = B24Task::where([
+                ['UF_CRM_TASK_LEAD', $lead->ID],
+                ['closedDate', '=', null],
+                ['b24_tasks.deadline', '<', $this->yesterday1]
+            ])
+                //                ->whereBetween('b24_tasks.deadline', [$this->tomorrowday1, $this->tomorrowday2])
+                ->get();
+            if (count($leadTasks)) {
+                $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
+                $lead->STATUS = 2; // TODAY
+                $lead->URL = $lead->ID; // TODAY
+                $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
+                    return $item->deadline;
+                });
+                $companyCollection->add($lead);
+                return true;
+            } else { //дело (активность) в компании
+                $leadTasks = B24Activity::where([
+                    ['LEAD_ID', $lead->ID],
+                    ['COMPLETED', 'N'],
+                    ['b24_activity.DEADLINE', '<', $this->yesterday1],
+                ])
+                    ->get();
+                if (count($leadTasks)) {
+
+                    $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
+                    $lead->STATUS = 2; // TODAY
+                    $lead->URL = $lead->ID; // TODAY
+                    $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
+                        return $item->DEADLINE;
+                    });
+                    $companyCollection->add($lead);
+                    return true;
+                }
+            }
+        }
     }
 }

@@ -29,7 +29,7 @@
             <tr class="bg-indigo-300">
                 <td>{{$loop->iteration}}</td>
                 <td>{{$item['ID']}}</td>
-                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/company/details/'.$item['ID'].'/'}}">
+                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL']?'lead':'company').'/details/'.$item['ID'].'/'}}">
                         {{$item['TITLE']}} </a>
                 </td>
                 <td>{{$item['AGENDA_DATE']??0}}</td>
@@ -39,8 +39,8 @@
             <tr class="bg-green-200">
                 <td>{{$loop->iteration}}</td>
                 <td>{{$item['ID']}}</td>
-                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/company/details/'.$item['ID'].'/'}}">
-                        {{$item['TITLE']}} </a>
+                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                         {{$item['TITLE']}} </a>
                 </td>
                 <td>{{$item['AGENDA_DATE']??0}}</td>
             </tr>
