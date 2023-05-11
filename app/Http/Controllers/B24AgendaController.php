@@ -184,7 +184,7 @@ class B24AgendaController extends Controller
             ])
             ->get();
         if (count($companyTasks)) {
-            $userCompany->STATUS = 2; // TODAY
+            $userCompany->STATUS = 3; // TODAY
             $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                 return $item->deadline;
             });
@@ -197,7 +197,7 @@ class B24AgendaController extends Controller
                 ])
                 ->get();
             if (count($companyTasks)) {
-                $userCompany->STATUS = 2; // TODAY
+                $userCompany->STATUS = 3; // TODAY
                 $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                     return $item->DEADLINE;
                 });
@@ -212,7 +212,7 @@ class B24AgendaController extends Controller
                     ])
                     ->get();
                 if (count($companyTasks)) {
-                    $userCompany->STATUS = 2; // TODAY
+                    $userCompany->STATUS = 3; // TODAY
                     $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                         return $item->deadline;
                     });
@@ -225,7 +225,7 @@ class B24AgendaController extends Controller
                         ])
                         ->get();
                     if (count($companyTasks)) {
-                        $userCompany->STATUS = 2; // TODAY
+                        $userCompany->STATUS = 3; // TODAY
                         $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                             return $item->DEADLINE;
                         });
@@ -246,7 +246,7 @@ class B24AgendaController extends Controller
             ->whereIn('STAGE_ID', $winStateArray)
             ->get();
         if (count($companyDeals)) {
-            $userCompany->STATUS = 3; // TODAY
+            $userCompany->STATUS = 2; // TODAY
             $userCompany->AGENDA_DATE = $companyDeals->max(function ($item) {
                 return $item->CLOSEDATE;
             });
