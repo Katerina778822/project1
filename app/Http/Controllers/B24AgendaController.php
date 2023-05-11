@@ -283,7 +283,7 @@ class B24AgendaController extends Controller
      */
     public function show($user_id)
     {
-        $file = 'userfiles/' . $user_id . 'json';
+        $file = 'userfiles/' . $user_id . '.json';
         // чтение массива из файла
         $json = file_get_contents($file);
         $userCompanies = json_decode($json, true);
@@ -359,7 +359,7 @@ class B24AgendaController extends Controller
 
         $userCompanies = $userCompanies->sortByDesc('AGENDA_DATE')->sortBy('STATUS');
         try {
-            $file = 'userfiles/' . $user_id  . 'json'; //test
+            $file = 'userfiles/' . $user_id  . '.json'; //test
             $json = json_encode($userCompanies);
             file_put_contents($file, $json);
         } catch (Exception $e) {
