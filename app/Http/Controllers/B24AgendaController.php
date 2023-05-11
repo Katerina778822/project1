@@ -320,6 +320,7 @@ class B24AgendaController extends Controller
         //перебор компаний на предмет наличия задач
         //  $date2->modify('-4 day'); //temp
         foreach ($userCompanies as $userCompany) {
+            $userCompany->URL_TYPE=0;//company
             //актуальность компании на сегодня
             if ($userCompany->ID == 4495) //temp
                 $i = 0;
@@ -343,6 +344,7 @@ class B24AgendaController extends Controller
             ->whereIn('STATUS_ID',  $dealStage)
             ->get();
         foreach ($userLeads as $userLead) {
+            $userLead->URL_TYPE = 1; // lead
             if ($userLead->ID == 32495) //temp
                 $i = 0;
             if (!$this->checkUserLeadToday($userLead, $userCompanies))
@@ -469,7 +471,6 @@ class B24AgendaController extends Controller
         if (count($leadTasks)) {
             $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
             $lead->STATUS = 0; // TODAY
-            $lead->URL = $lead->ID; // TODAY
             $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
                 return $item->deadline;
             });
@@ -486,7 +487,6 @@ class B24AgendaController extends Controller
 
                 $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
                 $lead->STATUS = 0; // TODAY
-                $lead->URL = $lead->ID; // TODAY
                 $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
                     return $item->DEADLINE;
                 });
@@ -508,7 +508,6 @@ class B24AgendaController extends Controller
             if (count($leadTasks)) {
                 $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
                 $lead->STATUS = 2; // TODAY
-                $lead->URL = $lead->ID; // TODAY
                 $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
                     return $item->deadline;
                 });
@@ -525,7 +524,6 @@ class B24AgendaController extends Controller
 
                     $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
                     $lead->STATUS = 2; // TODAY
-                    $lead->URL = $lead->ID; // TODAY
                     $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
                         return $item->DEADLINE;
                     });
