@@ -339,7 +339,6 @@ class B24AgendaController extends Controller
         $dealStage = ['NEW', '22'];
         $userLeads = B24Lead::where([
             ['ASSIGNED_BY_ID', $user_id],
-            ['STATUS_ID', '!=', 'CONVERTED']
         ])
             ->whereIn('STATUS_ID',  $dealStage)
             ->get();
