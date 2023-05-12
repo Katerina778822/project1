@@ -12,4 +12,5 @@ class B24User extends Model
     protected $fillable = [
         'ID', 'ACTIVE', 'LAST_NAME', 'NAME', 'VALUE',
     ];
+    protected $primaryKey = 'ID';
 }

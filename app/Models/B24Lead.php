@@ -14,4 +14,5 @@ class B24Lead extends Model
         'UTM_MEDIUM','UTM_CAMPAIGN','UTM_CONTENT','UTM_TERM','CURRENCY_ID','PHONE','OPPORTUNITY','COMPANY_ID',  
         'CONTACT_ID','ASSIGNED_BY_ID','CREATED_BY_ID','DATE_CREATE','DATE_CLOSED','DATE_MODIFY',
     ];
+    protected $primaryKey = 'ID';
 }

@@ -14,6 +14,8 @@ class Company extends Model
         'ASSIGNED_BY_ID', 'LAST_ACTIVITY_BY', 'UF_CRM_1540465145514', 'UF_CRM_1540121191354', 'UF_CRM_5DBAA9FFCC357'
     ];
 
+    protected $primaryKey = 'ID';
+
     public function b24deals()
     {
         return $this->hasMany(B24Deal::class, 'b24deal');
