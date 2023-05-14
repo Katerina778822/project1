@@ -18,5 +18,6 @@ $date->sub(new DateInterval('PT30M')); //
 $date = $date->format('Y-m-d');
 
 $orderController->updateData($date);
+Log::channel('single')->info('cron.php done.');
 
 
