@@ -26,7 +26,8 @@ class B24AgendaController extends Controller
     private DateTime $tomorrowday1;
     private DateTime $tomorrowday2;
     private DateTime $yesterday1;
-    private DateTime $yesterday2;
+    private DateTime $yesterday2; // Украина
+    private DateTime $yesterday3; // Развоз
 
 
 
@@ -41,10 +42,12 @@ class B24AgendaController extends Controller
         $this->tomorrowday2 = new DateTime();
         $this->yesterday1 = new DateTime();
         $this->yesterday2 = new DateTime();
+        $this->yesterday3 = new DateTime();
         $this->tomorrowday1->modify('+1 day')->setTime(0, 0, 0);
         $this->tomorrowday2->modify('+180 day')->setTime(23, 59, 59);
         $this->yesterday1->modify('-1 day')->setTime(23, 59, 59);
         $this->yesterday2->modify('-60 day')->setTime(23, 59, 59);
+        $this->yesterday3->modify('-28 day')->setTime(23, 59, 59);
     }
     /**
      * Display a listing of the resource.
@@ -239,8 +242,21 @@ class B24AgendaController extends Controller
 
     private function checkUserCompanyLastDealWon(Company $userCompany)
     {
-        //последняя сделка успешная
-        $winStateArray = ['C23:WON', 'C19:WON',];
+        //последняя сделка успешная развоз 28 дней
+        $winStateArray = ['C23:WON'];
+        $companyDeals = B24Deal::where('COMPANY_ID', $userCompany->ID)
+            ->whereBetween('CLOSEDATE', [$this->yesterday3, $this->yesterday1])
+            ->whereIn('STAGE_ID', $winStateArray)
+            ->get();
+        if (count($companyDeals)) {
+            $userCompany->STATUS = 5; // TODAY
+            $userCompany->AGENDA_DATE = $companyDeals->max(function ($item) {
+                return $item->CLOSEDATE;
+            });
+            return true;
+        }
+        //последняя сделка успешная Украина 60 дней
+        $winStateArray = ['C19:WON'];
         $companyDeals = B24Deal::where('COMPANY_ID', $userCompany->ID)
             ->whereBetween('CLOSEDATE', [$this->yesterday2, $this->yesterday1])
             ->whereIn('STAGE_ID', $winStateArray)
@@ -287,9 +303,48 @@ class B24AgendaController extends Controller
         // чтение массива из файла
         $json = file_get_contents($file);
         $userCompanies = json_decode($json, true);
+        $itemsTomorrow = [];
+        $itemsToday = [];
+        $itemsYesterday = [];
+        $items60Days = [];
+        $items28Days = [];
+        $itemsCold = [];
+        $itemsCheat1 = [];
+        foreach ($userCompanies as $item) {
+            if ($item['STATUS'] === 0) {
+                $itemsTomorrow[] = $item;
+            } elseif ($item['STATUS'] === 1) {
+                $itemsToday[] = $item;
+            } elseif ($item['STATUS'] === 2) {
+                $items60Days[] = $item;
+            } elseif ($item['STATUS'] === 5) {
+                $items28Days[] = $item;
+            } elseif ($item['STATUS'] === 3) {
+                $itemsYesterday[] = $item;
+            } elseif ($item['STATUS'] === 4) {
+                $itemsCold[] = $item;
+            } elseif ($item['STATUS'] === 6) {
+                $itemsCheat1[] = $item;
+            }
+        }
+        // $userCompanies = $userCompanies->groupBy('STATUS');
+        // $itemsTomorrow =  $userCompanies->get(0, collect());
+        // $itemsToday = $userCompanies->get(1, collect());
+        // $itemsYesterday = $userCompanies->get(3, collect());
+        // $items60Days = $userCompanies->get(2, collect());
+        // $items28Days = $userCompanies->get(5, collect());
+        // $itemsCold = $userCompanies->get(4, collect());
+        // $itemsCheat1 = $userCompanies->get(6, collect());
         return view('bitrix24.b24agenda.show', [
-            'items' => $userCompanies,
-            //   'id_node' => $id
+            //      'items' => $userCompanies,
+            'itemsTomorrow' => $itemsTomorrow,
+            'itemsToday' => $itemsToday,
+            'itemsYesterday' => $itemsYesterday,
+            'items60Days' => $items60Days,
+            'items28Days' => $items28Days,
+            'itemsCold' => $itemsCold,
+            'itemsCheat1' => $itemsCheat1,
+
         ]);
     }
 
@@ -320,9 +375,9 @@ class B24AgendaController extends Controller
         //перебор компаний на предмет наличия задач
         //  $date2->modify('-4 day'); //temp
         foreach ($userCompanies as $userCompany) {
-            $userCompany->URL_TYPE=0;//company
+            $userCompany->URL_TYPE = 0; //company
             //актуальность компании на сегодня
-            if ($userCompany->ID == 4495) //temp
+            if ($userCompany->ID == 7439) //temp
                 $i = 0;
             if (!$this->checkUserCompanyToday($userCompany))
                 if (!$this->checkUserCompanyTomorrow($userCompany))
@@ -506,7 +561,7 @@ class B24AgendaController extends Controller
                 ->get();
             if (count($leadTasks)) {
                 $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
-                $lead->STATUS = 2; // TODAY
+                $lead->STATUS = 3; // TODAY
                 $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
                     return $item->deadline;
                 });
@@ -522,7 +577,7 @@ class B24AgendaController extends Controller
                 if (count($leadTasks)) {
 
                     $lead->TITLE = 'ЛИД: ' . $lead->TITLE;
-                    $lead->STATUS = 2; // TODAY
+                    $lead->STATUS = 3; // TODAY
                     $lead->AGENDA_DATE = $leadTasks->max(function ($item) {
                         return $item->DEADLINE;
                     });

@@ -1,90 +1,184 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex ">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
-                <a href="first" class="btn-main">First fetch</a>
-            </h2>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
-                <a href="new" class="btn-main">New data</a>
-            </h2>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
-                <a href="analitics" class="btn-main">Analitics</a>
-            </h2>
-        </div>
+        <div>
+            <div class="flex " x-data="{  Tomorrow_cargo: false  }">
+         
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
+                    <button x-on:click="Tomorrow_cargo = !Tomorrow_cargo; $dispatch('toggle-content', Tomorrow_cargo)" class="btn-main">С делом/Развоз</button>
+                </h2>
 
+            </div>
     </x-slot>
-    <table class="table table-hover ">
-        <thead >
-            <tr >
-                <th>N</th>
-                <th>Id</th>
-                <th>Название</th>
-                <th>Дата</th>
-                <th>Статус</th>
-            </tr>
-        </thead>
-        <tbody >
-            @if(count($items))
-            @foreach($items as $item)
-            @if($item['STATUS']==0)
-            <tr class="bg-indigo-300">
-                <td>{{$loop->iteration}}</td>
-                <td>{{$item['ID']}}</td>
-                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
-                        {{$item['TITLE']}} </a>
-                </td>
-                <td>{{$item['AGENDA_DATE']??0}}</td>
-                <td>{{$item['STATUS']??0}}</td>
-            </tr>
-            @endif
-            @if($item['STATUS']==1)
-            <tr class="bg-green-200">
-                <td>{{$loop->iteration}}</td>
-                <td>{{$item['ID']}}</td>
-                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
-                         {{$item['TITLE']}} </a>
-                </td>
-                <td>{{$item['AGENDA_DATE']??0}}</td>
-                <td>{{$item['STATUS']??0}}</td>
-            </tr>
-            @endif
-            @if($item['STATUS']==2)
-            <tr class="bg-red-200">
-                <td>{{$loop->iteration}}</td>
-                <td>{{$item['ID']}}</td>
-                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
-                        {{$item['TITLE']}} </a>
-                </td>
-                <td>{{$item['AGENDA_DATE']??0}}</td>
-                <td>{{$item['STATUS']??0}}</td>
-            </tr>
-            @endif
-            @if($item['STATUS']==3)
-            <tr class="bg-red-400">
-                <td>{{$loop->iteration}}</td>
-                <td>{{$item['ID']}}</td>
-                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
-                        {{$item['TITLE']}} </a>
-                </td>
-                <td>{{$item['AGENDA_DATE']??0}}</td>
-                <td>{{$item['STATUS']??0}}</td>
-            </tr>
-            @endif
-            @if($item['STATUS']==4)
-            <tr class="bg-red-600">
-                <td>{{$loop->iteration}}</td>
-                <td>{{$item['ID']}}</td>
-                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
-                         {{$item['TITLE']}} </a>
-                </td>
-                <td>{{$item['AGENDA_DATE']??0}}</td>
-                <td>{{$item['STATUS']??0}}</td>
-            </tr>
-            @endif
 
-            @endforeach
-            @endif
-        </tbody>
+    <x-slot name="slot">
+        <div class="container w-12/12 flex justify-center m-2 ">
+            <div class=" w-11/12  ">
+                <!-- Tomorrow  -->
+                @if(!empty($itemsTomorrow))
+                <table x-data="{ Tomorrow: false }" x-show="Tomorrow" x-on:toggle-content.window="Tomorrow = $event.detail"  class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>N</th>
+                            <th>Id</th>
+                            <th>Название</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($itemsTomorrow as $item)
+                        <tr class="bg-indigo-300">
+                            <td>{{$loop->iteration}}</td>
+                            <td>{{$item['ID']}}</td>
+                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                                    {{$item['TITLE']}} </a>
+                            </td>
+                            <td>{{$item['AGENDA_DATE']??0}}</td>
+                            <td>{{$item['STATUS']??0}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
 
-    </table>
+                <!-- Tomorrow РАЗВОЗ -->
+                @if(!empty($items28Days))
+                <table x-data="{ Tomorrow_cargo: false }" x-show="Tomorrow_cargo" x-on:toggle-content.window="Tomorrow_cargo = $event.detail"  class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>N</th>
+                            <th>Id</th>
+                            <th>Название</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($items28Days as $item)
+                        <tr class="bg-indigo-400">
+                            <td>{{$loop->iteration}}</td>
+                            <td>{{$item['ID']}}</td>
+                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                                    {{$item['TITLE']}} </a>
+                            </td>
+                            <td>{{$item['AGENDA_DATE']??0}}</td>
+                            <td>{{$item['STATUS']??0}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
+
+                <!-- Today -->
+                @if(!empty($itemsToday))
+                <table class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>N</th>
+                            <th>Id</th>
+                            <th>Название</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($itemsToday as $item)
+                        <tr class="bg-green-200">
+                            <td>{{$loop->iteration}}</td>
+                            <td>{{$item['ID']}}</td>
+                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                                    {{$item['TITLE']}} </a>
+                            </td>
+                            <td>{{$item['AGENDA_DATE']??0}}</td>
+                            <td>{{$item['STATUS']??0}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
+                <!-- 60 days deal -->
+                @if(!empty($items60Days))
+                <table class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>N</th>
+                            <th>Id</th>
+                            <th>Название</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($items60Days as $item)
+                        <tr class="bg-red-200">
+                            <td>{{$loop->iteration}}</td>
+                            <td>{{$item['ID']}}</td>
+                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                                    {{$item['TITLE']}} </a>
+                            </td>
+                            <td>{{$item['AGENDA_DATE']??0}}</td>
+                            <td>{{$item['STATUS']??0}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
+
+                <!-- itemsYesterday -->
+                @if(!empty($itemsYesterday))
+                <table class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>N</th>
+                            <th>Id</th>
+                            <th>Название</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($itemsYesterday as $item)
+                        <tr class="bg-red-400">
+                            <td>{{$loop->iteration}}</td>
+                            <td>{{$item['ID']}}</td>
+                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                                    {{$item['TITLE']}} </a>
+                            </td>
+                            <td>{{$item['AGENDA_DATE']??0}}</td>
+                            <td>{{$item['STATUS']??0}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
+                <!-- itemsCold -->
+                @if(!empty($itemsCold))
+                <table class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>N</th>
+                            <th>Id</th>
+                            <th>Название</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($itemsCold as $item)
+                        <tr class="bg-red-600">
+                            <td>{{$loop->iteration}}</td>
+                            <td>{{$item['ID']}}</td>
+                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                                    {{$item['TITLE']}} </a>
+                            </td>
+                            <td>{{$item['AGENDA_DATE']??0}}</td>
+                            <td>{{$item['STATUS']??0}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
+            </div>
+        </div>
+    </x-slot>
 </x-app-layout>
