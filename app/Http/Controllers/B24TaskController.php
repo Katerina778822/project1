@@ -213,7 +213,7 @@ class B24TaskController extends AbstractB24Controller
 
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
         $requestArray['DATE'] = $checkDate;
-     //temp   $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
+        $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
         $requestArray['start'] = $count;
 
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
@@ -284,7 +284,5 @@ class B24TaskController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('task', $checkDate);
         }
-
-        return redirect()->back();
     }
 }

@@ -245,6 +245,5 @@ class B24RingController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('ring', $checkDate);
         }
 
-        return redirect()->back();
     }
 }

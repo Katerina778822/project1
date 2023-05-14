@@ -144,6 +144,5 @@ class B24UserController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantity('user', $checkDate);
         }
 
-        return redirect()->back();
     }
 }

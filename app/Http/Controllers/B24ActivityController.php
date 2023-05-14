@@ -165,7 +165,7 @@ class B24ActivityController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate, null, $requestArray);
         }
 
-        return redirect()->back();
+
     }
 
     /**

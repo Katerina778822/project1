@@ -143,6 +143,5 @@ class B24FieldController extends AbstractB24Controller
            
      //   }
      //   dd($item);
-        return redirect()->back();
     }
 }

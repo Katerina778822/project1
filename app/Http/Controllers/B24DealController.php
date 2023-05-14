@@ -171,7 +171,6 @@ class B24DealController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantity('deal', $checkDate);
         }
 
-        return redirect()->back();
     }
     public function updateData($checkDate)
     {
@@ -235,6 +234,5 @@ class B24DealController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('deal', $checkDate);
         }
 
-        return redirect()->back();
     }
 }

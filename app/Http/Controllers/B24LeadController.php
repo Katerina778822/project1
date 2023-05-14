@@ -225,6 +225,5 @@ class B24LeadController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('lead', $checkDate);
         }
 
-        return redirect()->back();
     }
 }

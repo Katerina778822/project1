@@ -141,6 +141,5 @@ class B24ContactController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantity('contact', $checkDate);
         }
 
-        return redirect()->back();
     }
 }

@@ -200,6 +200,5 @@ class CompanyController extends AbstractB24Controller
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('company', $checkDate);
         }
 
-        return redirect()->back();
     }
 }
