@@ -10,6 +10,7 @@ require __DIR__.'/../vendor/autoload.php'; // Путь к автозагрузч
 
 $app = require_once __DIR__.'/../bootstrap/app.php';
 $app->make('Illuminate\Contracts\Http\Kernel')->bootstrap();
+Log::channel('single')->info('Test1');
 $orderController = $app->make(\App\Http\Controllers\B24FetchController::class);
 
 Log::channel('single')->info('Test1');
