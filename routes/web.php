@@ -42,6 +42,7 @@ Route::get('/tail', function () {
 
 
 
+Route::resource('raport','App\Http\Controllers\B24RaportController');
 Route::resource('agenda','App\Http\Controllers\B24AgendaController');
 Route::resource('company','App\Http\Controllers\CompanyController');
 Route::resource('node','App\Http\Controllers\NodeController');

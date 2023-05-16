@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,9 +43,51 @@ class Company extends Model
     }
 
 
+
     public function b24user()
     {
         return $this->belongsTo(B24User::class, 'ASSIGNED_BY_ID', 'ID');
     }
-    
+
+    //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
+    public function getClientStatus()
+    {
+        $deals  = B24Deal::where('COMPANY_ID',$this->ID)->get();
+        if ($deals->count() == 0)
+            return 4;   //4-новый
+        else {
+            $dealsLastData = $deals->max(function ($deal) {
+                return $deal->CLOSEDATE;
+            });
+            $dealsLast = $deals->firstWhere('CLOSEDATE', $dealsLastData);
+            if ($deals->count() == 1 && $dealsLast->OPENED == 'Y') //последняя сделка открыта
+                return 4;  //4-новый
+            $winStateArray = ['C23:WON']; //развоз
+            $dealsSuccessCargo = $deals->whereIn('STAGE_ID', $winStateArray);
+            $winStateArray = ['C19:WON']; //Украина
+            $dealsSuccessUkraine = $deals->whereIn('STAGE_ID', $winStateArray);
+            if ($dealsSuccessCargo->count() > 0 || $dealsSuccessUkraine->count() > 0) {
+                $dealWithMaxDateCargo = $dealsSuccessCargo->max(function ($deal) {
+                    return $deal->CLOSEDATE;
+                });
+                $dealWithMaxDateUkraine = $dealsSuccessUkraine->max(function ($deal) {
+                    return $deal->CLOSEDATE;
+                });
+                $dealWithMaxDateCargo = new DateTime($dealWithMaxDateCargo);
+                $dealWithMaxDateUkraine = new DateTime($dealWithMaxDateUkraine);
+                $yesterdayCargo = new DateTime();
+                $yesterdayUkraine = new DateTime();
+                $yesterdayCargo->modify('-28 day')->setTime(0, 0, 0);
+                $yesterdayUkraine->modify('-60 day')->setTime(0, 0, 0);
+                if (
+                    $dealWithMaxDateUkraine > $yesterdayUkraine ||
+                    $dealWithMaxDateCargo> $yesterdayCargo
+                ) {
+                    return 1; //Клиент
+                } else
+                    return 3; //Остывший
+            } else
+                return 2; //2 - База
+        }
+    }
 }

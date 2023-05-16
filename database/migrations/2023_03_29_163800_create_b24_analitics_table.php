@@ -12,17 +12,18 @@ class CreateB24AnaliticsTable extends Migration
      * @return void
      */
 
-     // id_item   legend description
-     //1 -  rings total fetch quantity, big_int1 - quantity field
-     //2 -  tasks total fetch quantity, big_int1 - quantity field
-     //3 -  companies_date data, 
+     // AIM   legend description
+     //1 - 
+     //2 -  
+     //3 -  
+     //3377 -  cron.php update time  
 //
     public function up()
     {
         Schema::create('b24_analitics', function (Blueprint $table) { //halp table
 
             $table->id();
-            $table->unsignedBigInteger('AIM');// id for different solutions (tasks jjr aims)
+            $table->unsignedBigInteger('AIM');// id for different solutions (tasks or aims)
             $table->unsignedBigInteger('id_item')->nullable()->default(0);
             $table->unsignedBigInteger('big_int1')->nullable()->default(0);
             $table->unsignedBigInteger('big_int2')->nullable()->default(0);
