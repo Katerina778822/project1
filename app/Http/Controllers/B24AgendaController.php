@@ -348,8 +348,8 @@ class B24AgendaController extends Controller
             'items28Days' => $items28Days,
             'itemsCold' => $itemsCold,
             'itemsCheat1' => $itemsCheat1,
-            'cronTime' => $cronTime->date1,
-            'agendaTime' => $agendaTime->date1,
+            'cronTime' => $cronTime?$cronTime->date1:0,
+            'agendaTime' => $agendaTime?$agendaTime->date1:0
         ]);
     }
 
