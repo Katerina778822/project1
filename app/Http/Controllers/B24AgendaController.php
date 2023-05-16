@@ -6,6 +6,7 @@ use App\Jobs\B24AgendaFetch;
 use App\Models\B24Activity;
 use App\Models\B24Activity2;
 use App\Models\B24Agenda;
+use App\Models\B24Analitics;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
 use App\Models\B24Lead;
@@ -14,6 +15,7 @@ use App\Models\B24test;
 use App\Models\B24User;
 use App\Models\Company;
 use Carbon\Carbon;
+use DateInterval;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -335,6 +337,8 @@ class B24AgendaController extends Controller
         // $items28Days = $userCompanies->get(5, collect());
         // $itemsCold = $userCompanies->get(4, collect());
         // $itemsCheat1 = $userCompanies->get(6, collect());
+        $cronTime = B24Analitics::where('AIM', 3377)->first()??0;
+        $agendaTime = B24Analitics::where('AIM', 3388)->first()??0;
         return view('bitrix24.b24agenda.show', [
             //      'items' => $userCompanies,
             'itemsTomorrow' => $itemsTomorrow,
@@ -344,7 +348,8 @@ class B24AgendaController extends Controller
             'items28Days' => $items28Days,
             'itemsCold' => $itemsCold,
             'itemsCheat1' => $itemsCheat1,
-
+            'cronTime' => $cronTime->date1,
+            'agendaTime' => $agendaTime->date1,
         ]);
     }
 
@@ -418,6 +423,18 @@ class B24AgendaController extends Controller
             $file = 'userfiles/' . $user_id  . '.json'; //test
             $json = json_encode($userCompanies);
             file_put_contents($file, $json);
+            $currentTime = new DateTime(); //запись даты изменения в базу
+            $currentTime->add(new DateInterval('PT3H'));
+            $Time = B24Analitics::where('AIM', 3388)->first();
+            if (empty($Time)) {
+                $time = B24Analitics::create([
+                    'AIM' => 3388,
+                    'date1' => $currentTime,
+                ]);
+            } else {
+                $Time->date1  = $currentTime->format('Y-m-d H:i:s');
+                $Time->save();
+            }
         } catch (Exception $e) {
             Log::error('An error occurred: ' . $e->getMessage());
         }

@@ -17,11 +17,11 @@ class CreateB24AnaliticsTable extends Migration
      //2 -  
      //3 -  
      //3377 -  cron.php update time  
+     //3388 -  agenda create time  
 //
     public function up()
     {
         Schema::create('b24_analitics', function (Blueprint $table) { //halp table
-
             $table->id();
             $table->unsignedBigInteger('AIM');// id for different solutions (tasks or aims)
             $table->unsignedBigInteger('id_item')->nullable()->default(0);
@@ -50,7 +50,6 @@ class CreateB24AnaliticsTable extends Migration
             $table->dateTime('date5')->nullable()->default(null);
             $table->dateTime('date6')->nullable()->default(null);
             $table->timestamps();
-            
         });
    
     }

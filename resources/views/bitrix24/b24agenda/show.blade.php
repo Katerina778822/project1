@@ -13,6 +13,7 @@
     <x-slot name="slot">
         <div class="container w-12/12 flex justify-center m-2 ">
             <div class=" w-11/12  ">
+            <div>cron:{{$cronTime}} /Agenda:{{$agendaTime}}</div>
                 <!-- Tomorrow  -->
                 @if(!empty($itemsTomorrow))
                 <table x-data="{ Tomorrow: false }" x-show="Tomorrow" x-on:toggle-content.window="Tomorrow = $event.detail"  class="table table-hover w-full">
