@@ -8,6 +8,7 @@ use App\Models\B24Ring;
 use App\Models\B24Task;
 use App\Models\Company;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Http\Request;
 
 class B24RaportController extends Controller
@@ -19,24 +20,24 @@ class B24RaportController extends Controller
      */
     public function index()
     {
-        /*       $D = Company::find(5445);
+        $D = Company::find(5445);
         $deals = $D->getClientStatus();// 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
-
-        $start = new DateTime();
-        $end = new DateTime();
+        $timezone = new DateTimeZone('Europe/Kiev');
+        $start = new DateTime('now', $timezone);
+        $end = new DateTime('now', $timezone);
         $start->setTime(0, 0, 0);
-$user_id=1;
+$user_id=14;
         $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
         ->where('CALL_DURATION','>','10')->get();
         $Activities = B24Activity::whereBetween('b24_activity.LAST_UPDATED', [$start, $end])
         ->where('PROVIDER_ID','IMOPENLINES_SESSION')->get();
-        $items = B24Raport::where(, $user_id)->get();
+        $itemsRings = Company::whereIn('CRM_COMPANY_ID',$Rings->pluck('F2')->toArray());
         //dd($catalog);
         return view('bitrix24.raport.index', [
             'items' => $items,
          //   'items' => $id
         ]);
-        */
+        
     }
 
     /**

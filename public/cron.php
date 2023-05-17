@@ -12,14 +12,14 @@ $app = require_once __DIR__ . '/../bootstrap/app.php';
 $app->make('Illuminate\Contracts\Http\Kernel')->bootstrap();
 
 $orderController = $app->make(\App\Http\Controllers\B24FetchController::class);
-
-$date = new DateTime();
-$currentTime = new DateTime();
+$timezone = new DateTimeZone('Europe/Kiev');
+$date = new DateTime('now', $timezone);
+$currentTime = new DateTime('now', $timezone);
 $currentTime->add(new DateInterval('PT3H'));
 $date->sub(new DateInterval('PT30M')); // 
 $date = $date->format('Y-m-d H:i:s');
 
-//$orderController->updateData($date); TEMP
+$orderController->updateData($date); 
 
 
 $Time = B24Analitics::where('AIM', 3377)->first();
