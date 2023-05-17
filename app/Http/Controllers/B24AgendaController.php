@@ -428,7 +428,10 @@ class B24AgendaController extends Controller
             file_put_contents($file, $json);
             $currentTime = new DateTime(); //запись даты изменения в базу
             $currentTime->add(new DateInterval('PT3H'));
-            $Time = B24Analitics::where('AIM', 3388)->first();
+            $Time = B24Analitics::where([
+                ['AIM', 3388],
+                ['id_item', $user_id]
+                ])->first();
             if (empty($Time)) {
                 $time = B24Analitics::create([
                     'AIM' => 3388,
