@@ -15,7 +15,7 @@ $orderController = $app->make(\App\Http\Controllers\B24FetchController::class);
 $timezone = new DateTimeZone('Europe/Kiev');
 $date = new DateTime('now', $timezone);
 $currentTime = new DateTime('now', $timezone);
-$currentTime->add(new DateInterval('PT3H'));
+
 $date->sub(new DateInterval('PT30M')); // 
 $date = $date->format('Y-m-d H:i:s');
 
@@ -26,7 +26,7 @@ $Time = B24Analitics::where('AIM', 3377)->first();
 if (empty($Time)) {
     $time = B24Analitics::create([
         'AIM' => 3377,
-        'date1' => $currentTime,
+        'date1' => $currentTime->format('Y-m-d H:i:s'),
     ]);
 } else {
     $Time->date1  = $currentTime->format('Y-m-d H:i:s');

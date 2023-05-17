@@ -338,7 +338,10 @@ class B24AgendaController extends Controller
         // $itemsCold = $userCompanies->get(4, collect());
         // $itemsCheat1 = $userCompanies->get(6, collect());
         $cronTime = B24Analitics::where('AIM', 3377)->first()??0;
-        $agendaTime = B24Analitics::where('AIM', 3388)->first()??0;
+        $agendaTime = B24Analitics::where([
+            'AIM'=> 3388,
+            'id_item' => $user_id,
+            ])->first()??0;
         return view('bitrix24.b24agenda.show', [
             //      'items' => $userCompanies,
             'itemsTomorrow' => $itemsTomorrow,
@@ -429,6 +432,7 @@ class B24AgendaController extends Controller
             if (empty($Time)) {
                 $time = B24Analitics::create([
                     'AIM' => 3388,
+                    'id_item' => $user_id,
                     'date1' => $currentTime,
                 ]);
             } else {
