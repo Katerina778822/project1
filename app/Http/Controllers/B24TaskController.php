@@ -220,7 +220,7 @@ class B24TaskController extends AbstractB24Controller
         $items = $this->helperOriginAPI->getItemUpdate('task', $requestArray);
       //  dd($b24countItems);
         while (count($items) && $b24countItems > $count) {
-            foreach ($items as $item) {$i++; if($i==3)dd($item);
+            foreach ($items as $item) {//$i++; if($i==3)dd($item);
                 //      dd($item);
                 //     $item = get_object_vars($item);
 
@@ -272,7 +272,7 @@ class B24TaskController extends AbstractB24Controller
                                     // $item['description'] = $hostItem;
                                     break;
                             }
-                if ($item['id'] == 242737)
+                if ($item['id'] == 204963)
                 dd($item);
                     $this->update($item);
                 $count++;
