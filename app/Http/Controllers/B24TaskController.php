@@ -215,12 +215,12 @@ class B24TaskController extends AbstractB24Controller
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
         $requestArray['start'] = $count;
-
+       $i=1;
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
         $items = $this->helperOriginAPI->getItemUpdate('task', $requestArray);
         //dd($items);
-        while (count($items) && $b24countItems > $count) {dd($items);
-            foreach ($items as $item) {
+        while (count($items) && $b24countItems > $count) {if($i==2)dd($items);
+            foreach ($items as $item) {$i++;
                 //      dd($item);
                 //     $item = get_object_vars($item);
 
