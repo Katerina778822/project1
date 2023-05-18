@@ -272,7 +272,7 @@ class B24TaskController extends AbstractB24Controller
                                     // $item['description'] = $hostItem;
                                     break;
                             }
-                if ($item->id == 242737)
+                if ($item['id'] == 242737)
                 dd($item);
                     $this->update($item);
                 $count++;
