@@ -218,9 +218,9 @@ class B24TaskController extends AbstractB24Controller
        $i=1;
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
         $items = $this->helperOriginAPI->getItemUpdate('task', $requestArray);
-        dd($b24countItems);
-        while (count($items) && $b24countItems > $count) {if($i==3)dd($items);
-            foreach ($items as $item) {$i++;
+      //  dd($b24countItems);
+        while (count($items) && $b24countItems > $count) {
+            foreach ($items as $item) {$i++; if($i==3)dd($item);
                 //      dd($item);
                 //     $item = get_object_vars($item);
 
