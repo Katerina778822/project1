@@ -18,6 +18,7 @@ class CreateB24RaportsTable extends Migration
             $table->unsignedBigInteger('USER_ID')->nullable()->default(0);
             $table->unsignedBigInteger('COMPANY_ID')->nullable()->default(0);
             $table->unsignedBigInteger('LEAD_ID')->nullable()->default(0);
+            $table->unsignedBigInteger('CONTACT_ID')->nullable()->default(0);
             $table->unsignedBigInteger('DEAL_ID')->nullable()->default(0);
             $table->unsignedBigInteger('TASK_ID')->nullable()->default(0);
             $table->unsignedBigInteger('RING_ID')->nullable()->default(0);
