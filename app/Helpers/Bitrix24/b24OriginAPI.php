@@ -202,7 +202,7 @@ class b24OriginAPI
         $response = $this->apiClient->getResponse($this->getApiUrl($itemType), $requestArray);
         $responseContent = $response->getContent();
         $result = json_decode($responseContent, true);
-             dd($requestArray);
+            // dd($requestArray);
         if (!empty($result['result']['tasks']))
             return $result['result']['tasks'];
         return  $result['result'];
