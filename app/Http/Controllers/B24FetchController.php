@@ -129,7 +129,7 @@ class B24FetchController extends AbstractB24Controller
 
     public function updateDataTask()
     {
-        $date = new DateTime('-10 days');
+        $date = new DateTime('-20 days');
         $date = $date->format('Y-m-d');
 
         if ($_POST['date'] > $date)

@@ -148,6 +148,7 @@ class b24OriginAPI
     }
     public function getQuantityUpdate($itemType,  $date = null, $apiUrl = null, $requestArray = null)
     {
+
         $requestArray['DATE'] = $date;
         $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
         $apiUrl = $this->getApiUrl($itemType);
@@ -190,7 +191,7 @@ class b24OriginAPI
     }
 
     public function getItemUpdate($itemType, $requestArray, $apiUrl = null)
-    {
+    {   //    $requestArray['filter']['<' . $this->getDateModifyString($itemType)] = '2023-05-19T19:40:00+03:00';//TEMP
         usleep(800000);
           $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
         //$requestArray['filter']['start']=  intdiv( $requestArray['filter']['start'], 50)*50;//целочисленное деление на 50 и умножение для нарезки блоков items строго по 50 в запросе.

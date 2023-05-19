@@ -204,25 +204,24 @@ class B24TaskController extends AbstractB24Controller
     public function updateData($checkDate)
     {
         //  $count = 0;
-        //$checkDate=null;//'2022-01-01T00:00:00+03:00';
+    //    $checkDate = '2023-05-08T13:30:00+03:00'; //TEMP
         $b24countItems = $this->helperOriginAPI->getQuantityUpdate('task', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $count = 0;
-
-
 
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = ['ID', 'DESCRIPTION', 'RESPONSIBLE_ID', 'TIME_ESTIMATE', 'TITLE', 'DEADLINE', 'DATE_START', 'STATUS', 'CREATED_DATE', 'guid', 'CREATEDDATE', 'CHANGED_DATE', 'CLOSED_DATE', 'UF_CRM_TASK'];
         $requestArray['start'] = $count;
-       $i=1;
+        $i = 1;
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
         $items = $this->helperOriginAPI->getItemUpdate('task', $requestArray);
-      //  dd($b24countItems);
+        //  dd($b24countItems);
         while (count($items) && $b24countItems > $count) {
-            foreach ($items as $item) {//$i++; if($i==3)dd($item);
-                //      dd($item);
-                //     $item = get_object_vars($item);
+            $i++; //temp
+            foreach ($items as $item) {
+
+      
 
                 if (!empty($item['closedDate']))
                     $item['closedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['closedDate'])->format('Y-m-d H:i:s');
@@ -273,7 +272,7 @@ class B24TaskController extends AbstractB24Controller
                                     break;
                             }
 
-                    $this->update($item);
+                $this->update($item);
                 $count++;
             }
             //$b24count =B24Task::count(); //save result count
