@@ -179,7 +179,7 @@ class B24RaportController extends Controller
 
     public function index()
     {
-        dd("Here");
+        
         $job = new JobsB24Raport();
         $this->dispatch($job);
     }
