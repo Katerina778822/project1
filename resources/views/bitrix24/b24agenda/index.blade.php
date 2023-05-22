@@ -5,7 +5,6 @@
                 <a href="{{ route('raport.index') }}" class="btn-main">Создать отчет</a>
             </h2>
         </div>
-
     </x-slot>
     <table class="table table-hover">
         <thead>
@@ -15,9 +14,6 @@
                 <th>Создать Расписание</th>
                 <th>Смотреть Расписание</th>
                 <th>Смотреть Отчет</th>
-
-
-
             </tr>
         </thead>
         <tbody>
@@ -30,20 +26,15 @@
                         Создать </a></td>
                 <td> <a class="btn btn-link" href="{{ route('agenda.show', ['agenda' => $item['ID']]) }}">
                         Смотреть
-
                 <td> 
                     <form action="{{ route('raport.show', ['raport' => $item['ID']]) }}" method="GET">
                     <button class="btn-main">Смотреть</button>
-                    <input type="date" class="field-main" id="date" name="date">
-                    
+                    <input type="date" class="field-main" id="date" name="date">                  
                 </form>
                 </td>
-
-
             </tr>
             @endforeach
             @endif
         </tbody>
-
     </table>
 </x-app-layout>

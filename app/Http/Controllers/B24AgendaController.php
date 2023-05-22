@@ -372,14 +372,12 @@ class B24AgendaController extends Controller
 
     public function fetchData($user_id)
     {
-
         //получить список компаний для данного юзера с актуальной задачей/активностью в компании, сделке
         // актуальная задача в компании 
         $statusArr = [1617, 349, 1417, 1659, 1419, 1753]; //UF_CRM_1540465145514 - статусы клиента
         $userCompanies = Company::where('ASSIGNED_BY_ID', $user_id)
             ->whereIn('UF_CRM_1540465145514', $statusArr)
             ->get();
-
         //перебор компаний на предмет наличия задач
         //  $date2->modify('-4 day'); //temp
         foreach ($userCompanies as $userCompany) {
@@ -395,9 +393,7 @@ class B24AgendaController extends Controller
                         }
             //if ($userCompany->ID == 4495)
             //  dd($userCompany->STATUS, ' ', $userCompany->AGENDA_DATE);
-
         }
-
         //перебор лидов на предмет наличия задач
         $dealStage = ['NEW', '22'];
         $userLeads = B24Lead::where([
@@ -418,9 +414,6 @@ class B24AgendaController extends Controller
                         $userCompanies->add($userLead);
                     }
         }
-
-
-
         $userCompanies = $userCompanies->sortByDesc('AGENDA_DATE')->sortBy('STATUS');
         try {
             $file = 'userfiles/' . $user_id  . '.json'; //test

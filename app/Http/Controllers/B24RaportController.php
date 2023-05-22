@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\B24Raport as JobsB24Raport;
 use App\Models\B24Activity;
+use App\Models\B24Analitics;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
 use App\Models\B24Lead;
@@ -33,7 +34,7 @@ class B24RaportController extends Controller
         // $end = $end->modify('-3 day'); //TEMP!!
         // $end->setTime(21, 0, 0);//TEMP!!
         $start->setTime(0, 0, 0);
-        $user_id = 96;
+        $user_id = 1501;
         //заполнение/обновление клиентодел из чатов
         $Activities = B24Activity::whereBetween('b24_activity.LAST_UPDATED', [$start, $end])
             ->where('PROVIDER_ID', 'IMOPENLINES_SESSION')->get();
@@ -112,6 +113,8 @@ class B24RaportController extends Controller
             ])
             ->get();
         foreach ($Rings as $ring) {
+        //    if ($ring->PORTAL_USER_ID != 1501)TEMP!!
+          //      continue;TEMP!!!
             $item = [];
             $searchRaportConditions = [];
             $searchRaportConditions[] = ['b24_rings.PHONE_NUMBER', '=', $ring->PHONE_NUMBER];
@@ -229,7 +232,7 @@ class B24RaportController extends Controller
                 $title = 'ЛИД: ';
             } elseif ($raport['CONTACT_ID']) {
                 $contact =  B24Contact::find($raport['CONTACT_ID']);
-                $title = 'Контакт: '.$contact->NAME.' '.$contact->LAST_NAME;
+                $title = 'Контакт: ' . $contact->NAME . ' ' . $contact->LAST_NAME;
             }
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
@@ -244,11 +247,18 @@ class B24RaportController extends Controller
                 'RING_ID' => $raport->RING_ID ?? "-",
                 'ACTIVITY_ID' => $raport->ACTIVITY_ID ?? "-",
                 'URL_TYPE' => $raport['COMPANY_ID'] ? 0 : 1,
+                
             ]);
         }
+        $cronTime = B24Analitics::where('AIM', 3377)->first()??0;
+        $agendaTime = B24Analitics::where([
+            'AIM'=> 4477,
+            'id_item' => $user_id,
+            ])->first()??0;
         return view('bitrix24.raport.show', [
             'items' => $items,
-
+            'cronTime' => $cronTime?$cronTime->date1:0,
+            'agendaTime' => $agendaTime?$agendaTime->date1:0
         ]);
     }
 
