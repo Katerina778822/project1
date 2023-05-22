@@ -37,7 +37,7 @@ Log::channel('single')->info('cron.php fetchAll  done.');
 
 $orderController = $app->make(\App\Http\Controllers\B24RaportController::class);
 $orderController->fetchAll($date);
-$Time = B24Analitics::where('AIM', 3377)->first();
+$Time = B24Analitics::where('AIM', 4477)->first();
 if (empty($Time)) {//запись даты обновления в БД
     $time = B24Analitics::create([
         'AIM' => 4477,
@@ -48,3 +48,4 @@ if (empty($Time)) {//запись даты обновления в БД
 
     $Time->save();
 }
+Log::channel('single')->info('cron.php Raport created.');
