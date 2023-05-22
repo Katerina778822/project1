@@ -36,7 +36,7 @@ if (empty($Time)) {//запись даты обновления в БД
 Log::channel('single')->info('cron.php fetchAll  done.');
 
 $orderController = $app->make(\App\Http\Controllers\B24RaportController::class);
-$orderController->fetchAll($date);
+$orderController->index();
 $Time = B24Analitics::where('AIM', 4477)->first();
 if (empty($Time)) {//запись даты обновления в БД
     $time = B24Analitics::create([
