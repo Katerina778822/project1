@@ -179,7 +179,7 @@ class B24RaportController extends Controller
 
     public function index()
     {
-        
+
         $job = new JobsB24Raport();
         $this->dispatch($job);
     }
@@ -221,17 +221,20 @@ class B24RaportController extends Controller
 
         foreach ($raports as $raport) {
             $company = 'Компания/Лид не найдены';
-            $lead = '';
+            $title = '';
             if ($raport['COMPANY_ID']) {
                 $company = Company::find($raport['COMPANY_ID']);
             } elseif ($raport['LEAD_ID']) {
                 $company =  B24Lead::find($raport['LEAD_ID']);
-                $lead = 'ЛИД: ';
+                $title = 'ЛИД: ';
+            } elseif ($raport['CONTACT_ID']) {
+                $contact =  B24Contact::find($raport['CONTACT_ID']);
+                $title = 'Контакт: '.$contact->NAME.' '.$contact->LAST_NAME;
             }
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
             $items->add([
-                'TITLE' => $lead.($company->TITLE ?? "Не найдено"),
+                'TITLE' => $title . ($company->TITLE ?? "Не найдено"),
                 'ID' => $company->ID ?? "Не найдено",
                 'DEAL' => $raport->DEAL_ID ?? "-",
                 'DATE' => $raport->DATE ?? "-",
