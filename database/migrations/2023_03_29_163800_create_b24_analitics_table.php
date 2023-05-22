@@ -16,8 +16,10 @@ class CreateB24AnaliticsTable extends Migration
      //1 - 
      //2 -  
      //3 -  
-     //3377 -  cron.php update time  
+     //3377 -  cron.php update ALL DATA time  
      //3388 -  agenda create time  
+     //4477 -    cron.php RAPORT update time  
+     //4488 -     RAPORT create time  
 //
     public function up()
     {

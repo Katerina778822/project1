@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\B24Raport as JobsB24Raport;
 use App\Models\B24Activity;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
@@ -22,15 +23,15 @@ class B24RaportController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function UpdateData()
     {
         // $deals = $D->getClientStatus(); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
         $timezone = new DateTimeZone('Europe/Kiev');
         $start = new DateTime('now', $timezone);
-        $start = $start->modify('-3 day'); //TEMP!!
+        //  $start = $start->modify('-3 day'); //TEMP!!
         $end = new DateTime('now', $timezone);
-        $end = $end->modify('-3 day'); //TEMP!!
-        $end->setTime(21, 0, 0);//TEMP!!
+        // $end = $end->modify('-3 day'); //TEMP!!
+        // $end->setTime(21, 0, 0);//TEMP!!
         $start->setTime(0, 0, 0);
         $user_id = 96;
         //заполнение/обновление клиентодел из чатов
@@ -43,7 +44,7 @@ class B24RaportController extends Controller
             if ($activity->COMPANY_ID) { //если в чате есть компания
                 $item['COMPANY_ID'] = $activity->COMPANY_ID;
                 $company = Company::find($activity->COMPANY_ID);
-                $item['USER_ID'] =$company->ASSIGNED_BY_ID;
+                $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                 $item['DEAL_TYPE'] = $company->getClientStatus();
                 $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $activity->COMPANY_ID];
             } elseif ($activity->CONTACT_ID) { //если в чате есть контакт
@@ -122,7 +123,7 @@ class B24RaportController extends Controller
             if ($ring->CRM_COMPANY_ID) { //если в звонке есть компания
                 $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
                 $company = Company::find($ring->CRM_COMPANY_ID);
-                $item['USER_ID'] =$company->ASSIGNED_BY_ID;
+                $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                 $item['DEAL_TYPE'] = $company->getClientStatus();
                 $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
             } elseif ($ring->CRM_CONTACT_ID) { //если в звонке есть контакт
@@ -148,7 +149,6 @@ class B24RaportController extends Controller
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
             }
-           
             //поиск клиентодел (звонки) данной компании за сегодня 
             $raportFound = false;
             $raport = null;
@@ -175,6 +175,12 @@ class B24RaportController extends Controller
                 $raport = B24Raport::create($item);
             }
         }
+    }
+
+    public function index()
+    {
+        $job = new JobsB24Raport();
+        $this->dispatch($job);
     }
 
     /**
@@ -224,13 +230,13 @@ class B24RaportController extends Controller
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
             $items->add([
-                'TITLE' =>$lead.$company->TITLE ?? "Не найдено",
+                'TITLE' => $lead . $company->TITLE ?? "Не найдено",
                 'ID' => $company->ID ?? "Не найдено",
                 'DEAL' => $raport->DEAL_ID ?? "-",
                 'DATE' => $raport->DATE ?? "-",
                 'DEAL_STATUS' => $raport->DEAL_STATUS ?? "-",
                 'DEAL_TYPE' => $raport->DEAL_TYPE ?? "-",
-                'BUSINESS' => $raport->RING_ID?'Звонок':'Чат',
+                'BUSINESS' => $raport->RING_ID ? 'Звонок' : 'Чат',
                 'RING_ID' => $raport->RING_ID ?? "-",
                 'ACTIVITY_ID' => $raport->ACTIVITY_ID ?? "-",
                 'URL_TYPE' => $raport['COMPANY_ID'] ? 0 : 1,

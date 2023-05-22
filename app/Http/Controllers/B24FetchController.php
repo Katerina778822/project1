@@ -65,7 +65,7 @@ class B24FetchController extends AbstractB24Controller
 
     public function fetchAll($date = null)
     {
-        $job = new B24UpdateFetch();
+        $job = new B24UpdateFetch($date);
         $this->dispatch($job);
     }
 

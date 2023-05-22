@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Http\Controllers\B24FetchController;
+use App\Http\Controllers\B24RaportController;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,18 +10,18 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class B24UpdateFetch implements ShouldQueue
+class B24Raport implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    protected $DATE=null;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($date)
+    public function __construct()
     {
-        $this->DATE = $date;
+        //
     }
 
     /**
@@ -31,7 +31,7 @@ class B24UpdateFetch implements ShouldQueue
      */
     public function handle()
     {
-        $taskData=new B24FetchController;
-        $res=$taskData->updateData($this->DATE);
+        $taskData=new B24RaportController;
+        $res=$taskData->UpdateData();
     }
 }
