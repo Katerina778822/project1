@@ -52,7 +52,7 @@ class Company extends Model
     //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
     public function getClientStatus()
     {
-        if($this->ID=8151)//TEMP!!
+        if($this->ID==1179)//TEMP!!
         $r=0; 
         $deals  = B24Deal::where('COMPANY_ID',$this->ID)->get();
         if ($deals->count() == 0)
