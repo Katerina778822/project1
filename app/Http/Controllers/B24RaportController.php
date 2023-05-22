@@ -110,7 +110,7 @@ class B24RaportController extends Controller
                 ['CALL_DURATION', '>', '10'],
                 //       ['PORTAL_USER_ID', $user_id],
             ])
-            ->get();dd($Rings);
+            ->get();
         foreach ($Rings as $ring) {
             $item = [];
             $searchRaportConditions = [];
