@@ -231,7 +231,7 @@ class B24RaportController extends Controller
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
             $items->add([
-                'TITLE' => $lead . $company->TITLE ?? "Не найдено",
+                'TITLE' => $lead.($company->TITLE ?? "Не найдено"),
                 'ID' => $company->ID ?? "Не найдено",
                 'DEAL' => $raport->DEAL_ID ?? "-",
                 'DATE' => $raport->DATE ?? "-",
