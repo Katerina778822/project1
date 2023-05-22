@@ -30,7 +30,7 @@ class B24Raport implements ShouldQueue
      * @return void
      */
     public function handle()
-    {dd("Here2");
+    {
         $taskData=new B24RaportController;
         $res=$taskData->UpdateData();
     }

@@ -24,7 +24,7 @@ class B24RaportController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function UpdateData()
-    {
+    {dd("Here3");
         // $deals = $D->getClientStatus(); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
         $timezone = new DateTimeZone('Europe/Kiev');
         $start = new DateTime('now', $timezone);
