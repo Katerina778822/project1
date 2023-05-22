@@ -393,7 +393,7 @@ class b24OriginAPI
                     break;
                 }
             case 'deal': {
-                    return '2022-01-01T00:00:00+03:00';
+                    return '2019-01-01T00:00:00+03:00';
                     break;
                 }
             case 'lead': {

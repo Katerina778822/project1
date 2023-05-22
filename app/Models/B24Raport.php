@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class B24Raport extends Model
 {
     use HasFactory;
+    protected $table = 'b24_raports';
     protected $fillable = [
         'USER_ID', 'COMPANY_ID', 'LEAD_ID', 'CONTACT_ID', 'DEAL_ID', 'TASK_ID', 'RING_ID', 'ACTIVITY_ID', 'DEAL_TYPE',
         'DEAL_STATUS', 'DATE',

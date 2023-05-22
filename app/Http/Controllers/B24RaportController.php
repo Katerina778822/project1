@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\B24Activity;
 use App\Models\B24Contact;
+use App\Models\B24Deal;
+use App\Models\B24Lead;
 use App\Models\B24Raport;
 use App\Models\B24Ring;
 use App\Models\B24Task;
@@ -11,6 +13,7 @@ use App\Models\Company;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class B24RaportController extends Controller
 {
@@ -21,58 +24,157 @@ class B24RaportController extends Controller
      */
     public function index()
     {
-
-        $D = Company::find(5445);
-        $deals = $D->getClientStatus(); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
-
-        $item = [];
+        // $deals = $D->getClientStatus(); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
         $timezone = new DateTimeZone('Europe/Kiev');
         $start = new DateTime('now', $timezone);
+        $start = $start->modify('-3 day'); //TEMP!!
         $end = new DateTime('now', $timezone);
+        $end = $end->modify('-3 day'); //TEMP!!
+        $end->setTime(21, 0, 0);//TEMP!!
         $start->setTime(0, 0, 0);
-        $user_id = 14;
-        $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
-            ->where([
-                ['CALL_DURATION', '>', '10'],
-                ['PORTAL_USER_ID', $user_id],
-            ])->get();
-        //заполнение/обновление клиентодел из звонков
-        foreach ($Rings as $ring) {
-
-            $ring->CRM_COMPANY_ID?$item['COMPANY_ID'] = $ring->CRM_COMPANY_ID:0;
-            $ring->CRM_CONTACT_ID?$item['CONTACT_ID'] = $ring->CRM_CONTACT_ID:0;
-            $ring->CRM_LEAD_ID?$item['LEAD_ID'] = $ring->CRM_LEAD_ID:0;
-            $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
+        $user_id = 96;
+        //заполнение/обновление клиентодел из чатов
+        $Activities = B24Activity::whereBetween('b24_activity.LAST_UPDATED', [$start, $end])
+            ->where('PROVIDER_ID', 'IMOPENLINES_SESSION')->get();
+        foreach ($Activities as $activity) {
+            $item = [];
+            $item['ACTIVITY_ID'] = $activity->ID2;
             $item['DATE'] = $end;
-            $item['USER_ID'] = $user_id;
-            //поиск клиентодел данной компании за сегодня 
-            $raport = B24Raport::join('b24_rings','b24_raports.RING_ID','=','b24_rings.ID')
-            ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
-            ->where([
-        //        ['b24_raports.DATE','=',$end->format('Y-m-d')],
-                ['b24_rings.PHONE_NUMBER','=',$ring->PHONE_NUMBER],
-        //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
-            ])
-            ->get();
-            if (count($raport)) {
-                $raport->update($item);
+            if ($activity->COMPANY_ID) { //если в чате есть компания
+                $item['COMPANY_ID'] = $activity->COMPANY_ID;
+                $company = Company::find($activity->COMPANY_ID);
+                $item['USER_ID'] =$company->ASSIGNED_BY_ID;
+                $item['DEAL_TYPE'] = $company->getClientStatus();
+                $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $activity->COMPANY_ID];
+            } elseif ($activity->CONTACT_ID) { //если в чате есть контакт
+                $item['CONTACT_ID'] = $activity->CONTACT_ID;
+                $company = Company::find(B24Contact::find($activity->CONTACT_ID)->COMPANY_ID);
+                $searchRaportConditions[] = ['b24_raports.CONTACT_ID', '=', $item['CONTACT_ID']];
+                if ($company) {
+                    $item['COMPANY_ID'] = $company->ID;
+                    $item['USER_ID'] = $company->ASSIGNED_BY_ID;
+                    $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
+                }
+            } elseif ($activity->DEAL_ID) { //если в чате есть сделка
+                $item['DEAL_ID'] = $activity->DEAL_ID;
+                $company = Company::find(B24Deal::find($activity->DEAL_ID)->COMPANY_ID);
+                $searchRaportConditions[] = ['b24_raports.DEAL_ID', '=', $item['DEAL_ID']];
+                if ($company) {
+                    $item['COMPANY_ID'] = $company->ID;
+                    $item['USER_ID'] = $company->ASSIGNED_BY_ID;
+                    $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
+                }
+            } elseif ($activity->DEAL_ID) { //если в чате есть лид
+                $item['LEAD_ID'] = $activity->LEAD_ID;
+                $item['USER_ID'] =  B24Lead::find($activity->LEAD_ID)->ASSIGNED_BY_ID;
+                $item['DEAL_TYPE'] = 1;
+                $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
+                $company = Company::find(B24Lead::find($activity->LEAD_ID)->COMPANY_ID);
+                if ($company) {
+                    $item['COMPANY_ID'] = $company->ID;
+                    $item['USER_ID'] = $company->ASSIGNED_BY_ID;
+                    $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
+                }
+            }
+            //поиск клиентодел (чаты) данной компании за сегодня 
+            $raportFound = false;
+            $raport = null;
+            foreach ($searchRaportConditions as $condition) {
+                $raport = B24Raport:: //
+                    //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
+                    where([
+                        ['b24_raports.DATE', '=', $end->format('Y-m-d')],
+                        $condition,
+                        //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
+                    ])
+                    ->join('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
+                    ->first();
+                if (!empty($raport)) {
+                    $raportFound = true;
+                    break;
+                }
+            }
+            if ($raportFound) {
+                B24Raport::find($raport->id)->update($item);
             } else { //создаем клиентодело для контакта
                 $raport = B24Raport::create($item);
             }
-            
         }
+        //заполнение/обновление клиентодел из звонков
+        $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
+            ->where([
+                ['CALL_DURATION', '>', '10'],
+                //       ['PORTAL_USER_ID', $user_id],
+            ])
+            ->get();
+        foreach ($Rings as $ring) {
+            $item = [];
+            $searchRaportConditions = [];
+            $searchRaportConditions[] = ['b24_rings.PHONE_NUMBER', '=', $ring->PHONE_NUMBER];
 
+            $item['USER_ID'] = $user_id;
+            $item['RING_ID'] = $ring->ID;
+            $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
+            $item['DATE'] = $end;
+            if ($ring->CRM_COMPANY_ID) { //если в звонке есть компания
+                $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
+                $company = Company::find($ring->CRM_COMPANY_ID);
+                $item['USER_ID'] =$company->ASSIGNED_BY_ID;
+                $item['DEAL_TYPE'] = $company->getClientStatus();
+                $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
+            } elseif ($ring->CRM_CONTACT_ID) { //если в звонке есть контакт
+                $item['CONTACT_ID'] = $ring->CRM_CONTACT_ID;
+                $searchRaportConditions[] = ['b24_raports.CONTACT_ID', '=',  $item['CONTACT_ID']]; //ищем рапорт по контакту               $company = Company::find(B24Contact::find($ring->CRM_CONTACT_ID)->COMPANY_ID);
+                $company = Company::find(B24Contact::find($ring->CRM_CONTACT_ID)->COMPANY_ID);
+                if ($company) {
+                    $item['COMPANY_ID'] = $company->ID;
+                    $item['USER_ID'] = $company->ASSIGNED_BY_ID;
+                    $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']]; //ищем рапорт по компании
+                }
+            } elseif ($ring->CRM_LEAD_ID) { //если в звонке есть лид
+                $item['LEAD_ID'] = $ring->CRM_LEAD_ID;
+                $item['USER_ID'] =  B24Lead::find($ring->CRM_LEAD_ID)->ASSIGNED_BY_ID;
+                $item['DEAL_TYPE'] = 4;
+                $searchRaportConditions[] = ['b24_raports.LEAD_ID', '=',  $item['LEAD_ID']];
+                $company = Company::find(B24Lead::find($ring->CRM_LEAD_ID)->COMPANY_ID);
+                if ($company) {
+                    $item['COMPANY_ID'] = $company->ID;
+                    $item['USER_ID'] = $company->ASSIGNED_BY_ID;
+                    $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
+                }
+            }
+           
+            //поиск клиентодел (звонки) данной компании за сегодня 
+            $raportFound = false;
+            $raport = null;
+            foreach ($searchRaportConditions as $condition) {
+                $raport = B24Raport:: //
+                    //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
+                    where([
+                        ['b24_raports.DATE', '=', $end->format('Y-m-d')],
+                        //     ['b24_rings.PHONE_NUMBER',$ring->PHONE_NUMBER]
+                        $condition
 
-        $var =  $Rings->unique('CRM_COMPANY_ID')->pluck('CRM_COMPANY_ID')->toArray();
-        $itemsRings = Company::whereIn('ID', $var);
-        $Activities = B24Activity::whereBetween('b24_activity.LAST_UPDATED', [$start, $end])
-            ->where('PROVIDER_ID', 'IMOPENLINES_SESSION')->get();
-
-        //dd($catalog);
-        return view('bitrix24.raport.index', [
-            //'items' => $items,
-            //   'items' => $id
-        ]);
+                        //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
+                    ])
+                    ->join('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
+                    ->first();
+                if (!empty($raport)) {
+                    $raportFound = true;
+                    break;
+                }
+            }
+            if ($raportFound) {
+                B24Raport::find($raport->id)->update($item);
+            } else { //создаем клиентодело для контакта
+                $raport = B24Raport::create($item);
+            }
+        }
     }
 
     /**
@@ -102,9 +204,42 @@ class B24RaportController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($user_id, Request $request)
     {
-        //
+        $raports = B24Raport::where([
+            ['USER_ID', $user_id],
+            ['DATE', $request->date],
+        ])->get();
+        $items = new Collection();
+
+        foreach ($raports as $raport) {
+            $company = 'Компания/Лид не найдены';
+            $lead = '';
+            if ($raport['COMPANY_ID']) {
+                $company = Company::find($raport['COMPANY_ID']);
+            } elseif ($raport['LEAD_ID']) {
+                $company =  B24Lead::find($raport['LEAD_ID']);
+                $lead = 'ЛИД: ';
+            }
+            // if ($raport['DEAL_ID']) {
+            //$deal = B24Deal::find($raport['DEAL_ID']);            }
+            $items->add([
+                'TITLE' =>$lead.$company->TITLE ?? "Не найдено",
+                'ID' => $company->ID ?? "Не найдено",
+                'DEAL' => $raport->DEAL_ID ?? "-",
+                'DATE' => $raport->DATE ?? "-",
+                'DEAL_STATUS' => $raport->DEAL_STATUS ?? "-",
+                'DEAL_TYPE' => $raport->DEAL_TYPE ?? "-",
+                'BUSINESS' => $raport->RING_ID?'Звонок':'Чат',
+                'RING_ID' => $raport->RING_ID ?? "-",
+                'ACTIVITY_ID' => $raport->ACTIVITY_ID ?? "-",
+                'URL_TYPE' => $raport['COMPANY_ID'] ? 0 : 1,
+            ]);
+        }
+        return view('bitrix24.raport.show', [
+            'items' => $items,
+
+        ]);
     }
 
     /**

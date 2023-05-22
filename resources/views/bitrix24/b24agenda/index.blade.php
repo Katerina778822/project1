@@ -1,14 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex ">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
-                <a href="first" class="btn-main">First fetch</a>
-            </h2>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
-                <a href="new" class="btn-main">New data</a>
-            </h2>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
-                <a href="analitics" class="btn-main">Analitics</a>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
+                <a href="{{ route('raport.index') }}" class="btn-main">Создать отчет</a>
             </h2>
         </div>
 
@@ -20,6 +14,7 @@
                 <th>Фамилия</th>
                 <th>Создать Расписание</th>
                 <th>Смотреть Расписание</th>
+                <th>Смотреть Отчет</th>
 
 
 
@@ -35,7 +30,14 @@
                         Создать </a></td>
                 <td> <a class="btn btn-link" href="{{ route('agenda.show', ['agenda' => $item['ID']]) }}">
                         Смотреть
-                    </a></td>
+
+                <td> 
+                    <form action="{{ route('raport.show', ['raport' => $item['ID']]) }}" method="GET">
+                    <button class="btn-main">Смотреть</button>
+                    <input type="date" class="field-main" id="date" name="date">
+                    
+                </form>
+                </td>
 
 
             </tr>

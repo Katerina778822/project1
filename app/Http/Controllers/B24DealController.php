@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\b24DealFetch;
 use App\Models\B24Deal;
+use App\Models\Company;
 use App\View\Components\Alert;
 use DateTime;
 use Exception;
@@ -86,8 +87,8 @@ class B24DealController extends AbstractB24Controller
     {
         $b24Item = B24Deal::find($item['ID']);
 
-       if(B24Deal::where('ID', $item['ID'])->exists()) {
-                $b24Item->update($item);
+        if (B24Deal::where('ID', $item['ID'])->exists()) {
+            $b24Item->update($item);
         } else
             $this->store($item);
     }
@@ -124,7 +125,7 @@ class B24DealController extends AbstractB24Controller
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = [
-            'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID','OPENED',
+            'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID', 'CLOSED',
             'OPPORTUNITY', 'COMMENTS', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
             'UF_CRM_5BB6246DC30D8', 'UF_CRM_1545811346080', 'UF_CRM_1564411704463', 'UF_CRM_5CAB07390C964', 'UF_CRM_1540120643248',
             'UF_CRM_1545811274193', 'UF_CRM_1547732437301', 'DATE_CREATE', 'CLOSEDATE', 'UF_CRM_5C224D08961A9',
@@ -159,6 +160,11 @@ class B24DealController extends AbstractB24Controller
                 else $item['DATE_MODIFY'] = NULL;
 
 
+                if ($item['COMPANY_ID'] == 0)
+                    $item['COMPANY_ID'] = 7549;
+               
+                if (!Company::find($item['COMPANY_ID']))
+                    $item['COMPANY_ID'] = 7549;
 
                 $this->store($item);
             }
@@ -170,7 +176,6 @@ class B24DealController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantity('deal', $checkDate);
         }
-
     }
     public function updateData($checkDate)
     {
@@ -186,7 +191,7 @@ class B24DealController extends AbstractB24Controller
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = [
-            'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID','OPENED',
+            'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID', 'CLOSED',
             'OPPORTUNITY', 'COMMENTS', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
             'UF_CRM_5BB6246DC30D8', 'UF_CRM_1545811346080', 'UF_CRM_1564411704463', 'UF_CRM_5CAB07390C964', 'UF_CRM_1540120643248',
             'UF_CRM_1545811274193', 'UF_CRM_1547732437301', 'DATE_CREATE', 'CLOSEDATE', 'UF_CRM_5C224D08961A9', 'DATE_MODIFY'
@@ -223,16 +228,15 @@ class B24DealController extends AbstractB24Controller
 
 
                 $this->update($item);
-                 $count++;
+                $count++;
             }
-           // $b24count = B24Deal::count(); //save result count
+            // $b24count = B24Deal::count(); //save result count
             //$b24count->save();
-            
+
             $requestArray['start'] = $count;
             $items = $this->helperOriginAPI->getItemUpdate('deal', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('deal', $checkDate);
         }
-
     }
 }

@@ -19,7 +19,7 @@ class CreateB24DealsTable extends Migration
             $table->unsignedBigInteger('COMPANY_ID')->default(0); //company
             $table->string('TITLE')->default('');
      
-            $table->char('OPENED')->default('');
+            $table->char('CLOSED')->default('');
             $table->string('STAGE_ID')->default('');
             $table->string('CURRENCY_ID')->default('');
             $table->double('OPPORTUNITY')->default(0)->nullable();

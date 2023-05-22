@@ -52,6 +52,8 @@ class Company extends Model
     //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
     public function getClientStatus()
     {
+        if($this->ID=8151)//TEMP!!
+        $r=0; 
         $deals  = B24Deal::where('COMPANY_ID',$this->ID)->get();
         if ($deals->count() == 0)
             return 4;   //4-новый
@@ -60,7 +62,7 @@ class Company extends Model
                 return $deal->CLOSEDATE;
             });
             $dealsLast = $deals->firstWhere('CLOSEDATE', $dealsLastData);
-            if ($deals->count() == 1 && $dealsLast->OPENED == 'Y') //последняя сделка открыта
+            if ($deals->count() == 1 && $dealsLast->CLOSED == 'N') //последняя сделка открыта
                 return 4;  //4-новый
             $winStateArray = ['C23:WON']; //развоз
             $dealsSuccessCargo = $deals->whereIn('STAGE_ID', $winStateArray);
