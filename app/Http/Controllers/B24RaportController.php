@@ -184,12 +184,12 @@ class B24RaportController extends Controller
         $currentTime = new DateTime('now', $timezone);
         $Time = B24Analitics::where([
             ['AIM', 4488],
-            ['id_item', $user_id]
+
         ])->first();
         if (empty($Time)) {
             $time = B24Analitics::create([
                 'AIM' => 4488,
-                'id_item' => $user_id,
+
                 'date1' => $currentTime,
             ]);
         } else {
@@ -273,7 +273,6 @@ class B24RaportController extends Controller
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
         $agendaTime = B24Analitics::where([
             'AIM' => 4488,
-            'id_item' => $user_id,
         ])->first() ?? 0;
         return view('bitrix24.raport.show', [
             'items' => $items,
