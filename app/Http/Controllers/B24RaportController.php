@@ -104,23 +104,6 @@ class B24RaportController extends Controller
             } else { //создаем клиентодело для контакта
                 $raport = B24Raport::create($item);
             }
-            //запись даты формирования отчета в базу данных
-            $timezone = new DateTimeZone('Europe/Kiev');
-            $currentTime = new DateTime('now', $timezone);
-            $Time = B24Analitics::where([
-                ['AIM', 4488],
-                ['id_item', $user_id]
-            ])->first();
-            if (empty($Time)) {
-                $time = B24Analitics::create([
-                    'AIM' => 4488,
-                    'id_item' => $user_id,
-                    'date1' => $currentTime,
-                ]);
-            } else {
-                $Time->date1  = $currentTime->format('Y-m-d H:i:s');
-                $Time->save();
-            }
         }
         //заполнение/обновление клиентодел из звонков
         $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
@@ -194,6 +177,24 @@ class B24RaportController extends Controller
             } else { //создаем клиентодело для контакта
                 $raport = B24Raport::create($item);
             }
+        }
+
+        //запись даты формирования отчета в базу данных
+        $timezone = new DateTimeZone('Europe/Kiev');
+        $currentTime = new DateTime('now', $timezone);
+        $Time = B24Analitics::where([
+            ['AIM', 4488],
+            ['id_item', $user_id]
+        ])->first();
+        if (empty($Time)) {
+            $time = B24Analitics::create([
+                'AIM' => 4488,
+                'id_item' => $user_id,
+                'date1' => $currentTime,
+            ]);
+        } else {
+            $Time->date1  = $currentTime->format('Y-m-d H:i:s');
+            $Time->save();
         }
     }
 
@@ -269,9 +270,9 @@ class B24RaportController extends Controller
             ]);
         }
 
-        $cronTime = B24Analitics::where('AIM', 3377)->first() ?? 0;
+        $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
         $agendaTime = B24Analitics::where([
-            'AIM' => 4477,
+            'AIM' => 4488,
             'id_item' => $user_id,
         ])->first() ?? 0;
         return view('bitrix24.raport.show', [
