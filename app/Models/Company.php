@@ -9,11 +9,20 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     use HasFactory;
+    public static $clientStatus = [
+        0 => '-',
+        1 => 'Клиент',
+        2 => 'База',
+        3 => 'Остывший',
+        4 => 'Новый',
+
+    ];
     protected $table = 'companies';
     protected $fillable = [
         'ID', 'TITLE', 'UF_CRM_1597826997473', 'ASSIGNED_BY_ID', 'COMPANY_TYPE', 'DATE_CREATE', 'DATE_MODIFY', 'LAST_ACTIVITY_TIME',
         'ASSIGNED_BY_ID', 'LAST_ACTIVITY_BY', 'UF_CRM_1540465145514', 'UF_CRM_1540121191354', 'UF_CRM_5DBAA9FFCC357'
     ];
+
 
     protected $primaryKey = 'ID';
 

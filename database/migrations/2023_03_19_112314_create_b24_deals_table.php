@@ -26,6 +26,7 @@ class CreateB24DealsTable extends Migration
             $table->string('COMMENTS')->default('')->nullable();
             $table->char('IS_RETURN_CUSTOMER')->default('')->nullable();;
             $table->timestamps();
+            $table->string('STAGE_ID_BEFORE')->default('')->nullable(); // Результат работы со сделкой
             $table->string('UF_CRM_1545747379148')->default('')->nullable(); // Результат работы со сделкой
             $table->string('UF_CRM_5C20F23556A62')->default('')->nullable(); //  Канал продажи
             $table->string('UF_CRM_5BB6246DC30D8')->default('')->nullable(); //  Boost. Угода Генерация Джерело Лида

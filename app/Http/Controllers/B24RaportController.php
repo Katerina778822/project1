@@ -234,6 +234,7 @@ class B24RaportController extends Controller
                 $contact =  B24Contact::find($raport['CONTACT_ID']);
                 $title = 'Контакт: ' . $contact->NAME . ' ' . $contact->LAST_NAME;
             }
+          
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
             $items->add([
@@ -242,14 +243,16 @@ class B24RaportController extends Controller
                 'DEAL' => $raport->DEAL_ID ?? "-",
                 'DATE' => $raport->DATE ?? "-",
                 'DEAL_STATUS' => $raport->DEAL_STATUS ?? "-",
-                'DEAL_TYPE' => $raport->DEAL_TYPE ?? "-",
+                'DEAL_TYPE' =>  Company::$clientStatus[$raport->DEAL_TYPE],
                 'BUSINESS' => $raport->RING_ID ? 'Звонок' : 'Чат',
                 'RING_ID' => $raport->RING_ID ?? "-",
                 'ACTIVITY_ID' => $raport->ACTIVITY_ID ?? "-",
                 'URL_TYPE' => $raport['COMPANY_ID'] ? 0 : 1,
                 
             ]);
+       
         }
+       
         $cronTime = B24Analitics::where('AIM', 3377)->first()??0;
         $agendaTime = B24Analitics::where([
             'AIM'=> 4477,
