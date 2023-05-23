@@ -15,7 +15,6 @@ class Company extends Model
         2 => 'База',
         3 => 'Остывший',
         4 => 'Новый',
-
     ];
     protected $table = 'companies';
     protected $fillable = [

@@ -104,6 +104,23 @@ class B24RaportController extends Controller
             } else { //создаем клиентодело для контакта
                 $raport = B24Raport::create($item);
             }
+            //запись даты формирования отчета в базу данных
+            $timezone = new DateTimeZone('Europe/Kiev');
+            $currentTime = new DateTime('now', $timezone);
+            $Time = B24Analitics::where([
+                ['AIM', 4488],
+                ['id_item', $user_id]
+            ])->first();
+            if (empty($Time)) {
+                $time = B24Analitics::create([
+                    'AIM' => 4488,
+                    'id_item' => $user_id,
+                    'date1' => $currentTime,
+                ]);
+            } else {
+                $Time->date1  = $currentTime->format('Y-m-d H:i:s');
+                $Time->save();
+            }
         }
         //заполнение/обновление клиентодел из звонков
         $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
@@ -113,8 +130,8 @@ class B24RaportController extends Controller
             ])
             ->get();
         foreach ($Rings as $ring) {
-        //    if ($ring->PORTAL_USER_ID != 1501)TEMP!!
-          //      continue;TEMP!!!
+            //    if ($ring->PORTAL_USER_ID != 1501)TEMP!!
+            //      continue;TEMP!!!
             $item = [];
             $searchRaportConditions = [];
             $searchRaportConditions[] = ['b24_rings.PHONE_NUMBER', '=', $ring->PHONE_NUMBER];
@@ -234,7 +251,7 @@ class B24RaportController extends Controller
                 $contact =  B24Contact::find($raport['CONTACT_ID']);
                 $title = 'Контакт: ' . $contact->NAME . ' ' . $contact->LAST_NAME;
             }
-          
+
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
             $items->add([
@@ -248,20 +265,19 @@ class B24RaportController extends Controller
                 'RING_ID' => $raport->RING_ID ?? "-",
                 'ACTIVITY_ID' => $raport->ACTIVITY_ID ?? "-",
                 'URL_TYPE' => $raport['COMPANY_ID'] ? 0 : 1,
-                
+
             ]);
-       
         }
-       
-        $cronTime = B24Analitics::where('AIM', 3377)->first()??0;
+
+        $cronTime = B24Analitics::where('AIM', 3377)->first() ?? 0;
         $agendaTime = B24Analitics::where([
-            'AIM'=> 4477,
+            'AIM' => 4477,
             'id_item' => $user_id,
-            ])->first()??0;
+        ])->first() ?? 0;
         return view('bitrix24.raport.show', [
             'items' => $items,
-            'cronTime' => $cronTime?$cronTime->date1:0,
-            'agendaTime' => $agendaTime?$agendaTime->date1:0
+            'cronTime' => $cronTime ? $cronTime->date1 : 0,
+            'agendaTime' => $agendaTime ? $agendaTime->date1 : 0
         ]);
     }
 
