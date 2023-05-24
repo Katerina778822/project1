@@ -48,6 +48,7 @@ class B24RaportController extends Controller
                 $company = Company::find($activity->COMPANY_ID);
                 $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                 $item['DEAL_TYPE'] = $company->getClientStatus();
+                $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                 $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $activity->COMPANY_ID];
             } elseif ($activity->CONTACT_ID) { //если в чате есть контакт
                 $item['CONTACT_ID'] = $activity->CONTACT_ID;
@@ -57,6 +58,7 @@ class B24RaportController extends Controller
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                     $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
                 }
             } elseif ($activity->DEAL_ID) { //если в чате есть сделка
@@ -67,6 +69,7 @@ class B24RaportController extends Controller
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                     $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
                 }
             } elseif ($activity->DEAL_ID) { //если в чате есть лид
@@ -79,6 +82,7 @@ class B24RaportController extends Controller
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                     $item['DEAL_TYPE'] = $company->getClientStatus();
+                    $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
                 }
             }
@@ -119,7 +123,7 @@ class B24RaportController extends Controller
             $item = [];
             $searchRaportConditions = [];
             $searchRaportConditions[] = ['b24_rings.PHONE_NUMBER', '=', $ring->PHONE_NUMBER];
-
+            $company = null;
             $item['USER_ID'] = $user_id;
             $item['RING_ID'] = $ring->ID;
             $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
@@ -129,6 +133,7 @@ class B24RaportController extends Controller
                 $company = Company::find($ring->CRM_COMPANY_ID);
                 $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                 $item['DEAL_TYPE'] = $company->getClientStatus();
+               // $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                 $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
             } elseif ($ring->CRM_CONTACT_ID) { //если в звонке есть контакт
                 $item['CONTACT_ID'] = $ring->CRM_CONTACT_ID;
@@ -138,6 +143,7 @@ class B24RaportController extends Controller
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                     $item['DEAL_TYPE'] = $company->getClientStatus();
+                 //   $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']]; //ищем рапорт по компании
                 }
             } elseif ($ring->CRM_LEAD_ID) { //если в звонке есть лид
@@ -150,6 +156,7 @@ class B24RaportController extends Controller
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
                     $item['DEAL_TYPE'] = $company->getClientStatus();
+                  //  $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
             }
@@ -174,8 +181,14 @@ class B24RaportController extends Controller
                 }
             }
             if ($raportFound) {
-                B24Raport::find($raport->id)->update($item);
-            } else { //создаем клиентодело для контакта
+                if (!in_array($raport->DEAL_STATUS, [1, 3, 4])&&$company) {
+                    $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
+                }
+                $raport->update($item);
+            } else { //создаем клиентодело новое
+                if ($company) {
+                    $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
+                }
                 $raport = B24Raport::create($item);
             }
         }
@@ -277,7 +290,7 @@ class B24RaportController extends Controller
             'AIM' => 4488,
         ])->first() ?? 0;
         return view('bitrix24.raport.show', [
-            'user' => $user->NAME.' '.$user->LAST_NAME,
+            'user' => $user->NAME . ' ' . $user->LAST_NAME,
             'items' => $items,
             'cronTime' => $cronTime ? $cronTime->date1 : 0,
             'agendaTime' => $agendaTime ? $agendaTime->date1 : 0

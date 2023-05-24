@@ -88,6 +88,9 @@ class B24DealController extends AbstractB24Controller
         $b24Item = B24Deal::find($item['ID']);
 
         if (B24Deal::where('ID', $item['ID'])->exists()) {
+            if (empty($item['STAGE_ID_BEFORE']))
+                $item['STAGE_ID_BEFORE'] =  $item['STAGE_ID'];
+
             $b24Item->update($item);
         } else
             $this->store($item);
@@ -162,7 +165,7 @@ class B24DealController extends AbstractB24Controller
 
                 if ($item['COMPANY_ID'] == 0)
                     $item['COMPANY_ID'] = 7549;
-               
+
                 if (!Company::find($item['COMPANY_ID']))
                     $item['COMPANY_ID'] = 7549;
 
@@ -224,8 +227,6 @@ class B24DealController extends AbstractB24Controller
                 if (!empty($item['DATE_MODIFY']))
                     $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 else $item['DATE_MODIFY'] = NULL;
-
-
 
                 $this->update($item);
                 $count++;

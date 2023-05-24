@@ -107,7 +107,7 @@ class Company extends Model
         $deal = B24Deal::where([
             ['COMPANY_ID', $this->ID],
             ['CLOSED', 'N']
-        ])->orderByDesc('D2')->first();
+        ])->orderByDesc('DATE_CREATE')->first();
         if (!empty($deal)) {
             return $deal->getStatus();
         } else
