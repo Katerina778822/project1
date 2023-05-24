@@ -12,7 +12,7 @@
         <div class="container w-12/12 flex justify-center m-2 ">
             <div class=" w-11/12  ">
                 <div>cron:{{$cronTime}} /Raport:{{$agendaTime}}</div>
-
+                <div>{{$user}}</div>
                 <!--  -->
 
                 <table class="table table-hover w-full">

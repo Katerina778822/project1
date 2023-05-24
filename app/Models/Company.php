@@ -60,9 +60,9 @@ class Company extends Model
     //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
     public function getClientStatus()
     {
-        if($this->ID==1179)//TEMP!!
-        $r=0; 
-        $deals  = B24Deal::where('COMPANY_ID',$this->ID)->get();
+        if ($this->ID == 1179) //TEMP!!
+            $r = 0;
+        $deals  = B24Deal::where('COMPANY_ID', $this->ID)->get();
         if ($deals->count() == 0)
             return 4;   //4-новый
         else {
@@ -91,7 +91,7 @@ class Company extends Model
                 $yesterdayUkraine->modify('-60 day')->setTime(0, 0, 0);
                 if (
                     $dealWithMaxDateUkraine > $yesterdayUkraine ||
-                    $dealWithMaxDateCargo> $yesterdayCargo
+                    $dealWithMaxDateCargo > $yesterdayCargo
                 ) {
                     return 1; //Клиент
                 } else
@@ -99,5 +99,18 @@ class Company extends Model
             } else
                 return 2; //2 - База
         }
+    }
+
+    //returns last open Deal
+    public function getLastOpenDealStatus()
+    {
+        $deal = B24Deal::where([
+            ['COMPANY_ID', $this->ID],
+            ['CLOSED', 'N']
+        ])->orderByDesc('D2')->first();
+        if (!empty($deal)) {
+            return $deal->getStatus();
+        } else
+            return 2;
     }
 }

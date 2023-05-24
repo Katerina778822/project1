@@ -187,22 +187,7 @@ class B24RingController extends AbstractB24Controller
         $count = 0;
 
         $requestArray['DATE'] = $checkDate;
-        $requestArray['select'] = [
-            'ID',
-            'CALL_ID',
-            'PORTAL_USER_ID',
-            'PHONE_NUMBER',
-            'CALL_CATEGORY',
-            'CALL_DURATION',
-            'CALL_START_DATE',
-            'CRM_ENTITY_TYPE',
-            'CRM_ENTITY_ID',
-            'CRM_ACTIVITY_ID',
-            'CALL_TYPE',
-            'RECORD_FILE_ID',
-            'CALL_RECORD_URL',
-            'CALL_FAILED_REASON',
-        ];
+
         $requestArray['start'] = $count;
 
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);

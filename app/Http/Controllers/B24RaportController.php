@@ -11,6 +11,7 @@ use App\Models\B24Lead;
 use App\Models\B24Raport;
 use App\Models\B24Ring;
 use App\Models\B24Task;
+use App\Models\B24User;
 use App\Models\Company;
 use DateTime;
 use DateTimeZone;
@@ -270,11 +271,13 @@ class B24RaportController extends Controller
             ]);
         }
 
+        $user = B24User::find($user_id);
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
         $agendaTime = B24Analitics::where([
             'AIM' => 4488,
         ])->first() ?? 0;
         return view('bitrix24.raport.show', [
+            'user' => $user->NAME.' '.$user->LAST_NAME,
             'items' => $items,
             'cronTime' => $cronTime ? $cronTime->date1 : 0,
             'agendaTime' => $agendaTime ? $agendaTime->date1 : 0
