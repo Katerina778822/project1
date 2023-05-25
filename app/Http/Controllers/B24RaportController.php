@@ -291,7 +291,7 @@ class B24RaportController extends Controller
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
         $agendaTime = B24Analitics::where([
             'AIM' => 4488,
-        ])->first() ?? 0;dd($items);
+        ])->first() ?? 0;dd($raports);
         return view('bitrix24.raport.show', [
             'user' => $user->NAME . ' ' . $user->LAST_NAME,
             'items' => $items,
