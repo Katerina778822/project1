@@ -39,7 +39,7 @@ class B24UserController extends AbstractB24Controller
         $modelItem = null;
         $modelItem = B24User::where('ID', $item['ID'])->get();
         if (count($modelItem)) {
-            return;
+            $modelItem->update($item);
         }
         $modelItem = B24User::create($item);
 
