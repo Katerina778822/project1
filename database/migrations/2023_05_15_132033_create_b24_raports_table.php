@@ -15,6 +15,7 @@ class CreateB24RaportsTable extends Migration
     {
         Schema::create('b24_raports', function (Blueprint $table) {
             $table->id();
+            $table->float('SUMM')->nullable()->default(0);
             $table->unsignedBigInteger('USER_ID')->nullable()->default(0);
             $table->unsignedBigInteger('COMPANY_ID')->nullable()->default(0);
             $table->unsignedBigInteger('LEAD_ID')->nullable()->default(0);

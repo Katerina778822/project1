@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use DateTime;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,8 +26,6 @@ class B24Deal extends Model
     ];
     public static $winStateArray = ['C23:WON', 'C19:WON',];
 
-
-
     protected $table = 'b24_deals';
     protected $fillable = [
         'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID', 'CLOSED', 'STAGE_ID_BEFORE',
@@ -35,44 +35,60 @@ class B24Deal extends Model
     ];
     protected $primaryKey = 'ID';
 
-
-    public function getStatus()
+    //@ returns array ['STATUS' => $,'SUMM'=>$]
+    public function getStatus($statusBefore)
     {
-        if ($this->STAIGE_ID_BEFORE == '') {
-            $this->STAIGE_ID_BEFORE = $this->STAIGE_ID;
-            return 2;
+        $timezone = new DateTimeZone('Europe/Kiev');
+        $start = new DateTime('now', $timezone);
+        $start->setTime(0, 0, 0);
+        $summ=$this->OPPORTUNITY;
+        $this->DATE_MODIFY = new DateTime($this->DATE_MODIFY);
+
+        if($this->DATE_MODIFY<$start)
+            return ['STATUS' => 2,'SUMM'=>$summ];
+      
+        if ($this->STAGE_ID_BEFORE == '') {
+            $this->STAGE_ID_BEFORE = $this->STAGE_ID;
+            $this->save();
+            return ['STATUS' => 2,'SUMM'=>$summ];
         }
 
-        if ($this->STAIGE_ID_BEFORE == $this->STAIGE_ID) {
-            return 2;
+        if ($this->STAGE_ID_BEFORE == $this->STAGE_ID&&$statusBefore==2||$statusBefore==0) {
+            $this->save();
+            return ['STATUS' => 2,'SUMM'=>$summ];
         } else {
-            if (in_array($this->STAIGE_ID, B24Deal::$looseStateArray)) {
-                $this->STAIGE_ID_BEFORE = $this->STAIGE_ID;
-                return 1;
+            if (in_array($this->STAGE_ID, B24Deal::$looseStateArray)) {
+                $this->STAGE_ID_BEFORE = 'C19:NEW';
+                $this->save();
+                return ['STATUS' => 1,'SUMM'=>$summ];
             }
 
-            if (in_array($this->STAIGE_ID, B24Deal::$winStateArray) || in_array($this->STAIGE_ID_BEFORE, ['C23:FINAL_INVOICE', 'C23:9', 'C23:10', 'C23:11', 'C23:12', 'C23:13', 'C19:1', 'C19:9', 'C19:10', 'C19:11', 'C19:12', 'C19:13'])) {
-                $this->STAIGE_ID_BEFORE = $this->STAIGE_ID;
-                return 4;
+            if (in_array($this->STAGE_ID, B24Deal::$winStateArray) || in_array($this->STAGE_ID, ['C23:FINAL_INVOICE', 'C23:9', 'C23:10', 'C23:11', 'C23:12', 'C23:13', 'C19:1', 'C19:9', 'C19:10', 'C19:11', 'C19:12', 'C19:13'])) {
+                $this->STAGE_ID_BEFORE = 'C19:NEW';
+                $this->save();
+                return ['STATUS' => 4,'SUMM'=>$summ];
             }
 
-            if (in_array($this->STAIGE_ID_BEFORE, ['C23:NEW', 'C19:NEW'])) {
-                if (in_array($this->STAIGE_ID, ['C19:PREPARATION', 'C19:EXECUTING', 'C19:FINAL_INVOICE', 'C23:EXECUTING'])) {
-                    $this->STAIGE_ID_BEFORE = $this->STAIGE_ID;
-                    return 3;
+            if (in_array($this->STAGE_ID_BEFORE, ['C23:NEW', 'C19:NEW'])) {
+                if (in_array($this->STAGE_ID, ['C19:PREPARATION', 'C19:EXECUTING', 'C19:FINAL_INVOICE', 'C23:EXECUTING'])) {
+                    $this->STAGE_ID_BEFORE = $this->STAGE_ID;
+                    $this->save();
+                    return ['STATUS' => 3,'SUMM'=>$summ];
                 }
-            } elseif (in_array($this->STAIGE_ID_BEFORE, ['C19:PREPARATION'])) {
-                if (in_array($this->STAIGE_ID, ['C19:EXECUTING', 'C19:FINAL_INVOICE',])) {
-                    $this->STAIGE_ID_BEFORE = $this->STAIGE_ID;
-                    return 3;
+            } elseif (in_array($this->STAGE_ID_BEFORE, ['C19:PREPARATION'])) {
+                if (in_array($this->STAGE_ID, ['C19:EXECUTING', 'C19:FINAL_INVOICE',])) {
+                    $this->STAGE_ID_BEFORE = $this->STAGE_ID;
+                    $this->save();
+                    return ['STATUS' => 3,'SUMM'=>$summ];
                 }
-            } elseif (in_array($this->STAIGE_ID_BEFORE, ['C19:EXECUTING'])) {
-                if (in_array($this->STAIGE_ID, ['C19:FINAL_INVOICE',])) {
-                    $this->STAIGE_ID_BEFORE = $this->STAIGE_ID;
-                    return 3;
+            } elseif (in_array($this->STAGE_ID_BEFORE, ['C19:EXECUTING'])) {
+                if (in_array($this->STAGE_ID, ['C19:FINAL_INVOICE',])) {
+                    $this->STAGE_ID_BEFORE = $this->STAGE_ID;
+                    $this->save();
+                    return ['STATUS' => 3,'SUMM'=>$summ];
                 }
             }
         }
-        return 0;
+        return ['STATUS' => 0,'SUMM'=>$summ];
     }
 }

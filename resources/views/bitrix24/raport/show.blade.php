@@ -20,10 +20,11 @@
                         <tr>
                             <th>N</th>
                             <th>Компания</th>
+                            <th>Сумма</th>
                             <th>Сделка</th>
                             <th>Дело</th>
-                            <th>Дата</th>
                             <th>Тип</th>
+                            <th>Дата</th>                           
                         </tr>
                     </thead>
                     <tbody>
@@ -34,10 +35,11 @@
                             <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
                                     {{$item['TITLE']}} </a>
                             </td>
-                            <td>{{0??0}}</td>
+                            <td>{{$item['SUMM']}}</td>
+                            <td>{{$item['DEAL_STATUS']}}</td>
                             <td>{{$item['BUSINESS']??0}}</td>
-                            <td>{{$item['DATE']??0}}</td>
                             <td>{{$item['DEAL_TYPE']??0}}</td>
+                            <td>{{$item['DATE']??0}}</td>                         
                         </tr>
                         @endforeach
                     </tbody>

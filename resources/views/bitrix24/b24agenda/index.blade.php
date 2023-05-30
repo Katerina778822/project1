@@ -6,7 +6,7 @@
             </h2>
         </div>
     </x-slot>
-    <table class="table table-hover">
+    <table class="table table-hover ">
         <thead>
             <tr>
                 <th>Имя</th>
@@ -28,8 +28,8 @@
                         Смотреть
                 <td> 
                     <form action="{{ route('raport.show', ['raport' => $item['ID']]) }}" method="GET">
-                    <button class="btn-main">Смотреть</button>
-                    <input type="date" class="field-main" id="date" name="date">                  
+                    <button class="btn-link">Смотреть</button>
+                    <input type="date" class="w-18 h-2 text-xs" id="date" name="date">                  
                 </form>
                 </td>
             </tr>

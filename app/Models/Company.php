@@ -102,15 +102,22 @@ class Company extends Model
     }
 
     //returns last open Deal
-    public function getLastOpenDealStatus()
+    public function getLastOpenDealStatus($statusBefore)
     {
         $deal = B24Deal::where([
             ['COMPANY_ID', $this->ID],
             ['CLOSED', 'N']
         ])->orderByDesc('DATE_CREATE')->first();
         if (!empty($deal)) {
-            return $deal->getStatus();
-        } else
-            return 2;
+            return $deal->getStatus($statusBefore);
+        } else {
+            $deal = B24Deal::where([
+                ['COMPANY_ID', $this->ID],
+            ])->orderByDesc('DATE_CREATE')->first();
+            if (!empty($deal)) {
+                return $deal->getStatus($statusBefore); 
+            }
+        }
+        return ['STATUS' => 0,'SUMM'=>0];
     }
 }

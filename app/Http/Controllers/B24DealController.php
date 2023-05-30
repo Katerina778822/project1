@@ -87,8 +87,8 @@ class B24DealController extends AbstractB24Controller
     {
         $b24Item = B24Deal::find($item['ID']);
 
-        if (B24Deal::where('ID', $item['ID'])->exists()) {
-            if (empty($item['STAGE_ID_BEFORE']))
+        if (!empty($b24Item)) {
+            if (empty($b24Item['STAGE_ID_BEFORE']))
                 $item['STAGE_ID_BEFORE'] =  $item['STAGE_ID'];
 
             $b24Item->update($item);
@@ -202,7 +202,7 @@ class B24DealController extends AbstractB24Controller
         $requestArray['start'] = $count;
 
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-        $items = $this->helperOriginAPI->getItem('deal', $requestArray);
+        $items = $this->helperOriginAPI->getItemUpdate('deal', $requestArray);
         //dd($items);
         while (count($items) && $b24countItems > $count) {
             foreach ($items as $item) {
