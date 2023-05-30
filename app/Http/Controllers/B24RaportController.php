@@ -121,7 +121,7 @@ class B24RaportController extends Controller
         $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
             ->where([
                 ['CALL_DURATION', '>', '10'],
-               ['PORTAL_USER_ID', $user_id],//TEMP!!
+           //    ['PORTAL_USER_ID', $user_id],//TEMP!!
             ])
             ->get();
         foreach ($Rings as $ring) {
