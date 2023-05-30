@@ -105,14 +105,14 @@ class B24RaportController extends Controller
                 if ($company) {
                     $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS??0);
                     $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                    $item['SUMM'] = $dealArray['SUMM'];
+                    $item['SUMM'] = $dealArray['SUMM']??0;
                 }
                 $raport->update($item);
             } else { //создаем клиентодело для контакта
                 if ($company) {
                     $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS??0);
                     $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                    $item['SUMM'] = $dealArray['SUMM'];
+                    $item['SUMM'] = $dealArray['SUMM']??0;
                 }
                 $raport = B24Raport::create($item);
             }
@@ -191,7 +191,7 @@ class B24RaportController extends Controller
                 if ($company) {
                     $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS??0);
                     $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                    $item['SUMM'] = $dealArray['SUMM'];
+                    $item['SUMM'] = $dealArray['SUMM']??0;
                 }
                  $raport->update($item);
             } else { //создаем клиентодело новое
