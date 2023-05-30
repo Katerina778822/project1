@@ -82,7 +82,7 @@ class B24FetchController extends AbstractB24Controller
                 $date = $_POST['date'];
 
         $controller = new B24UserController;
-        $controller->fetchAll();
+        $controller->updateData($date);
 
         $controller = new B24LeadController;
         $controller->updateData($date);

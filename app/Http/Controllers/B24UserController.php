@@ -80,9 +80,14 @@ class B24UserController extends AbstractB24Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(array $item)
     {
-        //
+        $b24Item = B24User::find($item['ID']);
+
+        if (!empty($b24Item)) {
+            $b24Item->update($item);
+        } else
+            $this->store($item);
     }
 
     /**
@@ -142,6 +147,54 @@ class B24UserController extends AbstractB24Controller
             $items = $this->helperOriginAPI->getItem('user', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantity('user', $checkDate);
+        }
+
+    }
+    public function updateData($checkDate)
+    {
+        //  $count = 0;
+        $checkDate =null; //'2016-01-01T00:00:00+03:00';
+        $b24countItems = $this->helperOriginAPI->getQuantityUpdate('user', $checkDate);
+        //$b24count = B24Analitics::where('AIM', 2)->first();
+        $count = 0;
+
+
+        //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
+        $requestArray['DATE'] = $checkDate;
+        $requestArray['select'] = [
+            'ID',
+            'TITLE',
+            'UF_CRM_1540465145514', // замените на идентификатор своего пользовательского поля
+            'UF_CRM_1540121191354', // замените на идентификатор своего пользовательского поля
+            'UF_CRM_5DBAA9FFCC357', // замените на идентификатор своего пользовательского поля
+            'UF_CRM_1597826997473', // замените на идентификатор своего пользовательского поля
+
+            'ASSIGNED_BY_ID',
+            'LAST_ACTIVITY_BY',
+            'COMPANY_TYPE',
+            'DATE_CREATE',
+            'DATE_MODIFY',
+            'LAST_ACTIVITY_TIME',
+        ];
+        $requestArray['start'] = $count;
+
+        //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+        $items = $this->helperOriginAPI->getItemUpdate('user', $requestArray);
+        //dd($items);
+        while (count($items) && $b24countItems > $count) {
+            foreach ($items as $item) {
+
+              
+                $this->update($item);
+                $count++;
+            }
+            $b24count = B24User::count(); //save result count
+            //$b24count->save();
+            // $count = 0;
+            $requestArray['start'] = $count;
+            $items = $this->helperOriginAPI->getItemUpdate('user', $requestArray);
+            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+            $b24countItems = $this->helperOriginAPI->getQuantityUpdate('user', $checkDate);
         }
 
     }
