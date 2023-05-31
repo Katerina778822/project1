@@ -13,8 +13,29 @@
             <div class=" w-11/12  ">
                 <div>cron:{{$cronTime}} /Raport:{{$agendaTime}}</div>
                 <div>{{$user}}</div>
-                <!--  -->
+                <!-- Main Raport -->
+                @if(!empty($mainRaports))
+               
+                <table class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>Статус</th>
+                            <th>Суммма</th>
+                            <th></th>
 
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($mainRaports as $mainRaport)
+                        <tr class="bg-indigo-400">
+                            <td>{{$mainRaport->DEAL_TYPE}}</td>
+                            <td>{{$mainRaport->TOTAL}}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                @endif
+                <!-- Raport -->
                 <table class="table table-hover w-full">
                     <thead>
                         <tr>
@@ -24,7 +45,7 @@
                             <th>Сделка</th>
                             <th>Дело</th>
                             <th>Тип</th>
-                            <th>Дата</th>                           
+                            <th>Дата</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,7 +60,7 @@
                             <td>{{$item['DEAL_STATUS']}}</td>
                             <td>{{$item['BUSINESS']??0}}</td>
                             <td>{{$item['DEAL_TYPE']??0}}</td>
-                            <td>{{$item['DATE']??0}}</td>                         
+                            <td>{{$item['DATE']??0}}</td>
                         </tr>
                         @endforeach
                     </tbody>

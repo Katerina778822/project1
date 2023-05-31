@@ -42,10 +42,10 @@ class B24Deal extends Model
         $start = new DateTime('now', $timezone);
         $start->setTime(0, 0, 0);
         $summ=$this->OPPORTUNITY;
-        $this->DATE_MODIFY = new DateTime($this->DATE_MODIFY);
+        $dateModify = new DateTime($this->DATE_MODIFY);
 
-        if($this->DATE_MODIFY<$start)
-            return ['STATUS' => 2,'SUMM'=>$summ];
+        if($dateModify<$start)
+            return ['STATUS' => 2,'SUMM'=>0];
       
         if ($this->STAGE_ID_BEFORE == '') {
             $this->STAGE_ID_BEFORE = $this->STAGE_ID;
