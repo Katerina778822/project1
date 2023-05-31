@@ -53,8 +53,8 @@ class B24Deal extends Model
             return ['STATUS' => 2,'SUMM'=>$summ];
         }
 
-        if ($this->STAGE_ID_BEFORE == $this->STAGE_ID&&$statusBefore==2||$statusBefore==0) {
-            $this->save();
+        if ($this->STAGE_ID_BEFORE == $this->STAGE_ID&&$statusBefore==2&&(in_array($this->STAGE_ID, B24Deal::$winStateArray))||$statusBefore==0) {
+            
             return ['STATUS' => 2,'SUMM'=>$summ];
         } else {
             if (in_array($this->STAGE_ID, B24Deal::$looseStateArray)) {

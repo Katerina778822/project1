@@ -122,7 +122,7 @@ class B24RaportController extends Controller
         $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
             ->where([
                 ['CALL_DURATION', '>', '10'],
-                //    ['PORTAL_USER_ID', $user_id],//TEMP!!
+                    ['PORTAL_USER_ID', $user_id],//TEMP!!
             ])
             ->get();
         foreach ($Rings as $ring) {
@@ -171,8 +171,11 @@ class B24RaportController extends Controller
             $raportFound = false;
             $raport = null;
 
-            if ($ring->ID == 296837) //TEMP!!
-                $r = 0; //TEMP!!!
+
+
+            if (!empty($item['COMPANY_ID'])) //TEMP!!
+                if ($item['COMPANY_ID'] == 4495) //TEMP!!
+                    $r = 0; //TEMP!!!
             foreach ($searchRaportConditions as $condition) {
                 $raport = B24Raport:: //
                     //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
@@ -297,7 +300,7 @@ class B24RaportController extends Controller
             ]);
         }
 
-        $mainRaports = $this->calculateMainRaport($request->date);
+        $mainRaports = $this->calculateMainRaport($user_id, $request->date);
         $user = B24User::find($user_id);
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
         $agendaTime = B24Analitics::where([
@@ -346,13 +349,14 @@ class B24RaportController extends Controller
         //
     }
     //@fill b24raports table by actual data
-    public function calculateMainRaport(string $start, string  $end = null)
+    public function calculateMainRaport($user_id, string $start, string  $end = null)
     {
         if (!$end) {
             $end  = new DateTime();
             $end = $end->format('Y-m-d');
         }
         $items = B24Raport::where([
+            ['b24_raports.USER_ID', '=', $user_id],
             ['b24_raports.DATE', '>=', $start],
             ['b24_raports.DATE', '<=', $end],
             ['b24_raports.DEAL_STATUS', '=', 4],
@@ -361,7 +365,7 @@ class B24RaportController extends Controller
             ->groupBy('DEAL_TYPE')
             ->get();
 
-        
+
         return $items;
     }
 }
