@@ -355,7 +355,7 @@ class B24RaportController extends Controller
         $items = B24Raport::where([
             ['b24_raports.DATE', '>=', $start],
             ['b24_raports.DATE', '<=', $end],
-            ['b24_raports.STATUS', '=', 4],
+            ['b24_raports.DEAL_STATUS', '=', 4],
         ])
             ->select('DEAL_TYPE', DB::raw('SUM(SUMM) as TOTAL'))
             ->groupBy('DEAL_TYPE')
