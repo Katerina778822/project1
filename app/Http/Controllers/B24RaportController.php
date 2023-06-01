@@ -36,7 +36,7 @@ class B24RaportController extends Controller
         //  $end = $end->modify('-1 day'); //TEMP!!
         // $end->setTime(21, 0, 0);//TEMP!!
         $start->setTime(0, 0, 0);
-        $user_id = 1;
+        $user_id = 1489;
         //заполнение/обновление клиентодел из чатов
         $Activities = B24Activity::whereBetween('b24_activity.LAST_UPDATED', [$start, $end])
             ->where('PROVIDER_ID', 'IMOPENLINES_SESSION')->get();
@@ -87,6 +87,9 @@ class B24RaportController extends Controller
             //поиск клиентодел (чаты) данной компании за сегодня 
             $raportFound = false;
             $raport = null;
+          //  if (!empty($item['COMPANY_ID'])) //TEMP!!
+            //    if ($item['COMPANY_ID'] == 4199) //TEMP!!
+              //      $r = 0; //TEMP!!!
             foreach ($searchRaportConditions as $condition) {
                 $raport = B24Raport:: //
                     //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
@@ -95,7 +98,7 @@ class B24RaportController extends Controller
                         $condition,
                         //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
                     ])
-                    ->join('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
+                    ->join('b24_activity', 'b24_raports.ACTIVITY_ID', '=', 'b24_activity.ID2')
                     ->first();
                 if (!empty($raport)) {
                     $raportFound = true;
@@ -122,7 +125,7 @@ class B24RaportController extends Controller
         $Rings = B24Ring::whereBetween('b24_rings.CALL_START_DATE', [$start, $end])
             ->where([
                 ['CALL_DURATION', '>', '10'],
-                    ['PORTAL_USER_ID', $user_id],//TEMP!!
+                //    ['PORTAL_USER_ID', $user_id],//TEMP!!
             ])
             ->get();
         foreach ($Rings as $ring) {
@@ -171,11 +174,10 @@ class B24RaportController extends Controller
             $raportFound = false;
             $raport = null;
 
-
-
-            if (!empty($item['COMPANY_ID'])) //TEMP!!
-                if ($item['COMPANY_ID'] == 4495) //TEMP!!
-                    $r = 0; //TEMP!!!
+       //     if (!empty($item['COMPANY_ID'])) //TEMP!!
+     //           if ($item['COMPANY_ID'] == 4199) //TEMP!!
+   //                 $r = 0; //TEMP!!!
+                
             foreach ($searchRaportConditions as $condition) {
                 $raport = B24Raport:: //
                     //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
@@ -185,7 +187,7 @@ class B24RaportController extends Controller
                         $condition
                         //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
                     ])
-                    ->join('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
+                    ->leftjoin('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
                     ->first();
                 if (!empty($raport)) {
                     $raportFound = true;
@@ -213,12 +215,10 @@ class B24RaportController extends Controller
         $currentTime = new DateTime('now', $timezone);
         $Time = B24Analitics::where([
             ['AIM', 4488],
-
         ])->first();
         if (empty($Time)) {
             $time = B24Analitics::create([
                 'AIM' => 4488,
-
                 'date1' => $currentTime,
             ]);
         } else {
@@ -268,7 +268,6 @@ class B24RaportController extends Controller
             ['DATE', $request->date],
         ])->get();
         $items = new Collection();
-
         foreach ($raports as $raport) {
             $company = 'Компания/Лид не найдены';
             $title = '';
@@ -281,7 +280,6 @@ class B24RaportController extends Controller
                 $contact =  B24Contact::find($raport['CONTACT_ID']);
                 $title = 'Контакт: ' . $contact->NAME . ' ' . $contact->LAST_NAME;
             }
-
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
             $items->add([
@@ -299,7 +297,6 @@ class B24RaportController extends Controller
 
             ]);
         }
-
         $mainRaports = $this->calculateMainRaport($user_id, $request->date);
         $user = B24User::find($user_id);
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
@@ -314,7 +311,6 @@ class B24RaportController extends Controller
             'agendaTime' => $agendaTime ? $agendaTime->date1 : 0
         ]);
     }
-
     /**
      * Show the form for editing the specified resource.
      *
@@ -325,7 +321,6 @@ class B24RaportController extends Controller
     {
         //
     }
-
     /**
      * Update the specified resource in storage.
      *
@@ -337,7 +332,6 @@ class B24RaportController extends Controller
     {
         //
     }
-
     /**
      * Remove the specified resource from storage.
      *

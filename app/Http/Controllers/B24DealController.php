@@ -88,8 +88,8 @@ class B24DealController extends AbstractB24Controller
         $b24Item = B24Deal::find($item['ID']);
 
         if (!empty($b24Item)) {
-            if (empty($b24Item['STAGE_ID_BEFORE']))
-                $item['STAGE_ID_BEFORE'] =  $item['STAGE_ID'];
+ //           if (empty($b24Item['STAGE_ID_BEFORE']))
+//                $item['STAGE_ID_BEFORE'] =  $item['STAGE_ID'];
 
             $b24Item->update($item);
         } else

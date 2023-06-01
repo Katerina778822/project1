@@ -47,7 +47,7 @@ class B24Deal extends Model
         if($dateModify<$start)
             return ['STATUS' => 2,'SUMM'=>0];
       
-        if ($this->STAGE_ID_BEFORE == '') {
+        if ($this->STAGE_ID_BEFORE == ''&&!in_array($this->STAGE_ID, B24Deal::$looseStateArray)&&!(in_array($this->STAGE_ID, B24Deal::$winStateArray))) {
             $this->STAGE_ID_BEFORE = $this->STAGE_ID;
             $this->save();
             return ['STATUS' => 2,'SUMM'=>$summ];
