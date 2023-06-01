@@ -359,7 +359,9 @@ class B24RaportController extends Controller
             ->groupBy('DEAL_TYPE')
             ->get();
 
-
+foreach($items as $key => $item){
+    $key = Company::$clientStatus[$key];
+}
         return $items;
     }
 }
