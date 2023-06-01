@@ -87,9 +87,9 @@ class B24RaportController extends Controller
             //поиск клиентодел (чаты) данной компании за сегодня 
             $raportFound = false;
             $raport = null;
-          //  if (!empty($item['COMPANY_ID'])) //TEMP!!
+            //  if (!empty($item['COMPANY_ID'])) //TEMP!!
             //    if ($item['COMPANY_ID'] == 4199) //TEMP!!
-              //      $r = 0; //TEMP!!!
+            //      $r = 0; //TEMP!!!
             foreach ($searchRaportConditions as $condition) {
                 $raport = B24Raport:: //
                     //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
@@ -174,10 +174,10 @@ class B24RaportController extends Controller
             $raportFound = false;
             $raport = null;
 
-       //     if (!empty($item['COMPANY_ID'])) //TEMP!!
-     //           if ($item['COMPANY_ID'] == 4199) //TEMP!!
-   //                 $r = 0; //TEMP!!!
-                
+            //     if (!empty($item['COMPANY_ID'])) //TEMP!!
+            //           if ($item['COMPANY_ID'] == 4199) //TEMP!!
+            //                 $r = 0; //TEMP!!!
+
             foreach ($searchRaportConditions as $condition) {
                 $raport = B24Raport:: //
                     //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
@@ -359,9 +359,9 @@ class B24RaportController extends Controller
             ->groupBy('DEAL_TYPE')
             ->get();
 
-foreach($items as $key => $item){
-    $key = Company::$clientStatus[$key];
-}
+        foreach ($items as $item) {
+            $item['DEAL_TYPE'] = Company::$clientStatus[$item['DEAL_TYPE']];
+        }
         return $items;
     }
 }
