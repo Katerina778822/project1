@@ -170,9 +170,9 @@ class B24RaportController extends Controller
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
             }
-         //   if (!empty($item['COMPANY_ID'])) //TEMP!!
-        //       if ($item['COMPANY_ID'] == 103137) //TEMP!!
-         //           $r = 0; //TEMP!!!
+            //   if (!empty($item['COMPANY_ID'])) //TEMP!!
+            //       if ($item['COMPANY_ID'] == 103137) //TEMP!!
+            //           $r = 0; //TEMP!!!
             //поиск клиентодел (звонки) данной компании за сегодня 
             $raportFound = false;
             $raport = null;
@@ -224,8 +224,8 @@ class B24RaportController extends Controller
             $item = [];
             $searchRaportConditions = [];
             $company = null;
-          //  if ($deal['ID'] == 103137) //TEMP!!
-        //        $r = 0; //TEMP!!!
+            //  if ($deal['ID'] == 103137) //TEMP!!
+            //        $r = 0; //TEMP!!!
             //  $item['USER_ID'] = $user_id;
             $item['DEAL_ID'] = $deal->ID;
             $item['DATE'] = $end;
@@ -351,13 +351,15 @@ class B24RaportController extends Controller
                 $title = 'Контакт: ' . $contact->NAME . ' ' . $contact->LAST_NAME;
             }
             $business = '-';
-            if($raport->DEAL_ID)
-            $business = 'Сделка';
-            if($raport->ACTIVITY_ID)
-            $business = 'Чат';
-            if($raport->RING_ID)
-            $business = 'Звонок';
-         
+
+
+            if ($raport->RING_ID)
+                $business = 'Звонок';
+            else if ($raport->ACTIVITY_ID)
+                $business = 'Чат';
+            else if ($raport->DEAL_ID)
+                $business = 'Сделка';
+
             // if ($raport['DEAL_ID']) {
             //$deal = B24Deal::find($raport['DEAL_ID']);            }
             $items->add([
