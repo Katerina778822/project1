@@ -19,12 +19,12 @@ class B24Deal extends Model
     ];
     public static $looseStateArray = ['C19:LOSE', 'C19:APOLOGY', 'C19:2', 'C19:3', 'C19:4', 'C19:14', 'C19:7', 'C19:6', 'C19:5', 'C23:LOSE', 'C23:APOLOGY', 'C23:3', 'C23:6', 'C23:7', 'C23:8', 'C23:14', 'C23:15', 'C23:16'];
     public static $workStateArrayCargo = [
-        'C23:NEW', 'C23:EXECUTING', 'C23:FINAL_INVOICE', 'C23:9', 'C23:10', 'C23:11', 'C23:12', 'C23:13',
+        'C23:NEW', 
     ];
     public static $workStateArrayUkr = [
-        'C19:NEW', 'C19:PREPARATION', 'C19:EXECUTING', 'C19:FINAL_INVOICE', 'C19:1', 'C19:9', 'C19:10', 'C19:11', 'C19:12', 'C19:13'
+        'C19:NEW', 'C19:PREPARATION', 'C19:EXECUTING', 'C19:FINAL_INVOICE', 
     ];
-    public static $winStateArray = ['C23:WON', 'C19:WON',];
+    public static $winStateArray = ['C23:WON', 'C19:WON','C23:EXECUTING', 'C23:FINAL_INVOICE', 'C23:9', 'C23:10', 'C23:11', 'C23:12', 'C23:13','C19:1', 'C19:9', 'C19:10', 'C19:11', 'C19:12', 'C19:13'];
 
     protected $table = 'b24_deals';
     protected $fillable = [
