@@ -232,7 +232,7 @@ class B24RaportController extends Controller
             $item['USER_ID'] = $deal->ASSIGNED_BY_ID;
             if (
                 $deal->COMPANY_ID && ($deal->DATE_WIN == '' || $deal->DATE_WIN == $start->format('Y-m-d'))  //если в сделке есть компания и DATE_WIN непустое или с сегодняшней датой. И сделка не находится в первой стадии
-                && $deal->STAGE_ID != 'C19:NEW' && $deal->STAGE_ID == 'C23:NEW'
+                && $deal->STAGE_ID != 'C19:NEW' && $deal->STAGE_ID != 'C23:NEW'
             ) {
                 $item['COMPANY_ID'] = $deal->COMPANY_ID;
                 $company = Company::find($deal->COMPANY_ID);
