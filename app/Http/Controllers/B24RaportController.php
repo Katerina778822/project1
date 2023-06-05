@@ -230,8 +230,10 @@ class B24RaportController extends Controller
             $item['DEAL_ID'] = $deal->ID;
             $item['DATE'] = $end;
             $item['USER_ID'] = $deal->ASSIGNED_BY_ID;
-            if ($deal->COMPANY_ID && ($deal->DATE_WIN == '' || $deal->DATE_WIN == $start->format('Y-m-d'))  //если в сделке есть компания и DATE_WIN непустое или с сегодняшней датой. И сделка не находится в первой стадии
-            &&$deal->STAGE_ID !='C19:NEW' && $deal->STAGE_ID == 'C23:NEW'  ){
+            if (
+                $deal->COMPANY_ID && ($deal->DATE_WIN == '' || $deal->DATE_WIN == $start->format('Y-m-d'))  //если в сделке есть компания и DATE_WIN непустое или с сегодняшней датой. И сделка не находится в первой стадии
+                && $deal->STAGE_ID != 'C19:NEW' && $deal->STAGE_ID == 'C23:NEW'
+            ) {
                 $item['COMPANY_ID'] = $deal->COMPANY_ID;
                 $company = Company::find($deal->COMPANY_ID);
                 $item['DEAL_TYPE'] = $company->getClientStatus();
@@ -270,7 +272,7 @@ class B24RaportController extends Controller
                     }
                     $raport->update($item);
                 } else { //создаем клиентодело новое
-                    if ($company && (!$raport->ACTIVITY_ID && !$raport->RING_ID)) {
+                    if ($company ) {
                         $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
                         $item['DEAL_STATUS'] = $dealArray['STATUS'];
                         $item['SUMM'] = $dealArray['SUMM'] ?? 0;
