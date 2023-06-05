@@ -170,9 +170,9 @@ class B24RaportController extends Controller
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
             }
-            //   if (!empty($item['COMPANY_ID'])) //TEMP!!
-            //       if ($item['COMPANY_ID'] == 103137) //TEMP!!
-            //           $r = 0; //TEMP!!!
+               if (!empty($item['COMPANY_ID'])) //TEMP!!
+                   if ($item['COMPANY_ID'] == 2791) //TEMP!!
+                       $r = 0; //TEMP!!!
             //поиск клиентодел (звонки) данной компании за сегодня 
             $raportFound = false;
             $raport = null;

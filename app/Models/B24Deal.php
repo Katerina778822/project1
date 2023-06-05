@@ -42,7 +42,7 @@ class B24Deal extends Model
         $start = new DateTime('now', $timezone);
         $start->setTime(0, 0, 0);
         $summ=$this->OPPORTUNITY;
-        $dateModify = new DateTime($this->DATE_MODIFY);
+        $dateModify = new DateTime($this->DATE_MODIFY??'2019-01-01');
 
         if($dateModify<$start)
             return ['STATUS' => 2,'SUMM'=>0];
