@@ -64,6 +64,7 @@ class B24Deal extends Model
 
             if (in_array($this->STAGE_ID, B24Deal::$winStateArray) || in_array($this->STAGE_ID, ['C23:FINAL_INVOICE', 'C23:9', 'C23:10', 'C23:11', 'C23:12', 'C23:13', 'C19:1', 'C19:9', 'C19:10', 'C19:11', 'C19:12', 'C19:13'])) {
                 $this->STAGE_ID_BEFORE = 'C19:NEW';
+                $this->DATE_WIN=$start->format('Y-m-d');
                 $this->save();
                 return ['STATUS' => 4,'SUMM'=>$summ];
             }

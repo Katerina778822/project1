@@ -36,6 +36,7 @@ class CreateB24DealsTable extends Migration
             $table->dateTime('UF_CRM_1540120643248')->default(null)->nullable(); //  Взял ПРОСЧЕТ.ДАТА
             $table->dateTime('UF_CRM_1545811274193')->default(null)->nullable(); //  Взял ДЕНЬГИ. Дата
             $table->dateTime('UF_CRM_1547732437301')->default(null)->nullable(); //  РЕЗУЛЬТАТ ДАТА 
+            $table->date('DATE_WIN')->default(null)->nullable(); //  
             $table->dateTime('DATE_CREATE')->default(null)->nullable(); //  
             $table->dateTime('DATE_MODIFY')->default(null)->nullable(); //  
             $table->dateTime('CLOSEDATE')->default(null)->nullable(); //  
