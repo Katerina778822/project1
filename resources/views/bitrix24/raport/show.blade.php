@@ -19,8 +19,11 @@
                 <table class="table table-hover w-full">
                     <thead>
                         <tr>
-                            <th>Статус</th>
+                            <th>Тип Клиента</th>
                             <th>Суммма</th>
+                            <th>ЛИД(попытки)</th>
+                            <th>Конверсия</th>
+                            <th>Чек</th>
                             <th></th>
 
                         </tr>
@@ -30,6 +33,9 @@
                         <tr class="bg-indigo-400">
                             <td>{{$mainRaport->DEAL_TYPE}}</td>
                             <td>{{$mainRaport->TOTAL}}</td>
+                            <td>{{$mainRaport->LEAD}}</td>
+                            <td>{{round($mainRaport->CONVERSION,2)*100}}</td>
+                            <td>{{round($mainRaport->CHECK,0)}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -44,7 +50,7 @@
                             <th>Сумма</th>
                             <th>Сделка</th>
                             <th>Дело</th>
-                            <th>Тип</th>
+                            <th>Тип клиента</th>
                             <th>Дата</th>
                         </tr>
                     </thead>

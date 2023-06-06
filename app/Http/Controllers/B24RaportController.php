@@ -170,9 +170,9 @@ class B24RaportController extends Controller
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
             }
-               if (!empty($item['COMPANY_ID'])) //TEMP!!
-                   if ($item['COMPANY_ID'] == 2791) //TEMP!!
-                       $r = 0; //TEMP!!!
+            //  if (!empty($item['COMPANY_ID'])) //TEMP!!
+            //    if ($item['COMPANY_ID'] == 2135) //TEMP!!
+            //       $r = 0; //TEMP!!!
             //поиск клиентодел (звонки) данной компании за сегодня 
             $raportFound = false;
             $raport = null;
@@ -244,9 +244,9 @@ class B24RaportController extends Controller
                 $raportFound = false;
                 $raport = null;
 
-                //     if (!empty($item['COMPANY_ID'])) //TEMP!!
-                //           if ($item['COMPANY_ID'] == 4199) //TEMP!!
-                //                 $r = 0; //TEMP!!!
+                if (!empty($item['COMPANY_ID'])) //TEMP!!
+                    if ($item['COMPANY_ID'] == 2135) //TEMP!!
+                        $r = 0; //TEMP!!!
 
                 foreach ($searchRaportConditions as $condition) {
                     $raport = B24Raport:: //
@@ -272,7 +272,7 @@ class B24RaportController extends Controller
                     }
                     $raport->update($item);
                 } else { //создаем клиентодело новое
-                    if ($company ) {
+                    if ($company) {
                         $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
                         $item['DEAL_STATUS'] = $dealArray['STATUS'];
                         $item['SUMM'] = $dealArray['SUMM'] ?? 0;
@@ -378,6 +378,7 @@ class B24RaportController extends Controller
 
             ]);
         }
+
         $mainRaports = $this->calculateMainRaport($user_id, $request->date);
         $user = B24User::find($user_id);
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
@@ -431,7 +432,7 @@ class B24RaportController extends Controller
             $end  = new DateTime('now', $timezone);
             $end = $end->format('Y-m-d');
         }
-        $items = B24Raport::where([
+        $items = B24Raport::where([ //1. summ 
             ['b24_raports.USER_ID', '=', $user_id],
             ['b24_raports.DATE', '>=', $start],
             ['b24_raports.DATE', '<=', $end],
@@ -442,8 +443,26 @@ class B24RaportController extends Controller
             ->get();
 
         foreach ($items as $item) {
+            //
+            $raports = $this->getUserDealTypeRaport($user_id,$start,[$item->DEAL_TYPE],[4]);// sales only
+            $raportsALL = $this->getUserDealTypeRaport($user_id,$start,[$item->DEAL_TYPE],[1,2,3,4]);//all statusses
+            $item->CHECK = $raports->sum('SUMM')/$item->SUMM = $raports->count();
+            $item->CONVERSION = $raports->count()/$raportsALL->count();
+            $item->LEAD = $raportsALL->count();
             $item['DEAL_TYPE'] = Company::$clientStatus[$item['DEAL_TYPE']];
         }
         return $items;
+    }
+
+    private function getUserDealTypeRaport($user_id, string $date, array $DEAL_TYPE,$DEAL_STATUS)
+    {
+        return
+        $raports = B24Raport::where([
+            ['USER_ID', $user_id],
+            ['DATE', $date],
+            ['DEAL_TYPE', $DEAL_TYPE], // Тип клиента
+        ])
+        ->whereIn('DEAL_STATUS', $DEAL_STATUS)
+        ->get();
     }
 }
