@@ -21,6 +21,7 @@
                         <tr>
                             <th>Тип Клиента</th>
                             <th>Суммма</th>
+                            <th>Сделки</th>
                             <th>ЛИД(попытки)</th>
                             <th>Конверсия</th>
                             <th>Чек</th>
@@ -33,6 +34,7 @@
                         <tr class="bg-indigo-400">
                             <td>{{$mainRaport->DEAL_TYPE}}</td>
                             <td>{{$mainRaport->TOTAL}}</td>
+                            <td>{{$mainRaport->DEALS}}</td>
                             <td>{{$mainRaport->LEAD}}</td>
                             <td>{{round($mainRaport->CONVERSION,2)*100}}</td>
                             <td>{{round($mainRaport->CHECK,0)}}</td>

@@ -436,7 +436,7 @@ class B24RaportController extends Controller
             ['b24_raports.USER_ID', '=', $user_id],
             ['b24_raports.DATE', '>=', $start],
             ['b24_raports.DATE', '<=', $end],
-            ['b24_raports.DEAL_STATUS', '=', 4],
+       //     ['b24_raports.DEAL_STATUS', '=', 4],
         ])
             ->select('DEAL_TYPE', DB::raw('SUM(SUMM) as TOTAL'))
             ->groupBy('DEAL_TYPE')
@@ -446,9 +446,10 @@ class B24RaportController extends Controller
             //
             $raports = $this->getUserDealTypeRaport($user_id,$start,[$item->DEAL_TYPE],[4]);// sales only
             $raportsALL = $this->getUserDealTypeRaport($user_id,$start,[$item->DEAL_TYPE],[1,2,3,4]);//all statusses
-            $item->CHECK = $raports->sum('SUMM')/$item->SUMM = $raports->count();
-            $item->CONVERSION = $raports->count()/$raportsALL->count();
+            $item->CHECK = $raports->count()?$raports->sum('SUMM')/$raports->count():0;
+            $item->CONVERSION = $raportsALL->count()?$raports->count()/$raportsALL->count():0;
             $item->LEAD = $raportsALL->count();
+            $item->DEALS = $raports->count();
             $item['DEAL_TYPE'] = Company::$clientStatus[$item['DEAL_TYPE']];
         }
         return $items;
