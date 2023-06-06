@@ -15,7 +15,7 @@
                 <div>{{$user}}</div>
                 <!-- Main Raport -->
                 @if(!empty($mainRaports))
-               
+
                 <table class="table table-hover w-full">
                     <thead>
                         <tr>
@@ -30,7 +30,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach($mainRaports as $mainRaport)
+                        @foreach($mainRaports as $mainRaport)
                         <tr class="bg-indigo-400">
                             <td>{{$mainRaport->DEAL_TYPE}}</td>
                             <td>{{$mainRaport->TOTAL}}</td>
@@ -74,7 +74,40 @@
                     </tbody>
                 </table>
                 @endif
+                <!--All Users Main Raport -->
+                @if(!empty($allUsersmainRaports))
+                @foreach($allUsersmainRaports as $allUsersmainRaport)
+                <table class="table table-hover w-full">
+                    <thead>
+                        <tr>
+                            <th>ФИО</th>
+                            <th>Тип Клиента</th>
+                            <th>Суммма</th>
+                            <th>Сделки</th>
+                            <th>ЛИД(попытки)</th>
+                            <th>Конверсия</th>
+                            <th>Чек</th>
+                            <th></th>
 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($allUsersmainRaport as $mainRaport)
+                        <tr class="bg-indigo-400">
+                            <td>{{$mainRaport->USER}}</td>
+                            <td>{{$mainRaport->DEAL_TYPE}}</td>
+                            <td>{{$mainRaport->TOTAL}}</td>
+                            <td>{{$mainRaport->DEALS}}</td>
+                            <td>{{$mainRaport->LEAD}}</td>
+                            <td>{{round($mainRaport->CONVERSION,2)*100}}</td>
+                            <td>{{round($mainRaport->CHECK,0)}}</td>
+                        </tr>
+                        @endforeach
+
+                    </tbody>
+                </table>
+                @endforeach
+                @endif
 
             </div>
         </div>

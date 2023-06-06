@@ -380,12 +380,15 @@ class B24RaportController extends Controller
         }
 
         $mainRaports = $this->calculateMainRaport($user_id, $request->date);
+        $allUsersmainRaports = $this->calculateAllUsersMainRaport($request->date);
+
         $user = B24User::find($user_id);
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
         $agendaTime = B24Analitics::where([
             'AIM' => 4488,
         ])->first() ?? 0;
         return view('bitrix24.raport.show', [
+            'allUsersmainRaports' => $allUsersmainRaports,
             'mainRaports' => $mainRaports,
             'user' => $user->NAME . ' ' . $user->LAST_NAME,
             'items' => $items,
@@ -436,7 +439,7 @@ class B24RaportController extends Controller
             ['b24_raports.USER_ID', '=', $user_id],
             ['b24_raports.DATE', '>=', $start],
             ['b24_raports.DATE', '<=', $end],
-       //     ['b24_raports.DEAL_STATUS', '=', 4],
+            //     ['b24_raports.DEAL_STATUS', '=', 4],
         ])
             ->select('DEAL_TYPE', DB::raw('SUM(SUMM) as TOTAL'))
             ->groupBy('DEAL_TYPE')
@@ -444,10 +447,10 @@ class B24RaportController extends Controller
 
         foreach ($items as $item) {
             //
-            $raports = $this->getUserDealTypeRaport($user_id,$start,[$item->DEAL_TYPE],[4]);// sales only
-            $raportsALL = $this->getUserDealTypeRaport($user_id,$start,[$item->DEAL_TYPE],[1,2,3,4]);//all statusses
-            $item->CHECK = $raports->count()?$raports->sum('SUMM')/$raports->count():0;
-            $item->CONVERSION = $raportsALL->count()?$raports->count()/$raportsALL->count():0;
+            $raports = $this->getUserDealTypeRaport($user_id, $start, [$item->DEAL_TYPE], [4]); // sales only
+            $raportsALL = $this->getUserDealTypeRaport($user_id, $start, [$item->DEAL_TYPE], [1, 2, 3, 4]); //all statusses
+            $item->CHECK = $raports->count() ? $raports->sum('SUMM') / $raports->count() : 0;
+            $item->CONVERSION = $raportsALL->count() ? $raports->count() / $raportsALL->count() : 0;
             $item->LEAD = $raportsALL->count();
             $item->DEALS = $raports->count();
             $item['DEAL_TYPE'] = Company::$clientStatus[$item['DEAL_TYPE']];
@@ -455,15 +458,34 @@ class B24RaportController extends Controller
         return $items;
     }
 
-    private function getUserDealTypeRaport($user_id, string $date, array $DEAL_TYPE,$DEAL_STATUS)
+    private function getUserDealTypeRaport($user_id, string $date, array $DEAL_TYPE, $DEAL_STATUS)
     {
         return
-        $raports = B24Raport::where([
-            ['USER_ID', $user_id],
-            ['DATE', $date],
-            ['DEAL_TYPE', $DEAL_TYPE], // Тип клиента
-        ])
-        ->whereIn('DEAL_STATUS', $DEAL_STATUS)
-        ->get();
+            $raports = B24Raport::where([
+                ['USER_ID', $user_id],
+                ['DATE', $date],
+                ['DEAL_TYPE', $DEAL_TYPE], // Тип клиента
+            ])
+            ->whereIn('DEAL_STATUS', $DEAL_STATUS)
+            ->get();
+    }
+    private function calculateAllUsersMainRaport(string $start, string  $end = null)
+    {
+        $allUsersItems = new Collection();
+        $usersID = [14, 96, 94, 1489, 1501];
+        foreach ($usersID as $user_id) {
+            $items = $this->calculateMainRaport($user_id, $start, $end = null);
+            foreach($items as $key => $item){
+                $user = B24User::find($user_id);
+                $item['USER'] = $user->NAME;
+                if (!$allUsersItems->has($item->DEAL_TYPE)) {
+                    $allUsersItems->put($item->DEAL_TYPE, new Collection());
+                }
+                $allUsersItems[$item->DEAL_TYPE]->push($item);
+            }
+         
+        }
+        return $allUsersItems;
+        //dd($allUsersItems);
     }
 }
