@@ -30,6 +30,7 @@
                     <form action="{{ route('raport.show', ['raport' => $item['ID']]) }}" method="GET">
                     <button class="btn-link">Смотреть</button>
                     <input type="date" class="w-18 h-2 text-xs" id="date" name="date">                  
+                    <input type="date" class="w-18 h-2 text-xs" id="dateEnd" name="dateEnd">                  
                 </form>
                 </td>
             </tr>

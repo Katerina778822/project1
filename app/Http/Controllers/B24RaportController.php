@@ -334,10 +334,13 @@ class B24RaportController extends Controller
      */
     public function show($user_id, Request $request)
     {
-        $raports = B24Raport::where([
-            ['USER_ID', $user_id],
-            ['DATE', $request->date],
-        ])->get();
+        if (empty($request->dateEnd)) {
+            $selectArray =  [['USER_ID', $user_id], ['DATE', $request->date]];
+        } else {
+            $selectArray =   [['USER_ID', $user_id], ['DATE','>=', $request->date],['DATE','<=', $request->dateEnd]];
+        }
+
+        $raports = B24Raport::where($selectArray)->get();
         $items = new Collection();
         foreach ($raports as $raport) {
             $company = 'Компания/Лид не найдены';
@@ -475,7 +478,7 @@ class B24RaportController extends Controller
         $usersID = [14, 96, 94, 1489, 1501];
         foreach ($usersID as $user_id) {
             $items = $this->calculateMainRaport($user_id, $start, $end = null);
-            foreach($items as $key => $item){
+            foreach ($items as $key => $item) {
                 $user = B24User::find($user_id);
                 $item['USER'] = $user->NAME;
                 if (!$allUsersItems->has($item->DEAL_TYPE)) {
@@ -483,7 +486,6 @@ class B24RaportController extends Controller
                 }
                 $allUsersItems[$item->DEAL_TYPE]->push($item);
             }
-         
         }
         return $allUsersItems;
         //dd($allUsersItems);
