@@ -337,7 +337,7 @@ class B24RaportController extends Controller
         if (empty($request->dateEnd)) {
             $selectArray =  [['USER_ID', $user_id], ['DATE', $request->date]];
         } else {
-            $selectArray =   [['USER_ID', $user_id], ['DATE','>=', $request->date],['DATE','<=', $request->dateEnd]];
+            $selectArray =   [['USER_ID', $user_id], ['DATE', '>=', $request->date], ['DATE', '<=', $request->dateEnd]];
         }
 
         $raports = B24Raport::where($selectArray)->get();
@@ -450,8 +450,8 @@ class B24RaportController extends Controller
 
         foreach ($items as $item) {
             //
-            $raports = $this->getUserDealTypeRaport($user_id, $start, [$item->DEAL_TYPE], [4]); // sales only
-            $raportsALL = $this->getUserDealTypeRaport($user_id, $start, [$item->DEAL_TYPE], [1, 2, 3, 4]); //all statusses
+            $raports = $this->getUserDealTypeRaport($user_id, [$item->DEAL_TYPE], [4], $start, $end); // sales only
+            $raportsALL = $this->getUserDealTypeRaport($user_id, [$item->DEAL_TYPE], [1, 2, 3, 4], $start, $end); //all statusses
             $item->CHECK = $raports->count() ? $raports->sum('SUMM') / $raports->count() : 0;
             $item->CONVERSION = $raportsALL->count() ? $raports->count() / $raportsALL->count() : 0;
             $item->LEAD = $raportsALL->count();
@@ -461,12 +461,18 @@ class B24RaportController extends Controller
         return $items;
     }
 
-    private function getUserDealTypeRaport($user_id, string $date, array $DEAL_TYPE, $DEAL_STATUS)
+    private function getUserDealTypeRaport($user_id, array $DEAL_TYPE, $DEAL_STATUS, string $start, string $end = null)
     {
+        if (!$end) {
+            $timezone = new DateTimeZone('Europe/Kiev');
+            $end  = new DateTime('now', $timezone);
+            $end = $end->format('Y-m-d');
+        }
         return
             $raports = B24Raport::where([
                 ['USER_ID', $user_id],
-                ['DATE', $date],
+                ['b24_raports.DATE', '>=', $start],
+                ['b24_raports.DATE', '<=', $end],
                 ['DEAL_TYPE', $DEAL_TYPE], // Тип клиента
             ])
             ->whereIn('DEAL_STATUS', $DEAL_STATUS)
