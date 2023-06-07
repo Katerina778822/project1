@@ -496,15 +496,26 @@ class B24RaportController extends Controller
         }
         //Рассчет суммы продаж и ср значений
         foreach ($allUsersItems as $item) {
-            $coll = new B24RaportCollection();
-            $coll->put('CHECK', $item->average('CHECK'));
-            $coll->put('CONVERSION', $item->average('CONVERSION'));
-            $coll->put('LEAD', $item->average('LEAD'));
-            $coll->put('DEALS', $item->average('DEALS'));
-            $coll->put('TOTAL', $item->sum('TOTAL'));
-            $coll->put('DEAL_TYPE', '');
-            $coll->put('USER', 'Итого/ср.зн.');
-            $item->push($coll);
+            $collAv = new B24RaportCollection();
+            $collAv->put('CHECK', $item->average('CHECK'));
+            $collAv->put('CONVERSION', $item->average('CONVERSION'));
+            $collAv->put('LEAD', $item->average('LEAD'));
+            $collAv->put('DEALS', $item->average('DEALS'));
+            $collAv->put('TOTAL', $item->average('TOTAL'));
+            $collAv->put('DEAL_TYPE', '');
+            $collAv->put('USER', 'Ср.знач');
+            
+            $collSum = new B24RaportCollection();
+            $collSum->put('CHECK', 0);
+            $collSum->put('CONVERSION', 0);
+            $collSum->put('LEAD', $item->sum('LEAD'));
+            $collSum->put('DEALS', $item->sum('DEALS'));
+            $collSum->put('TOTAL', $item->sum('TOTAL'));
+            $collSum->put('DEAL_TYPE', '');
+            $collSum->put('USER', 'Сумма');
+
+            $item->push($collAv);
+            $item->push($collSum);
         }
 
         return $allUsersItems;
