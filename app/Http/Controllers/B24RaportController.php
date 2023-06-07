@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Bitrix24\B24RaportCollection;
 use App\Jobs\B24Raport as JobsB24Raport;
 use App\Models\B24Activity;
 use App\Models\B24Analitics;
@@ -18,6 +19,7 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+
 
 class B24RaportController extends Controller
 {
@@ -356,7 +358,6 @@ class B24RaportController extends Controller
             }
             $business = '-';
 
-
             if ($raport->RING_ID)
                 $business = 'Звонок';
             else if ($raport->ACTIVITY_ID)
@@ -382,8 +383,8 @@ class B24RaportController extends Controller
             ]);
         }
 
-        $mainRaports = $this->calculateMainRaport($user_id, $request->date);
-        $allUsersmainRaports = $this->calculateAllUsersMainRaport($request->date);
+        $mainRaports = $this->calculateMainRaport($user_id, $request->date,$request->dateEnd);
+        $allUsersmainRaports = $this->calculateAllUsersMainRaport($request->date,$request->dateEnd);
 
         $user = B24User::find($user_id);
         $cronTime = B24Analitics::where('AIM', 4477)->first() ?? 0;
@@ -493,6 +494,19 @@ class B24RaportController extends Controller
                 $allUsersItems[$item->DEAL_TYPE]->push($item);
             }
         }
+        //Рассчет суммы продаж и ср значений
+        foreach ($allUsersItems as $item) {
+            $coll = new B24RaportCollection();
+            $coll->put('CHECK', $item->average('CHECK'));
+            $coll->put('CONVERSION', $item->average('CONVERSION'));
+            $coll->put('LEAD', $item->average('LEAD'));
+            $coll->put('DEALS', $item->average('DEALS'));
+            $coll->put('TOTAL', $item->sum('TOTAL'));
+            $coll->put('DEAL_TYPE', '');
+            $coll->put('USER', 'Итого/ср.зн.');
+            $item->push($coll);
+        }
+
         return $allUsersItems;
         //dd($allUsersItems);
     }
