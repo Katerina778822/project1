@@ -58,9 +58,9 @@ class Company extends Model
     }
 
     //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
-    public function getClientStatus()
+    public function getClientStatus($start, $end)
     {
-        if ($this->ID == 1179) //TEMP!!
+        if ($this->ID == 8759) //TEMP!!
             $r = 0;
         $deals  = B24Deal::where('COMPANY_ID', $this->ID)->get();
         if ($deals->count() == 0)
@@ -69,6 +69,9 @@ class Company extends Model
             $dealsLastData = $deals->max(function ($deal) {
                 return $deal->CLOSEDATE;
             });
+            if($dealsLastData > $start->format('Y-m-d H:i:s')&&$dealsLastData<$end->format('Y-m-d H:i:s')&&$deals->count()<=1){
+                return 4;  //4-новый - сделка закрыта сегодня
+            }
             $dealsLast = $deals->firstWhere('CLOSEDATE', $dealsLastData);
             if ($deals->count() == 1 && $dealsLast->CLOSED == 'N') //последняя сделка открыта
                 return 4;  //4-новый
@@ -102,20 +105,20 @@ class Company extends Model
     }
 
     //returns last open Deal
-    public function getLastOpenDealStatus($statusBefore)
+    public function getLastOpenDealStatus($statusBefore, DateTime $start, DateTime $end=null)
     {
         $deal = B24Deal::where([
             ['COMPANY_ID', $this->ID],
             ['CLOSED', 'N']
         ])->orderByDesc('DATE_CREATE')->first();
         if (!empty($deal)) {
-            return $deal->getStatus($statusBefore);
+            return $deal->getStatus($statusBefore,$start, $end);
         } else {
             $deal = B24Deal::where([
                 ['COMPANY_ID', $this->ID],
             ])->orderByDesc('DATE_CREATE')->first();
             if (!empty($deal)) {
-                return $deal->getStatus($statusBefore); 
+                return $deal->getStatus($statusBefore, $start, $end); 
             }
         }
         return ['STATUS' => 0,'SUMM'=>0];

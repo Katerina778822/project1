@@ -40,11 +40,11 @@ class B24Deal extends Model
     protected $primaryKey = 'ID';
 
     //@ returns array ['STATUS' => $,'SUMM'=>$]
-    public function getStatus($statusBefore)
+    public function getStatus($statusBefore, DateTime $start, DateTime $end)
     {
-        $timezone = new DateTimeZone('Europe/Kiev');
-        $start = new DateTime('now', $timezone);
-        $start->setTime(0, 0, 0);
+        //$timezone = new DateTimeZone('Europe/Kiev');
+        //$start = new DateTime('now', $timezone);
+        //$start->setTime(0, 0, 0);
         $summ=$this->OPPORTUNITY;
         $dateModify = new DateTime($this->DATE_MODIFY??'2019-01-01');
 
