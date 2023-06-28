@@ -33,9 +33,9 @@ class B24RaportController extends Controller
         // $deals = $D->getClientStatus($start, $end); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
         $timezone = new DateTimeZone('Europe/Kiev');
         $start = new DateTime('now', $timezone);
-        $start = $start->modify('-1 day'); //TEMP!!
+      //  $start = $start->modify('-1 day'); //TEMP!!
         $end = new DateTime('now', $timezone);
-        $end = $end->modify('-1 day'); //TEMP!!
+      //  $end = $end->modify('-1 day'); //TEMP!!
         $end->setTime(21, 0, 0); //TEMP!!
         $start->setTime(0, 0, 0);
         $user_id = 1489;
@@ -144,8 +144,8 @@ class B24RaportController extends Controller
             $item['RING_ID'] = $ring->ID;
             $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
             $item['DATE'] = $end;
-         //   if ($ring->ID == 300963)
-           //     $r = 0;
+            if ($ring->ID == 304891)
+                $r = 0;
             if ($ring->CRM_COMPANY_ID) { //если в звонке есть компания
                 $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
                 $company = Company::find($ring->CRM_COMPANY_ID);
