@@ -118,7 +118,8 @@ class B24ActivityController extends AbstractB24Controller
         //dd($items);
         while (count($items) && $b24countItems > $count) {
             foreach ($items as $item) {
-                //      dd($item);
+              //  if($item['ID']==689331)
+                //      $r=0;;
                 //               $item = get_object_vars($item);
                 $item['ID2'] = $item['ID'];
                 $item['CREATED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CREATED'])->format('Y-m-d H:i:s');

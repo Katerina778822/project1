@@ -144,7 +144,7 @@ class B24RaportController extends Controller
             $item['RING_ID'] = $ring->ID;
             $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
             $item['DATE'] = $end;
-            if ($ring->ID == 304891)
+            if ($ring->ID == 304735)
                 $r = 0;
             if ($ring->CRM_COMPANY_ID) { //если в звонке есть компания
                 $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
