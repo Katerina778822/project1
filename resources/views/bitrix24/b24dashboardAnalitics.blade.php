@@ -28,7 +28,7 @@
         </div>
         <div>
             <div class="bg-blue-300 rounded-lg  p-8 flex">
-                <form action="{{ route('b24contact.analitics.companies_cold_date') }}" method="get">
+                <!--form action="{{ route('b24contact.analitics.companies_cold_date') }}" method="get">
                     <button class="btn-main my-4">Компании без движения после </button>
                     <input type="date" class="field-main" id="since_date" name="since_date">
                     @csrf
@@ -36,6 +36,11 @@
                 <form action="{{ route('b24analitics_companies_date.index') }}" method="get" disabled>
                     <button class="btn-main my-4">Показать </button>
                     @csrf
+                </form-->
+                <form action="{{ route('newLeadAnalise')}}" method="GET">
+                    <button class="btn-link">Leads</button>
+                    <input type="date" class="w-18 h-2 text-xs" id="dateStart" name="dateStart">                  
+                    <input type="date" class="w-18 h-2 text-xs" id="dateEnd" name="dateEnd">                  
                 </form>
             </div>
         </div>

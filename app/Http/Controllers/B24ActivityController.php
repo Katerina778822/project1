@@ -47,8 +47,7 @@ class B24ActivityController extends AbstractB24Controller
         //dd($items);
         while (count($items) && $b24countItems > $b24count) {
             foreach ($items as $item) {
-                //      dd($item);
-                //               $item = get_object_vars($item);
+
                 $item['ID2'] = $item['ID'];
                 $item['CREATED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CREATED'])->format('Y-m-d H:i:s');
                 if (!empty($item['LAST_UPDATED']))
@@ -118,9 +117,8 @@ class B24ActivityController extends AbstractB24Controller
         //dd($items);
         while (count($items) && $b24countItems > $count) {
             foreach ($items as $item) {
-              //  if($item['ID']==689331)
-                //      $r=0;;
-                //               $item = get_object_vars($item);
+                if ($item['ID'] == 684489)
+                    $r = 0;
                 $item['ID2'] = $item['ID'];
                 $item['CREATED'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['CREATED'])->format('Y-m-d H:i:s');
                 if (!empty($item['LAST_UPDATED']))
@@ -165,8 +163,6 @@ class B24ActivityController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate, null, $requestArray);
         }
-
-
     }
 
     /**
@@ -249,15 +245,12 @@ class B24ActivityController extends AbstractB24Controller
      */
     public function update(array $item)
     {
-        $activity = B24Activity::where('ID2',$item['ID2'])->first();
+        $activity = B24Activity::where('ID2', $item['ID2'])->first();
         if (!empty($activity)) {
             $activity->update($item); // Заполняем модель данными из $item
         } else {
             $this->store($item);
         }
-        
-       
-  
     }
 
     /**

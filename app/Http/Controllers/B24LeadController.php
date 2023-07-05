@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Jobs\b24LeadFetch;
 use App\Models\B24Analitics;
+use App\Models\B24Deal;
 use App\Models\B24Lead;
+use App\Models\B24User;
+use App\Models\Company;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DateTimeZone;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -224,6 +228,60 @@ class B24LeadController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('lead', $checkDate);
         }
+    }
 
+    public function newLeadAnalise(Request $request)
+    {
+        $dateStart = null;
+        $dateEnd = null;
+        $timezone = new DateTimeZone('Europe/Kiev');
+        if (empty($request->dateStart)) {   
+            $dateStart = new DateTime('now', $timezone);
+            // $dateStart->modify("-1 day");
+        } else{
+            $dateStart =  new DateTime($request->dateStart,$timezone);
+        }
+      
+        if (empty($request->dateEnd)) {
+
+            $dateEnd = new DateTime('now', $timezone);
+        } else {
+            $dateEnd =  new DateTime($request->dateEnd,$timezone);
+            $dateEnd->setTime(23, 59, 59);
+        }
+        $dateStart->setTime(0, 0, 0);
+        // получение лидов за период
+        $leads = B24Lead::where([
+            ['b24_leads.DATE_CREATE', '>', $dateStart->format('Y-m-d H:i:s')],
+            ['b24_leads.DATE_CREATE', '<', $dateEnd->format('Y-m-d H:i:s')],
+        ])->get();
+        foreach ($leads as $lead) {
+            $lead->USER_NAME = B24User::find($lead->ASSIGNED_BY_ID)->NAME;
+            //поиск компании, сделок и суммы всех продаж данного лида
+            if(!empty($lead->COMPANY_ID)){
+                $company = Company::find($lead->COMPANY_ID);
+                $deals = B24Deal::where([
+                   [ 'COMPANY_ID',$company->ID],
+                   [ 'CLOSED','y'],
+                    ])->get();
+                if(!empty($deals)){
+                    $deals_count=0;
+                    $deals_summ=0;
+                    foreach($deals as $deal){
+                        $deals_count++;
+                        $deals_summ+= $deal->OPPORTUNITY;
+                    }
+                    $lead->DEALS_COUNT = $deals_count;
+                    $lead->DEALS_SUMM = $deals_summ;
+                }
+            }
+        }
+
+
+
+        return view('bitrix24.b24lead.index', [
+            'items' => $leads,
+
+        ]);
     }
 }

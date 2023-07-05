@@ -113,6 +113,8 @@ Route::get('/bitrix24/analitics', function () {
 })->middleware(['auth'])->name('/bitrix24/analitics');
 
 
+Route::get('/Bitrix24/newLeadAnalise', [App\Http\Controllers\B24LeadController::class, 'newLeadAnalise'])->middleware(['auth'])
+->name('newLeadAnalise');
 Route::get('/Bitrix24/analitics/companies_date', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDate'])->middleware(['auth'])
 ->name('b24contact.analitics.companies_date');
 Route::get('/Bitrix24/analitics/b24contact.analitics.companies_date_index', [App\Http\Controllers\B24AnaliticsController::class, 'companiesDateShow'])->middleware(['auth'])

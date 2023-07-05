@@ -221,7 +221,8 @@ class B24TaskController extends AbstractB24Controller
             $i++; //temp
             foreach ($items as $item) {
 
-      
+     // if($item['id'] == 268549)
+      //  $r=0;
 
                 if (!empty($item['closedDate']))
                     $item['closedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['closedDate'])->format('Y-m-d H:i:s');

@@ -337,11 +337,11 @@ class B24AgendaController extends Controller
         // $items28Days = $userCompanies->get(5, collect());
         // $itemsCold = $userCompanies->get(4, collect());
         // $itemsCheat1 = $userCompanies->get(6, collect());
-        $cronTime = B24Analitics::where('AIM', 3377)->first()??0;
+        $cronTime = B24Analitics::where('AIM', 3377)->first() ?? 0;
         $agendaTime = B24Analitics::where([
-            'AIM'=> 3388,
+            'AIM' => 3388,
             'id_item' => $user_id,
-            ])->first()??0;
+        ])->first() ?? 0;
         return view('bitrix24.b24agenda.show', [
             //      'items' => $userCompanies,
             'itemsTomorrow' => $itemsTomorrow,
@@ -351,8 +351,8 @@ class B24AgendaController extends Controller
             'items28Days' => $items28Days,
             'itemsCold' => $itemsCold,
             'itemsCheat1' => $itemsCheat1,
-            'cronTime' => $cronTime?$cronTime->date1:0,
-            'agendaTime' => $agendaTime?$agendaTime->date1:0
+            'cronTime' => $cronTime ? $cronTime->date1 : 0,
+            'agendaTime' => $agendaTime ? $agendaTime->date1 : 0
         ]);
     }
 
@@ -383,8 +383,8 @@ class B24AgendaController extends Controller
         foreach ($userCompanies as $userCompany) {
             $userCompany->URL_TYPE = 0; //company
             //актуальность компании на сегодня
-         //   if ($userCompany->ID == 7439) //temp
-        //        $i = 0;
+               if ($userCompany->ID == 7563) //temp
+                    $i = 0;
             if (!$this->checkUserCompanyToday($userCompany))
                 if (!$this->checkUserCompanyTomorrow($userCompany))
                     if (!$this->checkUserCompanyYesterday($userCompany))
@@ -403,8 +403,8 @@ class B24AgendaController extends Controller
             ->get();
         foreach ($userLeads as $userLead) {
             $userLead->URL_TYPE = 1; // lead
-         //   if ($userLead->ID == 32495) //temp
-         //       $i = 0;
+            //   if ($userLead->ID == 32495) //temp
+            //       $i = 0;
             if (!$this->checkUserLeadToday($userLead, $userCompanies))
                 if (!$this->checkUserLeadTomorrow($userLead, $userCompanies))
                     if (!$this->checkUserLeadYesterday($userLead, $userCompanies)) {
@@ -424,7 +424,7 @@ class B24AgendaController extends Controller
             $Time = B24Analitics::where([
                 ['AIM', 3388],
                 ['id_item', $user_id]
-                ])->first();
+            ])->first();
             if (empty($Time)) {
                 $time = B24Analitics::create([
                     'AIM' => 3388,
