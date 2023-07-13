@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Helpers\Bitrix24\b24Companies;
 use App\Jobs\B24UpdateFetch;
 use App\Models\B24Activity;
+use App\Models\B24Analitics;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
 use App\Models\B24Lead;
@@ -17,6 +18,7 @@ use App\Models\Company;
 use Bitrix24\SDK\Core\Credentials\ApplicationProfile;
 use Bitrix24\SDK\Services\Main\Service\Main;
 use DateTime;
+use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -81,29 +83,48 @@ class B24FetchController extends AbstractB24Controller
             if ($_POST['date'] > $date)
                 $date = $_POST['date'];
 
-        $controller = new B24UserController;
-        $controller->updateData($date);
+        try {
+            $controller = new B24UserController;
+            $controller->updateData($date);
 
-        $controller = new B24LeadController;
-        $controller->updateData($date);
+            $controller = new B24LeadController;
+            $controller->updateData($date);
 
-        $controller = new CompanyController;
-        $controller->updateData($date);
+            $controller = new CompanyController;
+            $controller->updateData($date);
 
-        $controller = new B24RingController;
-        $controller->updateData($date);
+            $controller = new B24RingController;
+            $controller->updateData($date);
 
-        $controller = new B24TaskController;
-        $controller->updateData($date);
+            $controller = new B24TaskController;
+            $controller->updateData($date);
 
-        $controller = new B24DealController;
-        $controller->updateData($date);
+            $controller = new B24DealController;
+            $controller->updateData($date);
 
-        $controller = new B24ActivityController;
-        $controller->updateData($date);
+            $controller = new B24ActivityController;
+            $controller->updateData($date);
 
-        $controller = new B24ContactController;
-        $controller->fetchData($date);
+            $controller = new B24ContactController;
+            $controller->updateData($date);
+
+            $errors = B24Analitics::where([
+                ['AIM', 4553],
+            ])->get();
+            foreach($errors as $error){
+                $error->delete();
+            }
+        } catch (Exception $e) {
+            $dateError = new DateTime();
+            $dateError = $dateError->format('Y-m-d');
+            $var = B24Analitics::create([
+                'AIM' => 4553,
+                'date1' => $dateError,
+                'text1' => $e->getMessage(),
+                'string1' => 'Ошибка загрузки данных из Битрикс24! Возможно есть сделка без компании',
+            ]);
+           
+        }
     }
 
     public function updateDataCompany()

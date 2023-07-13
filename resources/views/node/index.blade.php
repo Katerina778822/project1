@@ -18,7 +18,7 @@
                     <th>Name</th>
                     <th>URL</th>
                     <th>Pagination</th>
-
+                    <th>Login</th>
                     <th></th>
                 </tr>
             </thead>
@@ -38,6 +38,10 @@
                     <td>
                         <p class="bg-danger">{{$node->node_paginat_pattern}}</p>
                     </td>
+                    <td>
+                        <p class="bg-danger">{{$node->login}}</p>
+                    </td>
+
 
 
                 </tr>

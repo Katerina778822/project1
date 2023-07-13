@@ -46,6 +46,10 @@
                     <td>{{$node->node_paginat_pattern}}</td>
                 </tr>
                 <tr>
+                    <th>Login</th>
+                    <td>{{$node->login}}</td>
+                </tr>
+                <tr>
                     <th>Create Time</th>
                     <td>{{$node->createdAt}}</td>
                 </tr>

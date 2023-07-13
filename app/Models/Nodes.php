@@ -14,7 +14,7 @@ class Nodes extends Model
     const UPDATED_AT = 'updatedAt';
     protected $table = 'nodes';
     protected $fillable = [
-        'name', 'url', 'node_paginat_pattern'
+        'name', 'url', 'node_paginat_pattern', 'login', 'pass'
     ];
     public function Selectors()
     {

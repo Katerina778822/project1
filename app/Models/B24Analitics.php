@@ -15,4 +15,26 @@ class B24Analitics extends Model
         'double3','double4','double5','text1','text2','text3','date1',
         'date2','date3','date4','date5','date6',
     ];
+
+     //@ make notice to DB when contact isnt linked with company
+     static public function whriteContactError(B24Contact $contact)
+     {
+ 
+         $var = B24Analitics::create([
+             'AIM' => 4554,
+             'date1' => $contact->DATE_CREATE,
+             'string1' => $contact->ID,
+             'string2' => $contact->NAME,
+         ]);
+     }
+     //@ delete all contact (without compatiy) errors
+     static public function deleteContactError()
+     {
+         $errors = B24Analitics::where([
+             ['AIM', 4554],
+         ])->get();
+         foreach($errors as $error){
+             $error->delete();
+         }
+     }
 }

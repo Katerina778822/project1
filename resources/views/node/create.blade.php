@@ -20,6 +20,12 @@
                 <p><label for="paginat">Шаблон страниц (node_paginat_pattern):</label>
                     <input class="field-main" type="text" name="node_paginat_pattern" id="node_paginat_pattern" style="width: 170px;" watermark="Enter Node name">
                 </p>
+                <p><label for="login">Логин:</label>
+                    <input class="field-main" type="text" name="login" id="login" style="width: 170px;" watermark="Enter auth login (optional)">
+                </p>
+                <p><label for="pass">Пароль:</label>
+                    <input class="field-main" type="password" name="pass" id="pass" style="width: 170px;" watermark="Enter auth password (optional)">
+                </p>
                 <fieldset style="max-width: 350px; position: relative; align-content: center;text-align:right;padding-right: 50;">
                     <legend>Селекторы:</legend>
                     <p><label for="b1">Корневой каталог(b1):</label>

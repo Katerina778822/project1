@@ -16,10 +16,11 @@ use App\Models\B24User;
 use App\Models\Company;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-
+use phpseclib3\File\ASN1\Maps\Extensions;
 
 class B24RaportController extends Controller
 {
@@ -30,15 +31,16 @@ class B24RaportController extends Controller
      */
     public function UpdateData()
     {
+        B24Analitics::deleteContactError();//empty DB 
         // $deals = $D->getClientStatus($start, $end); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
         $timezone = new DateTimeZone('Europe/Kiev');
         $start = new DateTime('now', $timezone);
-      //  $start = $start->modify('-1 day'); //TEMP!!
+        //  $start = $start->modify('-1 day'); //TEMP!!
         $end = new DateTime('now', $timezone);
-      //  $end = $end->modify('-1 day'); //TEMP!!
+        //  $end = $end->modify('-1 day'); //TEMP!!
         $end->setTime(21, 0, 0); //TEMP!!
         $start->setTime(0, 0, 0);
-        $user_id = 1489;
+        
         //заполнение/обновление клиентодел из чатов
         $Activities = B24Activity::whereBetween('b24_activity.LAST_UPDATED', [$start, $end])
             ->where('PROVIDER_ID', 'IMOPENLINES_SESSION')->get();
@@ -91,40 +93,40 @@ class B24RaportController extends Controller
             $this->saveRaport($company, $item, $searchRaportConditions, $start, $end);
             //поиск клиентодел (чаты) данной компании за сегодня 
             /*  $raportFound = false;
-            $raport = null;
-            //  if (!empty($item['COMPANY_ID'])) //TEMP!!
-            //    if ($item['COMPANY_ID'] == 4199) //TEMP!!
-            //      $r = 0; //TEMP!!!
-            foreach ($searchRaportConditions as $condition) {
-                $raport = B24Raport:: //
-                    //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
-                    where([
-                        ['b24_raports.DATE', '=', $end->format('Y-m-d')],
-                        $condition,
-                        //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
-                    ])
-                    ->leftjoin('b24_activity', 'b24_raports.ACTIVITY_ID', '=', 'b24_activity.ID2')
-                    ->first();
-                if (!empty($raport)) {
-                    $raportFound = true;
-                    break;
-                }
+        $raport = null;
+        //  if (!empty($item['COMPANY_ID'])) //TEMP!!
+        //    if ($item['COMPANY_ID'] == 4199) //TEMP!!
+        //      $r = 0; //TEMP!!!
+        foreach ($searchRaportConditions as $condition) {
+            $raport = B24Raport:: //
+                //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
+                where([
+                    ['b24_raports.DATE', '=', $end->format('Y-m-d')],
+                    $condition,
+                    //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
+                ])
+                ->leftjoin('b24_activity', 'b24_raports.ACTIVITY_ID', '=', 'b24_activity.ID2')
+                ->first();
+            if (!empty($raport)) {
+                $raportFound = true;
+                break;
             }
-            if ($raportFound) {
-                if ($company) {
-                    $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                    $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                    $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-                }
-                $raport->update($item);
-            } else { //создаем клиентодело для контакта
-                if ($company) {
-                    $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                    $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                    $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-                }
-                $raport = B24Raport::create($item);
-            }*/
+        }
+        if ($raportFound) {
+            if ($company) {
+                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
+                $item['DEAL_STATUS'] = $dealArray['STATUS'];
+                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
+            }
+            $raport->update($item);
+        } else { //создаем клиентодело для контакта
+            if ($company) {
+                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
+                $item['DEAL_STATUS'] = $dealArray['STATUS'];
+                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
+            }
+            $raport = B24Raport::create($item);
+        }*/
         }
 
         //заполнение/обновление клиентодел из звонков
@@ -144,7 +146,7 @@ class B24RaportController extends Controller
             $item['RING_ID'] = $ring->ID;
             $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
             $item['DATE'] = $end;
-            if ($ring->ID == 304735)
+            if ($ring->ID == 500000)
                 $r = 0;
             if ($ring->CRM_COMPANY_ID) { //если в звонке есть компания
                 $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
@@ -156,7 +158,13 @@ class B24RaportController extends Controller
             } elseif ($ring->CRM_CONTACT_ID) { //если в звонке есть контакт
                 $item['CONTACT_ID'] = $ring->CRM_CONTACT_ID;
                 $searchRaportConditions[] = ['b24_raports.CONTACT_ID', '=',  $item['CONTACT_ID']]; //ищем рапорт по контакту               $company = Company::find(B24Contact::find($ring->CRM_CONTACT_ID)->COMPANY_ID);
-                $company = Company::find(B24Contact::find($ring->CRM_CONTACT_ID)->COMPANY_ID);
+                if (empty(Company::find(B24Contact::find($ring->CRM_CONTACT_ID))))
+                    $q = 1;
+                $contact = B24Contact::find($ring->CRM_CONTACT_ID);
+                if ($contact->COMPANY_ID)
+                    $company = Company::find($contact->COMPANY_ID);
+                    else
+                        B24Analitics::whriteContactError($contact);
                 if ($company) {
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
@@ -178,51 +186,51 @@ class B24RaportController extends Controller
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
             }
-          //  if ($company->ID == 9003)
-           // $r = 0;
+            //  if ($company->ID == 9003)
+            // $r = 0;
             $this->saveRaport($company, $item, $searchRaportConditions, $start, $end);
             //  if (!empty($item['COMPANY_ID'])) //TEMP!!
             //    if ($item['COMPANY_ID'] == 2135) //TEMP!!
             //       $r = 0; //TEMP!!!
             //поиск клиентодел (звонки) данной компании за сегодня 
             /*    $raportFound = false;
-            $raport = null;
+        $raport = null;
 
-            //     if (!empty($item['COMPANY_ID'])) //TEMP!!
-            //           if ($item['COMPANY_ID'] == 4199) //TEMP!!
-            //                 $r = 0; //TEMP!!!
+        //     if (!empty($item['COMPANY_ID'])) //TEMP!!
+        //           if ($item['COMPANY_ID'] == 4199) //TEMP!!
+        //                 $r = 0; //TEMP!!!
 
-            foreach ($searchRaportConditions as $condition) {
-                $raport = B24Raport:: //
-                    //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
-                    where([
-                        ['b24_raports.DATE', '=', $end->format('Y-m-d')],
-                        //     ['b24_rings.PHONE_NUMBER',$ring->PHONE_NUMBER]
-                        $condition
-                        //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
-                    ])
-                    ->leftjoin('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
-                    ->first();
-                if (!empty($raport)) {
-                    $raportFound = true;
-                    break;
-                }
+        foreach ($searchRaportConditions as $condition) {
+            $raport = B24Raport:: //
+                //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
+                where([
+                    ['b24_raports.DATE', '=', $end->format('Y-m-d')],
+                    //     ['b24_rings.PHONE_NUMBER',$ring->PHONE_NUMBER]
+                    $condition
+                    //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
+                ])
+                ->leftjoin('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
+                ->first();
+            if (!empty($raport)) {
+                $raportFound = true;
+                break;
             }
-            if ($raportFound) {
-                if ($company) {
-                    $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                    $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                    $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-                }
-                $raport->update($item);
-            } else { //создаем клиентодело новое
-                if ($company) {
-                    $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                    $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                    $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-                }
-                $raport = B24Raport::create($item);
-            }*/
+        }
+        if ($raportFound) {
+            if ($company) {
+                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
+                $item['DEAL_STATUS'] = $dealArray['STATUS'];
+                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
+            }
+            $raport->update($item);
+        } else { //создаем клиентодело новое
+            if ($company) {
+                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
+                $item['DEAL_STATUS'] = $dealArray['STATUS'];
+                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
+            }
+            $raport = B24Raport::create($item);
+        }*/
         }
 
         //заполнение/обновление клиентодел из СДЕЛОК
@@ -254,43 +262,43 @@ class B24RaportController extends Controller
                 $this->saveRaport($company, $item, $searchRaportConditions, $start, $end);
                 //поиск клиентодел (сделка)по компаниям за сегодня 
                 /* $raportFound = false;
-                $raport = null;
+            $raport = null;
 
-                if (!empty($item['COMPANY_ID'])) //TEMP!!
-                    if ($item['COMPANY_ID'] == 2135) //TEMP!!
-                        $r = 0; //TEMP!!!
+            if (!empty($item['COMPANY_ID'])) //TEMP!!
+                if ($item['COMPANY_ID'] == 2135) //TEMP!!
+                    $r = 0; //TEMP!!!
 
-                foreach ($searchRaportConditions as $condition) {
-                    $raport = B24Raport:: //
-                        //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
-                        where([
-                            ['b24_raports.DATE', '=', $end->format('Y-m-d')],
-                            //     ['b24_rings.PHONE_NUMBER',$ring->PHONE_NUMBER]
-                            $condition
-                            //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
-                        ])
-                        ->leftjoin('b24_deals', 'b24_raports.DEAL_ID', '=', 'b24_deals.ID')
-                        ->first();
-                    if (!empty($raport)) {
-                        $raportFound = true;
-                        break;
-                    }
+            foreach ($searchRaportConditions as $condition) {
+                $raport = B24Raport:: //
+                    //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
+                    where([
+                        ['b24_raports.DATE', '=', $end->format('Y-m-d')],
+                        //     ['b24_rings.PHONE_NUMBER',$ring->PHONE_NUMBER]
+                        $condition
+                        //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
+                    ])
+                    ->leftjoin('b24_deals', 'b24_raports.DEAL_ID', '=', 'b24_deals.ID')
+                    ->first();
+                if (!empty($raport)) {
+                    $raportFound = true;
+                    break;
                 }
-                if ($raportFound) {
-                    if ($company && (!$raport->ACTIVITY_ID && !$raport->RING_ID)) {
-                        $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                        $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                        $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-                    }
-                    $raport->update($item);
-                } else { //создаем клиентодело новое
-                    if ($company) {
-                        $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                        $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                        $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-                    }
-                    $raport = B24Raport::create($item);
-                }*/
+            }
+            if ($raportFound) {
+                if ($company && (!$raport->ACTIVITY_ID && !$raport->RING_ID)) {
+                    $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
+                    $item['DEAL_STATUS'] = $dealArray['STATUS'];
+                    $item['SUMM'] = $dealArray['SUMM'] ?? 0;
+                }
+                $raport->update($item);
+            } else { //создаем клиентодело новое
+                if ($company) {
+                    $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
+                    $item['DEAL_STATUS'] = $dealArray['STATUS'];
+                    $item['SUMM'] = $dealArray['SUMM'] ?? 0;
+                }
+                $raport = B24Raport::create($item);
+            }*/
             }
         }
         //запись даты формирования отчета в базу данных
@@ -346,7 +354,7 @@ class B24RaportController extends Controller
         }
         if ($raportFound) {
             if ($company) {
-                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0,$start, $end);
+                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0, $start, $end);
                 $item['DEAL_STATUS'] = $dealArray['STATUS'];
                 $item['SUMM'] = $dealArray['SUMM'] ?? 0;
                 if ($item['DEAL_STATUS'] == -1) { //проверка возврата, создаем новую запись в B24Raport
@@ -355,17 +363,16 @@ class B24RaportController extends Controller
                         ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']],
                         ['b24_raports.DEAL_STATUS', '=', -1],
                     ])->first();
-                    if(empty($returnToday)){
-                       $raport = B24Raport::create($item);//создаем, если возврат ещене записан в отчет
-                    }else
-                    $res = $returnToday->update($item);//обновляем если возврат уже сегодня записан
+                    if (empty($returnToday)) {
+                        $raport = B24Raport::create($item); //создаем, если возврат ещене записан в отчет
+                    } else
+                        $res = $returnToday->update($item); //обновляем если возврат уже сегодня записан
                 } else
                     $res = $raport->update($item);
             }
-            
         } else { //создаем клиентодело для контакта
             if ($company) {
-                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0,$start,$end);
+                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0, $start, $end);
                 $item['DEAL_STATUS'] = $dealArray['STATUS'];
                 $item['SUMM'] = $dealArray['SUMM'] ?? 0;
             }
@@ -465,11 +472,19 @@ class B24RaportController extends Controller
         $agendaTime = B24Analitics::where([
             'AIM' => 4488,
         ])->first() ?? 0;
+        $errorUpdateData = B24Analitics::where([
+            'AIM' => 4553,
+        ])->first() ?? 0;
+        $errorContact = B24Analitics::where([
+            'AIM' => 4554,
+        ])->first() ?? 0;
         return view('bitrix24.raport.show', [
             'allUsersmainRaports' => $allUsersmainRaports,
             'mainRaports' => $mainRaports,
             'user' => $user->NAME . ' ' . $user->LAST_NAME,
             'items' => $items,
+            'errorUpdateData' => $errorUpdateData,
+            'errorContact' => $errorContact,
             'cronTime' => $cronTime ? $cronTime->date1 : 0,
             'agendaTime' => $agendaTime ? $agendaTime->date1 : 0
         ]);

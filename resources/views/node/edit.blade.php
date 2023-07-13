@@ -30,6 +30,14 @@
                             <td>
                                 <input type="text" class="field-main" id="page" name="node_paginat_pattern" value="{{$node->node_paginat_pattern}}">
                             </td>
+                            <th>Login</th>
+                            <td>
+                                <input type="text" class="field-main" id="login" name="login" value="{{$node->login}}">
+                            </td>
+                            <th>Password</th>
+                            <td>
+                                <input type="password" class="field-main" id="pass" name="pass" value="{{$node->pass}}">
+                            </td>
                         </tr>
                         @endif
                     </tbody>

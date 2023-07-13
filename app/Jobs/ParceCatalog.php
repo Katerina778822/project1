@@ -49,9 +49,9 @@ class ParceCatalog implements ShouldQueue
     private function ParceCatalog($url, $selector_literal, int $recursion, $id_node)
     {
 
-        $document = null;
-        $url=CorrectUrl::Handle($url,$id_node);//check and correct url before loading
-        $document = new Document($url, true);
+        //$document = ParceHelper::getDocument($url, $id_node);
+           $url=CorrectUrl::Handle($url,$id_node);//check and correct url before loading
+             $document = new Document($url, true);
 
         if (empty($document))
             return 0; //if document didnt load
@@ -60,31 +60,27 @@ class ParceCatalog implements ShouldQueue
             // throw new Exception("Empty Selector ".$selector_literal . $recursion);
             return 0; //if selector doesnt exist
         }
-        $res = 0;//sublevels count
-        $posts = ParceHelper::findCssOrXpath($document,$selector->value);
+        $res = 0; //sublevels count
+        $posts = ParceHelper::findCssOrXpath($document, $selector->value);
         /*  if (empty($posts[0])) {
              throw new Exception("Empty Selector ".$selector_literal . $recursion);
         }*/
         foreach ($posts as $post) {
             $selector_NEXT = Selectors::where('fid_id_node', $id_node)->where('name', $selector_literal . $recursion + 1)->first();
-            $resSub =0;
-            if (!empty($selector_NEXT->value))//if selector of deeper level doesnt exist - go further
+            $resSub = 0;
+            if (!empty($selector_NEXT->value)) //if selector of deeper level doesnt exist - go further
                 $resSub = $this->ParceCatalog($post->getAttribute('href'), 'b', $recursion + 1, $id_node); //try parcing deeper level catalog
             if ($resSub)
                 continue; //if sublevel contains goods dont store this CATALOG
-            $catalog = Catalogs::where('url', CorrectUrl::Handle($post->getAttribute('href'),$id_node))->first();
+            $catalog = Catalogs::where('url', CorrectUrl::Handle($post->getAttribute('href'), $id_node))->first();
             if (empty($catalog)) { //store catalog if it doesnt exist yet
-                $catalogContrl = new CatalogController;
-                $catalog_url=CorrectUrl::Handle($post->getAttribute('href'),$id_node);//check and correct url before storing
-                
+                 $catalogContrl = new CatalogController;
+                $catalog_url = CorrectUrl::Handle($post->getAttribute('href'), $id_node); //check and correct url before storing
+
                 $catalogContrl->store($id_node, $catalog_url, $post->text());
-               
             }
             $res++;
         }
         return $res;
     }
-
-    
 }
-

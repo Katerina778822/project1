@@ -47,6 +47,8 @@ class NodeController extends Controller
                 'name' => $request->get('nodename'),
                 'url' => $request->get('url'),
                 'node_paginat_pattern' => $request->get('node_paginat_pattern'),
+                'login' => $request->get('login')??null,
+                'pass' => $request->get('pass')??null,
             ]);
         } catch (Exception $e) {
             $e->getMessage();

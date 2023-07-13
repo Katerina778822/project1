@@ -22,6 +22,7 @@ class CreateB24ContactsTable extends Migration
             $table->unsignedBigInteger('COMPANY_ID')->nullable()->default(0);
 
             $table->dateTime('DATE_CREATE')->nullable()->default(null);
+            $table->dateTime('DATE_MODIFY')->nullable()->default(null);
             $table->timestamps();
             
         });

@@ -13,6 +13,24 @@
             <div class=" w-11/12  ">
                 <div>cron:{{$cronTime}} /Raport:{{$agendaTime}}</div>
                 <div>{{$user}}</div>
+                
+                <!-- errorUpdateData  -->
+                @if(!empty($errorUpdateData))
+                <div class="text-xl text-red-500">
+                    <p>  {{$errorUpdateData->string1}} </p>
+                    <p>  {{$errorUpdateData->text1}} </p>
+                    <p> {{$errorUpdateData->date1}} </p>
+                </div>
+                @endif
+                <!-- error raport Contact withowt Company  -->
+                @if(!empty($errorContact))
+                <div class="text-xl text-red-500">
+                    ЛИД без компании!
+                    <p>ID {{$errorContact->string1}} </p>
+                    <p>Имя {{$errorContact->string2}} </p>
+                    <p>Дата {{$errorContact->date1}} </p>
+                </div>
+                @endif
                 <!-- Main Raport -->
                 @if(!empty($mainRaports))
 

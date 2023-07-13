@@ -19,6 +19,8 @@ class CreateNodesTable extends Migration
             $table->string('name',45)->nullable(false);
             $table->string('url',256)->nullable(false);
             $table->string('node_paginat_pattern',45)->nullable()->default(0);
+            $table->string('login',45)->nullable()->default(0);
+            $table->string('pass',45)->nullable()->default(0);
             $table->timestamp('createdAt')->nullable();    
             $table->timestamp('updatedAt')->nullable();
         });

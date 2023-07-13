@@ -42,6 +42,7 @@ class ParseGoods implements ShouldQueue
                 if ($page === false)
                     throw new Exception('Check pagination pattern! Should contain "x"-symbol!');
                 $document = new Document($catalog->url . $page, true); //dd($document);
+              //$document = ParceHelper::getDocument2($catalog->url . $page, $node_id);
                 $posts = ParceHelper::findCssOrXpath($document, $selector->value);
                 if (!empty($posts)) { //dd($posts[3]);
                     // $goods = Goods::all();
@@ -52,7 +53,8 @@ class ParseGoods implements ShouldQueue
                         else throw new Exception('Wrong good URL! Check gd SELECTOR.  '); //if incorrect url of the good
                         $storedGood = Goods::where('url', $goodUrl)->first();
                         if (empty($storedGood)) { //if goods isnt before
-                            $documentGood = new Document($goodUrl, true); //create goods details
+                           // $documentGood = new Document($goodUrl, true); //create goods details
+                           $documentGood = ParceHelper::getDocument($goodUrl, $node_id);
                             // if (1) {                            
                             $goodArr['url'] = $goodUrl;
 

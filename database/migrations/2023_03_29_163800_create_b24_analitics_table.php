@@ -20,6 +20,9 @@ class CreateB24AnaliticsTable extends Migration
      //3388 -  agenda create time  
      //4477 -    cron.php RAPORT update time  
      //4488 -     RAPORT create time  
+     //4555 -     Error - deal without company  
+     //4554 -     Error - contact without company  
+     //4553 -     Error - other RAPORT creating error 
 //
     public function up()
     {

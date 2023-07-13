@@ -333,7 +333,7 @@ class b24OriginAPI
                     break;
                 }
             case 'contact': {
-                    return '';
+                    return 'DATE_MODIFY';
                     break;
                 }
             case 'company': {

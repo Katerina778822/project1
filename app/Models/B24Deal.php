@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use PhpParser\Node\Stmt\Return_;
 
 class B24Deal extends Model
 {
@@ -98,4 +99,6 @@ class B24Deal extends Model
         }
         return ['STATUS' => 0,'SUMM'=>$summ];
     }
+
+
 }
