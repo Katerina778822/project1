@@ -17,6 +17,7 @@ class B24Deal extends Model
         2 => 'Перенос',
         3 => 'Прогресс',
         4 => 'Продажа',
+        5 => 'Возврат',
     ];
     public static $returnArray = ['C23:8','C19:5'];
     public static $looseStateArray = ['C19:LOSE', 'C19:APOLOGY', 'C19:2', 'C19:3', 'C19:4', 'C19:14', 'C19:7', 'C19:6', 'C23:LOSE', 'C23:APOLOGY', 'C23:3', 'C23:6', 'C23:7',  'C23:14', 'C23:15', 'C23:16'];
@@ -58,7 +59,7 @@ class B24Deal extends Model
             return ['STATUS' => 2,'SUMM'=>$summ];
         }
         if (in_array($this->STAGE_ID_BEFORE, B24Deal::$startArray)&&in_array($this->STAGE_ID, B24Deal::$returnArray)) {
-            return ['STATUS' => -1,'SUMM'=> -$summ];
+            return ['STATUS' => 5,'SUMM'=> -$summ];
         }
 
         if ($this->STAGE_ID_BEFORE == $this->STAGE_ID&&$statusBefore==2&&!(in_array($this->STAGE_ID, B24Deal::$winStateArray))||$statusBefore==0) {
