@@ -237,7 +237,7 @@ class B24DealController extends AbstractB24Controller
                     $item['COMPANY_ID'] = 7549;
                     $error = B24Analitics::create([
                         'AIM' => 4555,
-                        'id_item' => $item['id_item'],
+                        'id_item' => $item['ID'],
                         'string1' => $item['TITLE'],
                         'string2' => "Deal without company",
                     ]);
