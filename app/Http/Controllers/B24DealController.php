@@ -239,7 +239,7 @@ class B24DealController extends AbstractB24Controller
                         'AIM' => 4555,
                         'id_item' => $item['id_item'],
                         'string1' => $item['TITLE'],
-                        'string' => "Deal without company",
+                        'string2' => "Deal without company",
                     ]);
                 }
                     
