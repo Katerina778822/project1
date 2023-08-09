@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\b24DealFetch;
+use App\Models\B24Analitics;
 use App\Models\B24Deal;
 use App\Models\Company;
 use App\View\Components\Alert;
@@ -88,8 +89,8 @@ class B24DealController extends AbstractB24Controller
         $b24Item = B24Deal::find($item['ID']);
 
         if (!empty($b24Item)) {
- //           if (empty($b24Item['STAGE_ID_BEFORE']))
-//                $item['STAGE_ID_BEFORE'] =  $item['STAGE_ID'];
+            //           if (empty($b24Item['STAGE_ID_BEFORE']))
+            //                $item['STAGE_ID_BEFORE'] =  $item['STAGE_ID'];
 
             $b24Item->update($item);
         } else
@@ -227,6 +228,19 @@ class B24DealController extends AbstractB24Controller
                 if (!empty($item['DATE_MODIFY']))
                     $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 else $item['DATE_MODIFY'] = NULL;
+
+                if (empty($item['COMPANY_ID'])){
+                    $item['COMPANY_ID'] = 7549;
+                    $error = B24Analitics::create([
+                        'AIM' => 4555,
+                        'id_item' => $item['id_item'],
+                        'string1' => $item['TITLE'],
+                        'string' => "Deal without company",
+                    ]);
+                }
+                    
+
+        
 
                 $this->update($item);
                 $count++;

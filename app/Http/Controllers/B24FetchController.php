@@ -92,6 +92,9 @@ class B24FetchController extends AbstractB24Controller
 
             $controller = new CompanyController;
             $controller->updateData($date);
+            
+            $controller = new B24ContactController;
+            $controller->updateData($date);
 
             $controller = new B24RingController;
             $controller->updateData($date);
@@ -99,13 +102,10 @@ class B24FetchController extends AbstractB24Controller
             $controller = new B24TaskController;
             $controller->updateData($date);
 
-            $controller = new B24DealController;
-            $controller->updateData($date);
-
             $controller = new B24ActivityController;
             $controller->updateData($date);
 
-            $controller = new B24ContactController;
+            $controller = new B24DealController;
             $controller->updateData($date);
 
             $errors = B24Analitics::where([
