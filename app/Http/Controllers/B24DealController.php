@@ -164,11 +164,15 @@ class B24DealController extends AbstractB24Controller
                 else $item['DATE_MODIFY'] = NULL;
 
 
-                if ($item['COMPANY_ID'] == 0)
+                if (empty($item['COMPANY_ID'])){
                     $item['COMPANY_ID'] = 7549;
-
-                if (!Company::find($item['COMPANY_ID']))
-                    $item['COMPANY_ID'] = 7549;
+                    $error = B24Analitics::create([
+                        'AIM' => 4555,
+                        'id_item' => $item['id_item'],
+                        'string1' => $item['TITLE'],
+                        'string' => "Deal without company",
+                    ]);
+                }
 
                 $this->store($item);
             }
