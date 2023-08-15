@@ -35,9 +35,9 @@ class B24RaportController extends Controller
         // $deals = $D->getClientStatus($start, $end); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
         $timezone = new DateTimeZone('Europe/Kiev');
         $start = new DateTime('now', $timezone);
-        //  $start = $start->modify('-1 day'); //TEMP!!
+          $start = $start->modify('-1 day'); //TEMP!!
         $end = new DateTime('now', $timezone);
-        //  $end = $end->modify('-1 day'); //TEMP!!
+          $end = $end->modify('-1 day'); //TEMP!!
         $end->setTime(21, 0, 0); //TEMP!!
         $start->setTime(0, 0, 0);
         
@@ -137,7 +137,6 @@ class B24RaportController extends Controller
             ])
             ->get();
         foreach ($Rings as $ring) {
-
             $item = [];
             $searchRaportConditions = [];
             $searchRaportConditions[] = ['b24_rings.PHONE_NUMBER', '=', $ring->PHONE_NUMBER];
@@ -146,8 +145,10 @@ class B24RaportController extends Controller
             $item['RING_ID'] = $ring->ID;
             $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
             $item['DATE'] = $end;
-            if ($ring->ID == 500000)
-                $r = 0;
+//debug
+           // if ($ring->CRM_COMPANY_ID != 6687)
+             //   continue;
+
             if ($ring->CRM_COMPANY_ID) { //если в звонке есть компания
                 $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
                 $company = Company::find($ring->CRM_COMPANY_ID);
@@ -186,53 +187,8 @@ class B24RaportController extends Controller
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
             }
-            //  if ($company->ID == 9003)
-            // $r = 0;
             $this->saveRaport($company, $item, $searchRaportConditions, $start, $end);
-            //  if (!empty($item['COMPANY_ID'])) //TEMP!!
-            //    if ($item['COMPANY_ID'] == 2135) //TEMP!!
-            //       $r = 0; //TEMP!!!
-            //поиск клиентодел (звонки) данной компании за сегодня 
-            /*    $raportFound = false;
-        $raport = null;
-
-        //     if (!empty($item['COMPANY_ID'])) //TEMP!!
-        //           if ($item['COMPANY_ID'] == 4199) //TEMP!!
-        //                 $r = 0; //TEMP!!!
-
-        foreach ($searchRaportConditions as $condition) {
-            $raport = B24Raport:: //
-                //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
-                where([
-                    ['b24_raports.DATE', '=', $end->format('Y-m-d')],
-                    //     ['b24_rings.PHONE_NUMBER',$ring->PHONE_NUMBER]
-                    $condition
-                    //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
-                ])
-                ->leftjoin('b24_rings', 'b24_raports.RING_ID', '=', 'b24_rings.ID')
-                ->first();
-            if (!empty($raport)) {
-                $raportFound = true;
-                break;
-            }
         }
-        if ($raportFound) {
-            if ($company) {
-                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-            }
-            $raport->update($item);
-        } else { //создаем клиентодело новое
-            if ($company) {
-                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-            }
-            $raport = B24Raport::create($item);
-        }*/
-        }
-
         //заполнение/обновление клиентодел из СДЕЛОК
         $Deals = B24Deal::whereBetween('b24_deals.DATE_MODIFY', [$start, $end])
             ->where([
@@ -240,6 +196,9 @@ class B24RaportController extends Controller
             ])
             ->get();
         foreach ($Deals as $deal) {
+            //debug
+           // if ($deal->COMPANY_ID != 2757)
+           // continue;
             $item = [];
             $searchRaportConditions = [];
             $company = null;
@@ -251,7 +210,8 @@ class B24RaportController extends Controller
             $item['USER_ID'] = $deal->ASSIGNED_BY_ID;
             if (
                 $deal->COMPANY_ID && ($deal->DATE_WIN == '' || $deal->DATE_WIN == $start->format('Y-m-d'))  //если в сделке есть компания и DATE_WIN пустое или с сегодняшней датой. И сделка не находится в первой стадии
-                && $deal->STAGE_ID != 'C19:NEW' && $deal->STAGE_ID != 'C23:NEW'
+                && !(in_array($deal->STAGE_ID, B24Deal::$startArray))
+                
             ) {
                 $item['COMPANY_ID'] = $deal->COMPANY_ID;
                 $company = Company::find($deal->COMPANY_ID);

@@ -60,8 +60,8 @@ class Company extends Model
     //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
     public function getClientStatus($start, $end)
     {
-        if ($this->ID == 8759) //TEMP!!
-            $r = 0;
+       // if ($this->ID == 8759) //TEMP!!
+         //   $r = 0;
         $deals  = B24Deal::where('COMPANY_ID', $this->ID)->get();
         if ($deals->count() == 0)
             return 4;   //4-новый
@@ -69,29 +69,42 @@ class Company extends Model
             $dealsLastData = $deals->max(function ($deal) {
                 return $deal->CLOSEDATE;
             });
-            if($dealsLastData > $start->format('Y-m-d H:i:s')&&$dealsLastData<$end->format('Y-m-d H:i:s')&&$deals->count()<=1){
+            if ($dealsLastData > $start->format('Y-m-d H:i:s') && $dealsLastData < $end->format('Y-m-d H:i:s') && $deals->count() <= 1) {
                 return 4;  //4-новый - сделка закрыта сегодня
             }
             $dealsLast = $deals->firstWhere('CLOSEDATE', $dealsLastData);
             if ($deals->count() == 1 && $dealsLast->CLOSED == 'N') //последняя сделка открыта
                 return 4;  //4-новый
-            $winStateArray = ['C23:WON']; //развоз
-            $dealsSuccessCargo = $deals->whereIn('STAGE_ID', $winStateArray);
-            $winStateArray = ['C19:WON']; //Украина
-            $dealsSuccessUkraine = $deals->whereIn('STAGE_ID', $winStateArray);
+                //поиск выигрышных сделок
+            $winStateArray = ['C23:WON','C25:WON']; //развоз
+            $dealsSuccessCargo = $deals->whereIn('STAGE_ID', $winStateArray)->where('OPPORTUNITY','>','1');
+            $winStateArray = ['C19:WON','C27:WON']; //Украина
+            $dealsSuccessUkraine = $deals->whereIn('STAGE_ID', $winStateArray)->where('OPPORTUNITY','>','1');
+
             if ($dealsSuccessCargo->count() > 0 || $dealsSuccessUkraine->count() > 0) {
+                $dealWithMaxDateCargo = null; //определение нач значений
+                $yesterdayCargo = null;
+                $yesterdayUkraine = null;
+                $dealWithMaxDateUkraine = null;
+                //выбор макс значений дат успешных сделок
                 $dealWithMaxDateCargo = $dealsSuccessCargo->max(function ($deal) {
                     return $deal->CLOSEDATE;
                 });
                 $dealWithMaxDateUkraine = $dealsSuccessUkraine->max(function ($deal) {
                     return $deal->CLOSEDATE;
                 });
-                $dealWithMaxDateCargo = new DateTime($dealWithMaxDateCargo);
-                $dealWithMaxDateUkraine = new DateTime($dealWithMaxDateUkraine);
-                $yesterdayCargo = new DateTime();
-                $yesterdayUkraine = new DateTime();
-                $yesterdayCargo->modify('-28 day')->setTime(0, 0, 0);
-                $yesterdayUkraine->modify('-60 day')->setTime(0, 0, 0);
+                //приведение дат к нормальному формату
+                if ($dealWithMaxDateCargo) {
+                    $dealWithMaxDateCargo = new DateTime($dealWithMaxDateCargo);
+                    $yesterdayCargo = new DateTime();
+                    $yesterdayCargo->modify('-28 day')->setTime(0, 0, 0);
+                }
+                if ($dealWithMaxDateUkraine) {
+                    $dealWithMaxDateUkraine = new DateTime($dealWithMaxDateUkraine);
+                    $yesterdayUkraine = new DateTime();
+                    $yesterdayUkraine->modify('-60 day')->setTime(0, 0, 0);
+                }
+                //определение состояние клиента по дате сделки
                 if (
                     $dealWithMaxDateUkraine > $yesterdayUkraine ||
                     $dealWithMaxDateCargo > $yesterdayCargo
@@ -105,22 +118,22 @@ class Company extends Model
     }
 
     //returns last open Deal
-    public function getLastOpenDealStatus($statusBefore, DateTime $start, DateTime $end=null)
+    public function getLastOpenDealStatus($statusBefore, DateTime $start, DateTime $end = null)
     {
         $deal = B24Deal::where([
             ['COMPANY_ID', $this->ID],
             ['CLOSED', 'N']
         ])->orderByDesc('DATE_CREATE')->first();
         if (!empty($deal)) {
-            return $deal->getStatus($statusBefore,$start, $end);
+            return $deal->getStatus($statusBefore, $start, $end);
         } else {
             $deal = B24Deal::where([
                 ['COMPANY_ID', $this->ID],
             ])->orderByDesc('DATE_CREATE')->first();
             if (!empty($deal)) {
-                return $deal->getStatus($statusBefore, $start, $end); 
+                return $deal->getStatus($statusBefore, $start, $end);
             }
         }
-        return ['STATUS' => 0,'SUMM'=>0];
+        return ['STATUS' => 0, 'SUMM' => 0];
     }
 }
