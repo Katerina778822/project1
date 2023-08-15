@@ -38,7 +38,7 @@ class B24RaportController extends Controller
         //  $start = $start->modify('-1 day'); //TEMP!!
         $end = new DateTime('now', $timezone);
         //  $end = $end->modify('-1 day'); //TEMP!!
-        $end->setTime(23, 0, 0); 
+        $end->setTime(21, 0, 0); 
         $start->setTime(0, 0, 0);
         
         //заполнение/обновление клиентодел из чатов
@@ -91,42 +91,7 @@ class B24RaportController extends Controller
             }
 
             $this->saveRaport($company, $item, $searchRaportConditions, $start, $end);
-            //поиск клиентодел (чаты) данной компании за сегодня 
-            /*  $raportFound = false;
-        $raport = null;
-        //  if (!empty($item['COMPANY_ID'])) //TEMP!!
-        //    if ($item['COMPANY_ID'] == 4199) //TEMP!!
-        //      $r = 0; //TEMP!!!
-        foreach ($searchRaportConditions as $condition) {
-            $raport = B24Raport:: //
-                //    ->whereBetween('b24_raports.DATE', [ $start->format('Y-m-d'), $end->format('Y-m-d')])
-                where([
-                    ['b24_raports.DATE', '=', $end->format('Y-m-d')],
-                    $condition,
-                    //        ['COMPANY_ID' => $ring->PHONE_NUMBER],
-                ])
-                ->leftjoin('b24_activity', 'b24_raports.ACTIVITY_ID', '=', 'b24_activity.ID2')
-                ->first();
-            if (!empty($raport)) {
-                $raportFound = true;
-                break;
-            }
-        }
-        if ($raportFound) {
-            if ($company) {
-                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-            }
-            $raport->update($item);
-        } else { //создаем клиентодело для контакта
-            if ($company) {
-                $dealArray = $company->getLastOpenDealStatus($raport->DEAL_STATUS ?? 0);
-                $item['DEAL_STATUS'] = $dealArray['STATUS'];
-                $item['SUMM'] = $dealArray['SUMM'] ?? 0;
-            }
-            $raport = B24Raport::create($item);
-        }*/
+        
         }
 
         //заполнение/обновление клиентодел из звонков
@@ -146,8 +111,8 @@ class B24RaportController extends Controller
             $item['PHONE_NUMBER'] = $ring->PHONE_NUMBER;
             $item['DATE'] = $end;
 //debug
-           // if ($ring->CRM_COMPANY_ID != 6687)
-             //   continue;
+            if ($ring->CRM_COMPANY_ID != 3409)
+               continue;
 
             if ($ring->CRM_COMPANY_ID) { //если в звонке есть компания
                 $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
@@ -159,8 +124,9 @@ class B24RaportController extends Controller
             } elseif ($ring->CRM_CONTACT_ID) { //если в звонке есть контакт
                 $item['CONTACT_ID'] = $ring->CRM_CONTACT_ID;
                 $searchRaportConditions[] = ['b24_raports.CONTACT_ID', '=',  $item['CONTACT_ID']]; //ищем рапорт по контакту               $company = Company::find(B24Contact::find($ring->CRM_CONTACT_ID)->COMPANY_ID);
-                if (empty(Company::find(B24Contact::find($ring->CRM_CONTACT_ID))))
-                    $q = 1;
+             //debug
+                //   if (empty(Company::find(B24Contact::find($ring->CRM_CONTACT_ID))))
+               //     $q = 1;
                 $contact = B24Contact::find($ring->CRM_CONTACT_ID);
                 if ($contact->COMPANY_ID)
                     $company = Company::find($contact->COMPANY_ID);
@@ -198,18 +164,22 @@ class B24RaportController extends Controller
         foreach ($Deals as $deal) {
 
             //debug
-           // if ($deal->COMPANY_ID != 2757)
-           // continue;
-           
+            if ($deal->COMPANY_ID != 3409)
+            continue;
+
             $item = [];
             $searchRaportConditions = [];
             $company = null;
             $item['DEAL_ID'] = $deal->ID;
             $item['DATE'] = $end;
             $item['USER_ID'] = $deal->ASSIGNED_BY_ID;
+            if($deal->OPPORTUNITY<2)//если сумма сделки меньше 2-х, в отчет не записываем
+                continue;
+            if(in_array($deal->STAGE_ID_BEFORE, B24Deal::$winStateArray))//если в предидущая стадия STAGE_ID_BEFORE отмечена как WIN, больше в отчет ее не трогаем
+                continue;
             if (
-                $deal->COMPANY_ID && ($deal->DATE_WIN == '' || $deal->DATE_WIN == $start->format('Y-m-d'))  //если в сделке есть компания и DATE_WIN пустое или с сегодняшней датой. И сделка не находится в первой стадии
-                && !(in_array($deal->STAGE_ID, B24Deal::$startArray))
+                $deal->COMPANY_ID && ($deal->DATE_WIN == '' || $deal->DATE_WIN == $start->format('Y-m-d'))  //если в сделке есть компания и DATE_WIN пустое или с сегодняшней датой. И сделка находится в WIN стадии
+                && (in_array($deal->STAGE_ID, B24Deal::$winStateArray))
                 
             ) {
                 $item['COMPANY_ID'] = $deal->COMPANY_ID;

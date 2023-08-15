@@ -64,13 +64,13 @@ class B24Deal extends Model
             return ['STATUS' => 2,'SUMM'=>$summ];
         } else {
             if (in_array($this->STAGE_ID, B24Deal::$looseStateArray)) {
-                $this->STAGE_ID_BEFORE = B24Deal::$startArray;
+                $this->STAGE_ID_BEFORE = $this->STAGE_ID;;
                 $this->save();
                 return ['STATUS' => 1,'SUMM'=>$summ];
             }
 
             if (in_array($this->STAGE_ID, B24Deal::$winStateArray) || in_array($this->STAGE_ID,  B24Deal::$workStateArray)) {
-                $this->STAGE_ID_BEFORE =  B24Deal::$startArray;
+                $this->STAGE_ID_BEFORE =  $this->STAGE_ID;;
                 $this->DATE_WIN=$start->format('Y-m-d');
                 $this->save();
                 return ['STATUS' => 4,'SUMM'=>$summ];
