@@ -57,10 +57,14 @@ class B24Deal extends Model
             return ['STATUS' => 2,'SUMM'=>$summ];
         }
         if (in_array($this->STAGE_ID_BEFORE, B24Deal::$startArray)&&in_array($this->STAGE_ID, B24Deal::$returnArray)) {
+            $this->STAGE_ID_BEFORE = $this->STAGE_ID;
+            $this->save();
             return ['STATUS' => 5,'SUMM'=> -$summ];
         }
 
-        if ($this->STAGE_ID_BEFORE == $this->STAGE_ID&&$statusBefore==2&&!(in_array($this->STAGE_ID, B24Deal::$winStateArray))||$statusBefore==0) {
+        if ($this->STAGE_ID_BEFORE == $this->STAGE_ID&&$statusBefore==2&&!in_array($this->STAGE_ID, B24Deal::$winStateArray)) {
+            $this->STAGE_ID_BEFORE = $this->STAGE_ID;
+            $this->save();
             return ['STATUS' => 2,'SUMM'=>$summ];
         } else {
             if (in_array($this->STAGE_ID, B24Deal::$looseStateArray)) {
@@ -69,7 +73,7 @@ class B24Deal extends Model
                 return ['STATUS' => 1,'SUMM'=>$summ];
             }
 
-            if (in_array($this->STAGE_ID, B24Deal::$winStateArray) || in_array($this->STAGE_ID,  B24Deal::$workStateArray)) {
+            if (in_array($this->STAGE_ID, B24Deal::$winStateArray)) {
                 $this->STAGE_ID_BEFORE =  $this->STAGE_ID;;
                 $this->DATE_WIN=$start->format('Y-m-d');
                 $this->save();
