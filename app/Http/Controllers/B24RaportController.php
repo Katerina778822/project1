@@ -32,7 +32,7 @@ class B24RaportController extends Controller
     public function UpdateData()
     {
         B24Analitics::deleteContactError(); //empty DB 
-        // $deals = $D->getClientStatus($start, $end); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
+        // $deals = $D->getClientStatus($start); // 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
         $timezone = new DateTimeZone('Europe/Kiev');
         $start = new DateTime('now', $timezone);
        // $start = $start->modify('-1 day'); //TEMP!!
@@ -54,7 +54,7 @@ class B24RaportController extends Controller
                 $item['COMPANY_ID'] = $activity->COMPANY_ID;
                 $company = Company::find($activity->COMPANY_ID);
                 $item['USER_ID'] = $company->ASSIGNED_BY_ID;
-                $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                $item['DEAL_TYPE'] = $company->getClientStatus($start);
                 $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $activity->COMPANY_ID];
             } elseif ($activity->CONTACT_ID) { //если в чате есть контакт
                 $item['CONTACT_ID'] = $activity->CONTACT_ID;
@@ -63,7 +63,7 @@ class B24RaportController extends Controller
                 if ($company) {
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
-                    $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                    $item['DEAL_TYPE'] = $company->getClientStatus($start);
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
                 }
             } elseif ($activity->DEAL_ID) { //если в чате есть сделка
@@ -73,7 +73,7 @@ class B24RaportController extends Controller
                 if ($company) {
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
-                    $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                    $item['DEAL_TYPE'] = $company->getClientStatus($start);
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
                 }
             } elseif ($activity->LEAD_ID) { //если в чате есть лид
@@ -85,7 +85,7 @@ class B24RaportController extends Controller
                 if ($company) {
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
-                    $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                    $item['DEAL_TYPE'] = $company->getClientStatus($start);
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=', $item['COMPANY_ID']];
                 }
             }
@@ -117,7 +117,7 @@ class B24RaportController extends Controller
                 $item['COMPANY_ID'] = $ring->CRM_COMPANY_ID;
                 $company = Company::find($ring->CRM_COMPANY_ID);
                 $item['USER_ID'] = $company->ASSIGNED_BY_ID;
-                $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                $item['DEAL_TYPE'] = $company->getClientStatus($start);
                 // $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                 $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
             } elseif ($ring->CRM_CONTACT_ID) { //если в звонке есть контакт
@@ -134,7 +134,7 @@ class B24RaportController extends Controller
                 if ($company) {
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
-                    $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                    $item['DEAL_TYPE'] = $company->getClientStatus($start);
                     //   $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']]; //ищем рапорт по компании
                 }
@@ -147,7 +147,7 @@ class B24RaportController extends Controller
                 if ($company) {
                     $item['COMPANY_ID'] = $company->ID;
                     $item['USER_ID'] = $company->ASSIGNED_BY_ID;
-                    $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                    $item['DEAL_TYPE'] = $company->getClientStatus($start);
                     //  $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                     $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
                 }
@@ -183,7 +183,7 @@ class B24RaportController extends Controller
             ) {
                 $item['COMPANY_ID'] = $deal->COMPANY_ID;
                 $company = Company::find($deal->COMPANY_ID);
-                $item['DEAL_TYPE'] = $company->getClientStatus($start, $end);
+                $item['DEAL_TYPE'] = $company->getClientStatus($start);
                 // $item['DEAL_STATUS'] = $company->getLastOpenDealStatus();
                 $searchRaportConditions[] = ['b24_raports.COMPANY_ID', '=',  $item['COMPANY_ID']];
 

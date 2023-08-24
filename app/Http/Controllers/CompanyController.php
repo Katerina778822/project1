@@ -7,9 +7,11 @@ use App\Jobs\b24CompanyFetch;
 use App\Models\B24Contact;
 use App\Models\Company;
 use DateTime;
+use DateTimeZone;
 use Exception;
 use Hamcrest\Core\IsNull;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use stdClass;
 use Symfony\Component\HttpFoundation\Session\Storage\Proxy\AbstractProxy;
 
@@ -199,6 +201,50 @@ class CompanyController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('company', $checkDate);
         }
+    }
 
+    public function UpdateStatusCompanies()
+    {
+        $timezone = new DateTimeZone('Europe/Kiev');
+        $end = new DateTime('now', $timezone);
+        $end->setTime(21, 0, 0);
+
+        $companies = Company::getALLB24ValidCompanies();
+        foreach ($companies as $company) {
+            if ($company->UF_CRM_1540465145514 == 1587) //закрылся не работает пропустить
+                continue;
+            $status = $company->getClientStatus($end);
+            switch ($status) {
+                case 1: {
+                        $status = 1753;
+                        break;
+                    }
+                case 2: {
+                        $status = 1417;
+                        break;
+                    }
+                case 3: {
+                        $status = 1617;
+                        break;
+                    }
+                case 4: {
+                        $status = 349;
+                        break;
+                    }
+            }
+            if($company->UF_CRM_1540465145514==$status)//если не изменился статус
+                continue;
+            try {
+                $res = $this->helperOriginAPI->companyUpdate($company->ID, $status);
+            } catch (\Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface  $e) {
+                $context = [
+                    'error_message' => $e->getMessage(),
+                    'stack_trace' => $e->getTraceAsString(),
+                ];
+
+                Log::error('An error occurred', $context,  "companyUpdate, id ", $company->ID);
+                //  Log::error($e->getMessage() . " companyUpdate, id ", $company->id);
+            }
+        }
     }
 }

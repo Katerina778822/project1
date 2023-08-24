@@ -11,7 +11,7 @@
                 <a href="analitics" class="btn-main">Analitics</a>
             </h2>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
-                <a href="{{ route('raport.index') }}" class="btn-main">Raport</a>
+                <a href="{{ route('UpdatecompanySTATUS') }}" class="btn-main">Update company B24 STATUS</a>
             </h2>
     </div>  
     

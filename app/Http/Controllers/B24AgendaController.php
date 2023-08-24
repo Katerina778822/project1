@@ -9,6 +9,7 @@ use App\Models\B24Agenda;
 use App\Models\B24Analitics;
 use App\Models\B24Contact;
 use App\Models\B24Deal;
+use App\Models\B24Field;
 use App\Models\B24Lead;
 use App\Models\B24Task;
 use App\Models\B24test;
@@ -313,6 +314,21 @@ class B24AgendaController extends Controller
         $itemsCold = [];
         $itemsCheat1 = [];
         foreach ($userCompanies as $item) {
+
+            try {
+                if (!empty($item['UF_CRM_1540465145514'])) //меняем статус с цифры на запись текстовую
+                    $item['UF_CRM_1540465145514'] = B24Field::find($item['UF_CRM_1540465145514'])->VALUE ?? $item['UF_CRM_1540465145514'];
+                $sd = 1;
+            } catch (\Exception  $e) {
+                $context = [
+                    'error_message' => $e->getMessage(),
+                    'stack_trace' => $e->getTraceAsString(),
+                ];
+
+                Log::error('An error occurred', $context,  "B24AgendaController-show, id ", $item['ID']);
+                //  Log::error($e->getMessage() . " companyUpdate, id ", $company->id);
+            }
+
             if ($item['STATUS'] === 0) {
                 $itemsTomorrow[] = $item;
             } elseif ($item['STATUS'] === 1) {
@@ -374,17 +390,15 @@ class B24AgendaController extends Controller
     {
         //получить список компаний для данного юзера с актуальной задачей/активностью в компании, сделке
         // актуальная задача в компании 
-        $statusArr = [1617, 349, 1417, 1659, 1419, 1753]; //UF_CRM_1540465145514 - статусы клиента
-        $userCompanies = Company::where('ASSIGNED_BY_ID', $user_id)
-            ->whereIn('UF_CRM_1540465145514', $statusArr)
-            ->get();
+
+        $userCompanies = Company::getALLB24ValidCompaniesByUserID($user_id);
         //перебор компаний на предмет наличия задач
         //  $date2->modify('-4 day'); //temp
         foreach ($userCompanies as $userCompany) {
             $userCompany->URL_TYPE = 0; //company
             //актуальность компании на сегодня
-               if ($userCompany->ID == 7563) //temp
-                    $i = 0;
+            if ($userCompany->ID == 7563) //temp
+                $i = 0;
             if (!$this->checkUserCompanyToday($userCompany))
                 if (!$this->checkUserCompanyTomorrow($userCompany))
                     if (!$this->checkUserCompanyYesterday($userCompany))
@@ -414,6 +428,7 @@ class B24AgendaController extends Controller
                         $userCompanies->add($userLead);
                     }
         }
+
         $userCompanies = $userCompanies->sortByDesc('AGENDA_DATE')->sortBy('STATUS');
         try {
             $file = 'userfiles/' . $user_id  . '.json'; //test

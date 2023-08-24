@@ -209,31 +209,6 @@ class b24OriginAPI
         return  $result['result'];
         // 
     }
-
-    public function getItemUpdateTemp()
-    {
-        
-   /*     [
-            'filter' => [  '>CREATED' => '20-01-01T00:00:00+03:00' ],
-
-        ]*/
-        $response = $this->apiClient->getResponse('crm.activity.list', [
-            
-            'filter' => [
-                'PROVIDER_ID' => 'IMOPENLINES_SESSION', 'CRM_TODO',
-                '>CREATED' => '2022-01-01T00:00:00+03:00',
-                '>LAST_UPDATED' => '2023-05-02T00:00:00+03:00'
-            ]
-
-
-        ]);
-        $responseContent = $response->getContent();
-        $result = json_decode($responseContent, true);
-        return  $result['result'];
-    }
-
-
-
     private function getApiUrl($itemType)
     {
         switch ($itemType) {
@@ -408,4 +383,15 @@ class b24OriginAPI
                 return false;
         }
     }
+    public function companyUpdate($id,  $status){
+        $response = $this->apiClient->getResponse('crm.company.update', [
+            'id' => $id,
+            'fields' => [
+                'UF_CRM_1540465145514' => $status,
+            ],
+        ]);
+         $responseContent = $response->getContent();
+         return $responseContent;
+    }
+
 }

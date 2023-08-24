@@ -81,6 +81,8 @@ Route::get('/partial.errorMessage/{error}', function () {
 
 Route::post('/Bitrix24/company', [App\Http\Controllers\CompanyController::class, 'fetchAll'])->middleware(['auth'])
 ->name('company.fetchAll');
+Route::get('/Bitrix24/UpdatecompanySTATUS', [App\Http\Controllers\CompanyController::class, 'UpdateStatusCompanies'])->middleware(['auth'])
+->name('UpdatecompanySTATUS');
 
 
 Route::post('/Bitrix24/field', [App\Http\Controllers\B24FieldController::class, 'fetchAll'])->middleware(['auth'])

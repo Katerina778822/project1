@@ -23,7 +23,8 @@
                             <th>Id</th>
                             <th>Название</th>
                             <th>Дата</th>
-                            <th>Статус</th>
+                            <th>Статус сделки</th>
+                            <th>Статус клиента</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -36,6 +37,7 @@
                             </td>
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
+                            <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -51,7 +53,8 @@
                             <th>Id</th>
                             <th>Название</th>
                             <th>Дата</th>
-                            <th>Статус</th>
+                            <th>Статус сделки</th>
+                            <th>Статус клиента</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,6 +67,7 @@
                             </td>
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
+                            <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -79,7 +83,8 @@
                             <th>Id</th>
                             <th>Название</th>
                             <th>Дата</th>
-                            <th>Статус</th>
+                            <th>Статус сделки</th>
+                            <th>Статус клиента</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,6 +97,7 @@
                             </td>
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
+                            <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -106,7 +112,8 @@
                             <th>Id</th>
                             <th>Название</th>
                             <th>Дата</th>
-                            <th>Статус</th>
+                            <th>Статус сделки</th>
+                            <th>Статус клиента</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,6 +126,7 @@
                             </td>
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
+                            <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -134,7 +142,8 @@
                             <th>Id</th>
                             <th>Название</th>
                             <th>Дата</th>
-                            <th>Статус</th>
+                            <th>Статус сделки</th>
+                            <th>Статус клиента</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -147,6 +156,7 @@
                             </td>
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
+                            <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -161,7 +171,8 @@
                             <th>Id</th>
                             <th>Название</th>
                             <th>Дата</th>
-                            <th>Статус</th>
+                            <th>Статус сделки</th>
+                            <th>Статус клиента</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -174,6 +185,7 @@
                             </td>
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
+                            <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                         </tr>
                         @endforeach
                     </tbody>

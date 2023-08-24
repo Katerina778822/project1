@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use DateTime;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,10 +59,12 @@ class Company extends Model
     }
 
     //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
-    public function getClientStatus($start, $end)
+    public function getClientStatus(DateTime $end)
     {
-       // if ($this->ID == 8759) //TEMP!!
-         //   $r = 0;
+        $start = clone $end;
+        $start->setTime(0, 0, 0);
+        // if ($this->ID == 8759) //TEMP!!
+        //   $r = 0;
         $deals  = B24Deal::where('COMPANY_ID', $this->ID)->get();
         if ($deals->count() == 0)
             return 4;   //4-новый
@@ -75,11 +78,11 @@ class Company extends Model
             $dealsLast = $deals->firstWhere('CLOSEDATE', $dealsLastData);
             if ($deals->count() == 1 && $dealsLast->CLOSED == 'N') //последняя сделка открыта
                 return 4;  //4-новый
-                //поиск выигрышных сделок
-            $winStateArray = ['C23:WON','C25:WON']; //развоз
-            $dealsSuccessCargo = $deals->whereIn('STAGE_ID', $winStateArray)->where('OPPORTUNITY','>','1');
-            $winStateArray = ['C19:WON','C27:WON']; //Украина
-            $dealsSuccessUkraine = $deals->whereIn('STAGE_ID', $winStateArray)->where('OPPORTUNITY','>','1');
+            //поиск выигрышных сделок
+            $winStateArray = ['C23:WON', 'C25:WON']; //развоз
+            $dealsSuccessCargo = $deals->whereIn('STAGE_ID', $winStateArray)->where('OPPORTUNITY', '>', '1');
+            $winStateArray = ['C19:WON', 'C27:WON']; //Украина
+            $dealsSuccessUkraine = $deals->whereIn('STAGE_ID', $winStateArray)->where('OPPORTUNITY', '>', '1');
 
             if ($dealsSuccessCargo->count() > 0 || $dealsSuccessUkraine->count() > 0) {
                 $dealWithMaxDateCargo = null; //определение нач значений
@@ -135,5 +138,22 @@ class Company extends Model
             }
         }
         return ['STATUS' => 0, 'SUMM' => 0];
+    }
+
+    static public function getALLB24ValidCompanies()
+    {
+        $statusArr = [1617, 349, 1417, 1659, 1753, 1419,]; //UF_CRM_1540465145514 - статусы клиента
+        $userCompanies = Company::whereIn('UF_CRM_1540465145514', $statusArr)
+            ->get();
+        return  $userCompanies;
+    }
+
+    static public function getALLB24ValidCompaniesByUserID($user_id)
+    {
+        $statusArr = [1617, 349, 1417, 1659, 1753, 1419,]; //UF_CRM_1540465145514 - статусы клиента
+        $userCompanies = Company::where('ASSIGNED_BY_ID', $user_id)
+            ->whereIn('UF_CRM_1540465145514', $statusArr)
+            ->get();
+        return  $userCompanies;
     }
 }
