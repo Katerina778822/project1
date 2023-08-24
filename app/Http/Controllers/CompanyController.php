@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\Bitrix24\b24Companies;
 use App\Jobs\b24CompanyFetch;
+use App\Jobs\b24UpdateStatusCompanies;
 use App\Models\B24Contact;
 use App\Models\Company;
 use DateTime;
@@ -203,6 +204,12 @@ class CompanyController extends AbstractB24Controller
         }
     }
 
+    public function UpdateStatusCompaniesJob()
+    {
+        $job = new b24UpdateStatusCompanies();
+        $this->dispatch($job);
+    }
+
     public function UpdateStatusCompanies()
     {
         $timezone = new DateTimeZone('Europe/Kiev');
@@ -213,7 +220,10 @@ class CompanyController extends AbstractB24Controller
         foreach ($companies as $company) {
             if ($company->UF_CRM_1540465145514 == 1587) //закрылся не работает пропустить
                 continue;
-            $status = $company->getClientStatus($end);
+            if ($company->ID==2833)
+            $asd=2;
+
+                $status = $company->getClientStatus($end);
             switch ($status) {
                 case 1: {
                         $status = 1753;
@@ -232,7 +242,7 @@ class CompanyController extends AbstractB24Controller
                         break;
                     }
             }
-            if($company->UF_CRM_1540465145514==$status)//если не изменился статус
+            if ($company->UF_CRM_1540465145514 == $status) //если не изменился статус
                 continue;
             try {
                 $res = $this->helperOriginAPI->companyUpdate($company->ID, $status);
