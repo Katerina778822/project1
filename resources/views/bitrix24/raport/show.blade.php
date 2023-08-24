@@ -79,7 +79,7 @@
                         @foreach($items as $item)
                         <tr class="bg-indigo-400">
                             <td>{{$loop->iteration}}</td>
-                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}">
+                            <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/'.($item['URL_TYPE']?'lead':'company').'/details/'.$item['ID'].'/'}}" target="_blank">
                                     {{$item['TITLE']}} </a>
                             </td>
                             <td>{{$item['SUMM']}}</td>

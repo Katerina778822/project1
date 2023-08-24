@@ -32,7 +32,8 @@
             <tr>
                 <td>{{$item['NAME']}}</td>
                 <td>{{$item['LAST_NAME']}}</td>
-                <td>{{$item['TITLE']}}</td>
+                <td><a class="btn btn-link" href="{{env('B24_MAIN1_URI').'crm/lead/details/'.$item['ID'].'/'}}" target="_blank">
+                                    {{$item['TITLE']}} </a></td>
                 <td>{{$item['SOURCE_ID']}}</td>
                 <td>{{$item['STATUS_ID']}}</td>
                 <td>{{$item['COMPANY_ID']}}</td>
