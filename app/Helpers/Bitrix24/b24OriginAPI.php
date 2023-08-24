@@ -384,6 +384,7 @@ class b24OriginAPI
         }
     }
     public function companyUpdate($id,  $status){
+        usleep(500000);
         $response = $this->apiClient->getResponse('crm.company.update', [
             'id' => $id,
             'fields' => [
