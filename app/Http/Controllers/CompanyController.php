@@ -256,5 +256,6 @@ class CompanyController extends AbstractB24Controller
                 //  Log::error($e->getMessage() . " companyUpdate, id ", $company->id);
             }
         }
+        Log::channel('single')->info('CompanyController-UpdateStatusCompanies() succeed.');
     }
 }
