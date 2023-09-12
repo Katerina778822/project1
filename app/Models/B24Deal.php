@@ -73,8 +73,9 @@ class B24Deal extends Model
                 return ['STATUS' => 1,'SUMM'=>$summ];
             }
 
-            if (in_array($this->STAGE_ID, B24Deal::$winStateArray)) {
-                $this->STAGE_ID_BEFORE =  $this->STAGE_ID;;
+            if (in_array($this->STAGE_ID, B24Deal::$winStateArray)&&!in_array($this->STAGE_ID_BEFORE, B24Deal::$winStateArray)) {
+                $this->STAGE_ID_BEFORE =  $this->STAGE_ID;
+               // $raport_before = B24Raport::where('');
                 $this->DATE_WIN=$start->format('Y-m-d');
                 $this->save();
                 return ['STATUS' => 4,'SUMM'=>$summ];
