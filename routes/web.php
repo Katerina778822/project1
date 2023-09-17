@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::get('/help', function () {
     return view('help');
 })->middleware(['auth'])->name('help');
@@ -25,16 +26,21 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+Route::get('/home', function () {
+    return view('home');
+});
+
+
 require __DIR__.'/auth.php';
 
 
 /*Route::get('/user/{id}/{username?}', function ($id,$username='Joe') {
     return 'Hello '.$username. 'Your Id is '.$id;
-})->name('Achtung!');  
+})->name('Achtung!');
 Route::group(['prefix'=>'users'],function(){
     Route::get('{id}/{username?}', function ($id,$username='Joe') {
         return 'Hello '.$username. '! Your Id is '.$id;
-    })->name('Achtung!');    
+    })->name('Achtung!');
 });
 Route::get('/tail', function () {
     return view('tailwind'); });
@@ -58,14 +64,14 @@ Route::get('/node/NodeDownload/{node_id}', [App\Http\Controllers\Controller::cla
 Route::get('/fetchToken', [App\Http\Controllers\Controller::class, 'fetchToken'])
 ->name('fetchToken');
 Route::post('/node/exportDataSheet/{node_id}', [App\Http\Controllers\Controller::class, 'exportDataSheet'])
-->name('exportDataSheet'); 
+->name('exportDataSheet');
 
 Route::get('/selector/createAll/{node_id}', [App\Http\Controllers\SelectorController::class, 'createAll'])
-->name('selector.createAll');  
+->name('selector.createAll');
 Route::get('/goods/showdetails/{good_id}', [App\Http\Controllers\GoodsController::class, 'showdetails'])
-->name('goods.showdetails');  
+->name('goods.showdetails');
 Route::get('/goods/destroyAllCatalog/{goods}', [App\Http\Controllers\GoodsController::class, 'destroyAllCatalog'])
-->name('goods.destroyAllCatalog'); 
+->name('goods.destroyAllCatalog');
 Route::get('/catalog/destroyAllNode/{node_id}', [App\Http\Controllers\GoodsController::class, 'destroyAllNode'])
 ->name('catalog.destroyAllNode');
 Route::get('/GoodsPresenter/form', [App\Http\Controllers\GoodsPresenterController::class, 'form'])
