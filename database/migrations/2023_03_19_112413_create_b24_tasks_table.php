@@ -14,7 +14,7 @@ class CreateB24TasksTable extends Migration
     public function up()
     {
         Schema::create('b24_tasks', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+            $table->id();
             $table->unsignedBigInteger('responsibleId')->nullable()->default(0);
             $table->bigInteger('status')->nullable()->default(0);
             $table->bigInteger('timeEstimate')->nullable()->default(0);
@@ -22,7 +22,7 @@ class CreateB24TasksTable extends Migration
             $table->unsignedBigInteger('UF_CRM_TASK_CONTACT')->nullable()->default(0);
             $table->unsignedBigInteger('UF_CRM_TASK_DEAL')->nullable()->default(0);
             $table->unsignedBigInteger('UF_CRM_TASK_COMPANY')->nullable()->default(0);
-          
+
             $table->text('title')->nullable()->default('');
            $table->text('description')->nullable()->default('');
             $table->dateTime('closedDate')->nullable()->default(null);
