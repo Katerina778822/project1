@@ -162,6 +162,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
        // Mesilov\Bitrix24\Bitrix24ServiceProvider::class,
+       Spatie\Permission\PermissionServiceProvider::class,
 
 
         /*

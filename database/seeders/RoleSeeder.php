@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Role;
+
 class RoleSeeder extends Seeder
 {
     /**
@@ -13,29 +14,40 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $admin=Role::create([
-            'name'=>'admin',
-            'slug'=>'admin',
-            'permissions'=>[
-                'InsertDataAll'=> true,
-                'DeleteDataAll'=> true,
-                'UpdateData'=> true
-                ]
+        $admin = Role::create([
+            'name' => 'admin',
+            'slug' => 'admin',
+            'permissions' => [
+                'InsertDataAll' => true,
+                'DeleteDataAll' => true,
+                'UpdateData' => true
+            ]
         ]);
-        $head=Role::create([
-            'name'=>'head',
-            'slug'=>'head',
-            'permissions'=>[
-                'InsertDataTeam'=> true,
-                'InsertDataPeople'=> true,
-                'DeleteDataPeople'=> true,
-                'UpdateDataPeople'=> true,
-                'UpdateDataTeam'=> true
-                ]
+        $head = Role::create([
+            'name' => 'head',
+            'slug' => 'head',
+            'permissions' => [
+                'InsertDataTeam' => true,
+                'InsertDataPeople' => true,
+                'DeleteDataPeople' => true,
+                'UpdateDataPeople' => true,
+                'UpdateDataTeam' => true
+            ]
+        ]);
+
+        $user = Role::create([
+            'name' => 'user',
+            'slug' => 'user',
+            'permissions' => [
+
+                'InsertDataPeople' => true,
+                'DeleteDataPeople' => true,
+                'UpdateDataPeople' => true,
+
+            ]
         ]);
     }
 
-   
-    //
-} 
 
+    //
+}
