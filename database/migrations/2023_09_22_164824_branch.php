@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('branch', function (Blueprint $table) {
+        Schema::create('branches', function (Blueprint $table) {
             $table->unsignedBigInteger('ID')->primary();
             $table->string('name_business')->default('')->nullable();
             $table->unsignedBigInteger('guide_id');
-
-            $table->foreign('guide_id')->references('ID')->on('branch_guide');
-
         });
     }
 

@@ -11,18 +11,23 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('business', function (Blueprint $table) {
-            $table->unsignedBigInteger('ID')->primary();
-            $table->string('name_')->default('')->nullable();
-            $table->float('Type_');
+        Schema::create('businesses', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->default('')->nullable();
+            $table->float('Type');
         });
-    }
 
+        Schema::table('users',function (Blueprint $table) {
+            $table->unsignedBigInteger('business_id');//foreign key
+            $table->foreign('business_id')->references('id')->on('businesses');
+        });
+       
+    }
     /**
      * Reverse the migrations.
      */
     public function down()
     {
-        Schema::dropIfExists('business');
+        Schema::dropIfExists('businesses');
     }
 };

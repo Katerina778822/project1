@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('guide', function (Blueprint $table) {
-            $table->unsignedBigInteger('ID')->primary();
+        Schema::create('guides', function (Blueprint $table) {
+            $table->id();
             $table->text('text_message')->default('')->nullable();
             $table->binary('media_files')->default('')->nullable();
         });
