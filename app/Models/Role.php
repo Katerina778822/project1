@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Role extends Model
 {
     protected $table = 'roles';
-    protected $fillable = ['name', 'slug', 'permissions'];
+    protected $fillable = ['name', 'permissions'];
     protected $casts = ['permissions' => 'array'];
     use HasFactory;
     public function users()
