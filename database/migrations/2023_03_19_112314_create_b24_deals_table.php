@@ -18,7 +18,7 @@ class CreateB24DealsTable extends Migration
             $table->unsignedBigInteger('ASSIGNED_BY_ID')->default(0); //user
             $table->unsignedBigInteger('COMPANY_ID')->default(0); //company
             $table->string('TITLE')->default('');
-     
+
             $table->char('CLOSED')->default('');
             $table->string('STAGE_ID')->default('');
             $table->string('CURRENCY_ID')->default('');
@@ -35,18 +35,19 @@ class CreateB24DealsTable extends Migration
             $table->dateTime('UF_CRM_5CAB07390C964')->nullable()->default(null);//  Взял ЗАКАЗ. Дата
             $table->dateTime('UF_CRM_1540120643248')->default(null)->nullable(); //  Взял ПРОСЧЕТ.ДАТА
             $table->dateTime('UF_CRM_1545811274193')->default(null)->nullable(); //  Взял ДЕНЬГИ. Дата
-            $table->dateTime('UF_CRM_1547732437301')->default(null)->nullable(); //  РЕЗУЛЬТАТ ДАТА 
-            $table->date('DATE_WIN')->default(null)->nullable(); //  
-            $table->dateTime('DATE_CREATE')->default(null)->nullable(); //  
-            $table->dateTime('DATE_MODIFY')->default(null)->nullable(); //  
-            $table->dateTime('CLOSEDATE')->default(null)->nullable(); //  
-            $table->string('UF_CRM_5C224D08961A9')->default('')->nullable(); //  ЛПР 
+            $table->dateTime('UF_CRM_1547732437301')->default(null)->nullable(); //  РЕЗУЛЬТАТ ДАТА
+            $table->date('DATE_WIN')->default(null)->nullable(); //
+            $table->dateTime('DATE_CREATE')->default(null)->nullable(); //
+            $table->dateTime('DATE_MODIFY')->default(null)->nullable(); //
+            $table->dateTime('CLOSEDATE')->default(null)->nullable(); //
+            $table->string('UF_CRM_5C224D08961A9')->default('')->nullable(); //  ЛПР
             $table->string('CATEGORY_ID')->default('')->nullable(); //  напрямок
-            
+            $table->float('customer')->default('')->nullable(); // тип покупателя (новый, постоянный и тд.)
+
             $table->foreign('ASSIGNED_BY_ID')->references('ID')->on('b24_users');
             $table->foreign('COMPANY_ID')->references('ID')->on('companies');
 
-           
+
 
         });
     }
