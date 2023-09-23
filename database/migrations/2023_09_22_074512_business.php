@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('business_id');//foreign key
             $table->foreign('business_id')->references('id')->on('businesses');
         });
-       
+
     }
     /**
      * Reverse the migrations.

@@ -22,7 +22,7 @@ class CreateB24UsersTable extends Migration
             $table->string('VALUE')->default('')->nullable();
             $table->unsignedBigInteger('user_id');
 
-            $table->foreign('user_id')->references('ID')->on('user');
+            $table->foreign('user_id')->references('ID')->on('users');
 
             $table->timestamps();
 
