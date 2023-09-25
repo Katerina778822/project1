@@ -25,7 +25,7 @@ protected $table='users';
         'name',
         'email',
         'password',
-        'business_id',
+        'b24_id',
     ];
 
     /**
@@ -61,15 +61,11 @@ protected $table='users';
 
     }
 
-    public function business()
-    {
-        return $this->belongsTo(Business::class, 'business_id', 'id');
-    }
 
-    public function b24user()
-    {
-        return $this->hasOne(B24User::class);
-    }
+   // public function b24user()
+   // {
+    //    return $this->belongsTo(B24User::class, 'b24_id', 'ID');
+   // }
 
 
 }

@@ -15,7 +15,7 @@ class business extends Model
 ];
     public function users()
     {
-        return $this->hasOne(User::class);
+        return $this->hasOne(B24User::class);
     }
 
 

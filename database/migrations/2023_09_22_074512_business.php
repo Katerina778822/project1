@@ -16,12 +16,6 @@ return new class extends Migration
             $table->string('name')->default('')->nullable();
             $table->float('Type');
         });
-
-        Schema::table('users',function (Blueprint $table) {
-            $table->unsignedBigInteger('business_id');//foreign key
-            $table->foreign('business_id')->references('id')->on('businesses');
-        });
-
     }
     /**
      * Reverse the migrations.

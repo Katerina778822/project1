@@ -14,10 +14,10 @@ class B24User extends Model
     ];
     protected $primaryKey = 'ID';
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'ID');
-    }
+   // public function business()
+   // {
+    //    return $this->belongsTo(User::class, 'business_id', 'ID');
+   // }
 
     public function company()
     {
