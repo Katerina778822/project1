@@ -22,7 +22,7 @@ class B24Deal extends Model
     public static $returnArray = ['C23:8','C19:5','C27:9','C25:1'];
     public static $looseStateArray = ['C27:LOSE','C27:APOLOGY','C27:6','C27:7','C27:8','C27:9','C27:10','C27:11','C27:12','C25:APOLOGY','C25:LOSE','C19:LOSE', 'C19:APOLOGY', 'C19:2', 'C19:3', 'C19:4', 'C19:14', 'C19:7', 'C19:6', 'C23:LOSE', 'C23:APOLOGY', 'C23:3', 'C23:6', 'C23:7',  'C23:14', 'C23:15', 'C23:16'];
     public static $startArray = [
-        'C27:NEW', 'C25:NEW',  'C23:NEW', 'C19:NEW', 
+        'C27:NEW', 'C25:NEW',  'C23:NEW', 'C19:NEW',
     ];
 
     public static $workStateArray = [
@@ -39,6 +39,17 @@ class B24Deal extends Model
     ];
     protected $primaryKey = 'ID';
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'COMPANY_ID', 'ID' );
+    }
+
+    public function event()
+    {
+        return $this->hasOne(Event::class);
+    }
+
+
     //@ returns array ['STATUS' => $,'SUMM'=>$]
     public function getStatus($statusBefore, DateTime $start, DateTime $end)
     {
@@ -50,7 +61,7 @@ class B24Deal extends Model
 
         if($dateModify<$start)
             return ['STATUS' => 2,'SUMM'=>0];
-      
+
         if ($this->STAGE_ID_BEFORE == ''&&!in_array($this->STAGE_ID, B24Deal::$looseStateArray)&&!(in_array($this->STAGE_ID, B24Deal::$winStateArray))) {
             $this->STAGE_ID_BEFORE = $this->STAGE_ID;
             $this->save();

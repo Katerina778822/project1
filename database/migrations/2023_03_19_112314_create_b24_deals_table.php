@@ -42,7 +42,7 @@ class CreateB24DealsTable extends Migration
             $table->dateTime('CLOSEDATE')->default(null)->nullable(); //
             $table->string('UF_CRM_5C224D08961A9')->default('')->nullable(); //  ЛПР
             $table->string('CATEGORY_ID')->default('')->nullable(); //  напрямок
-            $table->float('customer')->default('')->nullable(); // тип покупателя (новый, постоянный и тд.)
+            $table->float('customer')->default('0')->nullable(); // тип покупателя (новый, постоянный и тд.)
 
             $table->foreign('ASSIGNED_BY_ID')->references('ID')->on('b24_users');
             $table->foreign('COMPANY_ID')->references('ID')->on('companies');

@@ -10,7 +10,19 @@ class B24User extends Model
     use HasFactory;
     protected $table = 'b24_users';
     protected $fillable = [
-        'ID', 'ACTIVE', 'LAST_NAME', 'NAME', 'VALUE',
+        'ID', 'ACTIVE', 'LAST_NAME', 'NAME', 'VALUE', 'user_id',
     ];
     protected $primaryKey = 'ID';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'ID');
+    }
+
+    public function company()
+    {
+        return $this->hasOne(Company::class);
+    }
+
+
 }

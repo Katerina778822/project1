@@ -24,7 +24,12 @@ protected $table='users';
     protected $fillable = [
         'name',
         'email',
+<<<<<<< HEAD
         'password', 'business_id'
+=======
+        'password',
+        'business_id',
+>>>>>>> d1fdc4397ffee0fff5e35d23acafed5b5b22ba51
     ];
 
     /**
@@ -54,10 +59,20 @@ protected $table='users';
                 return true;
         return false;
     }
- 
+
     public function hasRole($roleSlug):bool{
         return $this->roles()->where('slug',$roleSlug)->count()==1;
- 
+
+    }
+
+    public function business()
+    {
+        return $this->belongsTo(Business::class, 'business_id', 'id');
+    }
+
+    public function b24user()
+    {
+        return $this->hasOne(B24User::class);
     }
 
 

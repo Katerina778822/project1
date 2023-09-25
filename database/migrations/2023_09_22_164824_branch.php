@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('branches', function (Blueprint $table) {
             $table->unsignedBigInteger('ID')->primary();
             $table->string('name_business')->default('')->nullable();
-            $table->unsignedBigInteger('guide_id');
         });
     }
 
@@ -23,6 +22,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('branch');
+        Schema::dropIfExists('branches');
     }
 };
