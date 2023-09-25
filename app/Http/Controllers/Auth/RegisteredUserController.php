@@ -37,54 +37,59 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         try {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+            $request->validate([
+                'name' => 'required|string|max:25',
+                'email' => 'required|string|email|max:255',
+                'business_id' => 'integer|min:0',
+                //'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],  // Geleon7
+                'password' => ['required', 'string', 'min:8'],  // geleonn
 
-        $users = User::with('roles')->get();
-        $hasAdminRole = false;
-        foreach ($users as $cur_user) {
-         
-            foreach ($cur_user->roles as $role) {
+            ]);
 
-                if ($role->slug == 'admin') {
-                    $hasAdminRole = true;
-                    break;
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'business_id' => $request->business_id ?? null,
+                'password' => Hash::make($request->password),
+            ]);
+
+            $users = User::with('roles')->get();
+            $hasAdminRole = false;
+            foreach ($users as $cur_user) {
+
+                foreach ($cur_user->roles as $role) {
+
+                    if ($role->slug == 'admin') {
+                        $hasAdminRole = true;
+                        break;
+                    }
                 }
             }
+            if (!$hasAdminRole) {
+
+                $adminRole = Role::where('slug', 'admin')->first();
+
+                $user->roles()->attach($adminRole);
+            } else {
+                $userRole = Role::where('slug', 'user')->first();
+
+                $user->roles()->attach($userRole);
+            }
+        } catch (\Exception $e) {
+            log($e->getMessage());
         }
-        if (!$hasAdminRole) {
 
-            $adminRole = Role::where('slug', 'admin')->first();
-
-            $user->roles()->attach($adminRole);
-        }
-        else{
-            $userRole = Role::where('slug', 'user')->first();
-
-            $user->roles()->attach($userRole);
-        }
-
-
-    }catch(\Exception $e){
-        log($e->getMessage());
-    }
- 
         event(new Registered($user));
- 
+
         Auth::login($user);
- 
+
         return redirect(RouteServiceProvider::HOME);
     }
-    public function register(RegisterRequest $request){
+    public function register(RegisterRequest $request)
+    {
         event(new Registered($user = $this->create($request->all())));
         $this->guard()->login($user);
-        return $this->registered($request,$user)
-        ?: redirect($this->redirectPath());
- 
+        return $this->registered($request, $user)
+            ?: redirect($this->redirectPath());
     }
-
-
 }
