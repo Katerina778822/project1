@@ -16,7 +16,7 @@ class RoleSeeder extends Seeder
     {
         $admin = Role::create([
             'name' => 'admin',
-            'slug' => 'admin',
+
             'permissions' => [
                 'InsertDataAll' => true,
                 'DeleteDataAll' => true,
@@ -25,7 +25,7 @@ class RoleSeeder extends Seeder
         ]);
         $head = Role::create([
             'name' => 'head',
-            'slug' => 'head',
+
             'permissions' => [
                 'InsertDataTeam' => true,
                 'InsertDataPeople' => true,
@@ -37,7 +37,7 @@ class RoleSeeder extends Seeder
 
         $user = Role::create([
             'name' => 'user',
-            'slug' => 'user',
+
             'permissions' => [
 
                 'InsertDataPeople' => true,

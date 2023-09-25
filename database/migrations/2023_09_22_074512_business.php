@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('businesses', function (Blueprint $table) {
             $table->id();
             $table->string('name')->default('')->nullable();
-            $table->float('Type');
+            $table->float('type');
+            $table->unique('name', 'type');
         });
 
         Schema::table('users',function (Blueprint $table) {

@@ -24,7 +24,7 @@ protected $table='users';
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'password', 'business_id'
     ];
 
     /**
