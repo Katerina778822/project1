@@ -24,16 +24,8 @@ protected $table='users';
     protected $fillable = [
         'name',
         'email',
-<<<<<<< HEAD
-        'password', 'business_id'
-=======
-        'password',
-<<<<<<< HEAD
-        'b24_id',
-=======
-        'business_id',
->>>>>>> d1fdc4397ffee0fff5e35d23acafed5b5b22ba51
->>>>>>> 92de89a9cb7e6ac3709ba72a9a6d460250063f52
+        'password', 
+        'crmuser_id',
     ];
 
     /**
