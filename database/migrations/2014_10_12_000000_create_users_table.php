@@ -22,12 +22,7 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamp('createdAt')->nullable();
             $table->timestamp('updatedAt')->nullable();
-            $table->unsignedBigInteger('b24_id');
-
-
-
-
-
+          
         });
     }
 

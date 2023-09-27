@@ -50,6 +50,11 @@ class CreatePermissionTables extends Migration
             }
         });
 
+        Schema::table('users',function (Blueprint $table) {
+            $table->unsignedSmallInteger('crmuser_id')->default(0);
+           
+        });
+
         Schema::create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
             $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
 

@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $admin = Role::create([
+  /*      $admin = Role::create([
             'name' => 'admin',
 
             'permissions' => [
@@ -45,9 +45,9 @@ class RoleSeeder extends Seeder
                 'UpdateDataPeople' => true,
 
             ]
-        ]);
+        ]);*/
     }
 
 
-    //
+    
 }
