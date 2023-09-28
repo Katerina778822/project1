@@ -7,19 +7,19 @@
 
 
     <div class="space-y-10 divide-y divide-gray-900/10 justify-center flex ">
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
+
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 max-w-xs mb-4">
             <div class="px-4 sm:px-0">
                 <h2 class="text-base font-semibold leading-7 text-gray-900"></h2>
-                <p class="mt-1 text-sm leading-6 text-gray-600"> </p>
+                <p class="mt-1 text-sm leading-6 text-gray-600">
+                <!--Вывод сообщения -->    
+                @if (session('status'))  
+                <div class="alert alert-success">
+                    {{ session('status') }}
+                </div>
+                @endif
+                 <!--Вывод ошибки валидации -->  
+                <x-auth-validation-errors class="mb-4" :errors="$errors" />
             </div>
 
             <form class="bg-gray-200 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 items-center justify-center" method="POST" action="{{ route('user.store') }}">
@@ -48,9 +48,9 @@
 
                         <!-- Business -->
                         <div class="mt-4">
-                            <x-label for="business_id" :value="__('*Business')" />
+                            <x-label for="crmuser_id" :value="__('*Business')" />
 
-                            <x-input id="business_id" class="block mt-1 w-full" type="text" name="business_id" :value="old('business_id')" />
+                            <x-input id="crmuser_id" class="block mt-1 w-full" type="text" name="crmuser_id" :value="old('crmuser_id')" />
                         </div>
 
                         <!-- Password -->

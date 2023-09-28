@@ -34,10 +34,11 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+
         $rController = new RegisteredUserController;
         $rController->store($request);
 
-        return redirect()->back()->with('status', 'User added!');
+        return redirect()->back()->with('status', 'User added!'); 
     }
 
     /**
@@ -53,6 +54,7 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
+
         $user = User::findOrFail($id);
 
         return view('user.edit', [
@@ -67,12 +69,18 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->business_id = $request->business_id;
-        if (!empty($user->password))
-            $user->password = Hash::make($request->password);
-        $user->save();
+        
+        $validator = $request->validate([
+            'name' => 'required|string|max:25|unique:App\Models\User,name,' . $id ,
+            'email' => 'required|string|email|max:45|unique:App\Models\User,email,'. $id,
+            'crmuser_id' => 'integer|min:0|nullable',
+            //'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],  // Geleon7
+            'password' => ['required', 'string', 'min:5'],  // geleonn
+            'password_confirmation' => ['required', 'same:password', 'string', 'min:5'],  // geleonn
+        ]);
+   
+        $user->update($request->all());
+
         return redirect()->back()->with('status', 'User updated!');
     }
 

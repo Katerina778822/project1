@@ -10,7 +10,15 @@
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 max-w-xs mb-4">
             <div class="px-4 sm:px-0">
                 <h2 class="text-base font-semibold leading-7 text-gray-900"></h2>
+               <!--Вывод сообщения -->
+                @if (session('status'))
+                <div class="alert alert-success">
+                    {{ session('status') }}
+                </div>
+                @endif
                 <p class="mt-1 text-sm leading-6 text-gray-600"> </p>
+                 <!--Вывод ошибки валидации -->  
+                <x-auth-validation-errors class="mb-4" :errors="$errors" />
             </div>
 
             <form class="bg-gray-200 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 items-center justify-center" method="post" action="{{ route('user.update', ['user' => $item]) }}">
@@ -39,23 +47,23 @@
 
                         <!-- Business -->
                         <div class="mt-4">
-                            <x-label for="business_id" :value="__('*Business')" />
+                            <x-label for="crmuser_id" :value="__('*Business')" />
 
-                            <x-input id="business_id" class="block mt-1 w-full" type="text" name="business_id" value="{{$item->business_id}}" />
+                            <x-input id="crmuser_id" class="block mt-1 w-full" type="text" name="crmuser_id" value="{{$item->crmuser_id}}" />
                         </div>
 
                         <!-- Password -->
                         <div class="mt-4">
                             <x-label for="password" :value="__('Password')" />
 
-                            <x-input id="password" class="block mt-1 w-full" type="password" name="password"  autocomplete="new-password" />
+                            <x-input id="password" class="block mt-1 w-full" type="password" name="password" autocomplete="new-password" />
                         </div>
 
                         <!-- Confirm Password -->
                         <div class="mt-4">
                             <x-label for="password_confirmation" :value="__('Confirm Password')" />
 
-                            <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation"  />
+                            <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" />
                         </div>
                         <div class="flex items-center justify-end mt-4">
                             <x-button class="ml-4">

@@ -3,13 +3,13 @@
         <div class="flex">
 
             <x-button_green class="ml-4">
-            <a class="btn btn-link" href="{{ route('user.create') }}">
-                {{ __('Create') }}</a>
+                <a class="btn btn-link" href="{{ route('user.create') }}">
+                    {{ __('Create') }}</a>
             </x-button_green>
             <x-button_red class="ml-4">
-     
-            {{ __('Register') }} 
-               
+
+                {{ __('Register') }}
+
             </x-button_red>
         </div>
 
@@ -17,6 +17,12 @@
 
 
     <div class="space-y-10 divide-y divide-gray-900/10">
+        <!--Вывод сообщения -->
+        @if (session('status'))
+        <div class="alert alert-success">
+            {{ session('status') }}
+        </div>
+        @endif
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -31,7 +37,7 @@
                 <tr>
                     <td>{{$item->name}}</td>
                     <td>{{$item['email']}}</td>
-                    <td>{{$item['business_id']}}</td>
+                    <td>{{$item['crm_user']}}</td>
                     <td> <a class="btn btn-link" href="{{ route('user.edit', ['user' => $item]) }}">
                             Edit </a></td>
                     <td>

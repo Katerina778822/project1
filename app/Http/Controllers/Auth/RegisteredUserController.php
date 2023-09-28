@@ -36,15 +36,16 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'name' => 'required|string|max:25',
-                'email' => 'required|string|email|max:255',
-                'business_id' => 'integer|min:0',
+    //    try {
+            $validator = $request->validate([
+                'name' => 'required|string|max:25|unique:App\Models\User,name',
+                'email' => 'required|string|email|max:45|unique:App\Models\User,email',
+                'business_id' => 'integer|min:0|nullable',
                 //'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],  // Geleon7
-                'password' => ['required', 'string', 'min:8'],  // geleonn
-
+                'password' => ['required', 'string', 'min:5'],  // geleonn
+                'password_confirmation' => ['required', 'same:password', 'string', 'min:5'],  // geleonn
             ]);
+
 
             $user = User::create([
                 'name' => $request->name,
@@ -65,7 +66,7 @@ class RegisteredUserController extends Controller
                     }
                 }
             }
-            if (!$hasAdminRole) {
+         /*   if (!$hasAdminRole) {
 
                 $adminRole = Role::where('slug', 'admin')->first();
 
@@ -74,10 +75,10 @@ class RegisteredUserController extends Controller
                 $userRole = Role::where('slug', 'user')->first();
 
                 $user->roles()->attach($userRole);
-            }
-        } catch (\Exception $e) {
-            log($e->getMessage());
-        }
+            }*/
+    //    } catch (\Exception $e) {
+    //        log($e->getMessage());
+   //     }
 
         event(new Registered($user));
 
