@@ -9,6 +9,8 @@ class Stage extends Model
 {
     use HasFactory;
 
+    protected $table = 'stage';
+
     protected $fillable = [
 
         'ID',
