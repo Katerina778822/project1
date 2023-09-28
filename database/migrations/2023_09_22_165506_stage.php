@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('stage', function (Blueprint $table) {
             $table->id('ID');
             $table->string('stage');
+            $table->timestamps();
         });
     }
 

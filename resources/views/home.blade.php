@@ -14,9 +14,15 @@
     </div>
 </header>
 
-<div class="container mx-auto">
-    @include('board')
+
+<div class="container mx-auto justify-center"
+@include('components.board')
 </div>
+
+
+
+
+
 
 </body>
 </html>
