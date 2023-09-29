@@ -116,7 +116,7 @@ class B24UserController extends AbstractB24Controller
         if (!empty($b24Item)) {
             $b24Item->update($item);
         } else
-            $this->store($item);
+            B24User::create($item);
     }
 
     /**
