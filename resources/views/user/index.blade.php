@@ -2,6 +2,10 @@
     <x-slot name="header">
         <div class="flex">
 
+        <x-button_blue class="ml-4">
+                <a class="btn btn-link" href="{{ route('B24User.index') }}">
+                    {{ __('CRM user') }}</a>
+            </x-button_blue>
             <x-button_green class="ml-4">
                 <a class="btn btn-link" href="{{ route('user.create') }}">
                     {{ __('Create') }}</a>

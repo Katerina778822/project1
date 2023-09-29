@@ -10,18 +10,18 @@
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 max-w-xs mb-4">
             <div class="px-4 sm:px-0">
                 <h2 class="text-base font-semibold leading-7 text-gray-900"></h2>
-               <!--Вывод сообщения -->
+                <!--Вывод сообщения -->
                 @if (session('status'))
                 <div class="alert alert-success">
                     {{ session('status') }}
                 </div>
                 @endif
                 <p class="mt-1 text-sm leading-6 text-gray-600"> </p>
-                 <!--Вывод ошибки валидации -->  
+                <!--Вывод ошибки валидации -->
                 <x-auth-validation-errors class="mb-4" :errors="$errors" />
             </div>
 
-            <form class="bg-gray-200 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 items-center justify-center" method="post" action="{{ route('user.update', ['user' => $item]) }}">
+            <form class="bg-gray-200 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 items-center justify-center" method="post" action="{{ route('B24User.update', ['B24User' => $item]) }}">
                 <div class="px-4 py-6 sm:p-8 justify-center">
                     <div class=" justify-center">
                         Заполните форму чтобы изменить пользователя
@@ -31,46 +31,42 @@
                     <div>
                         @csrf
                         @method('PUT')
+
+                        <!-- ID -->
+                        <div>
+                            <x-label for="ID" :value="__('ID')" />
+
+                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" :value="old('ID')" required autofocus />
+                        </div>
+
                         <!-- Name -->
                         <div>
-                            <x-label for="name" :value="__('Name')" />
+                            <x-label for="NAME" :value="__('NAME')" />
 
-                            <x-input id="name" class="block mt-1 w-full" type="text" name="name" value="{{$item->name}}" required autofocus />
+                            <x-input id="NAME" class="block mt-1 w-full" type="text" name="NAME" value="{{$item->NAME}}" required autofocus />
                         </div>
 
-                        <!-- Email Address -->
+                        <!-- LAST_NAME -->
                         <div class="mt-4">
-                            <x-label for="email" :value="__('Email')" />
+                            <x-label for="LAST_NAME" :value="__('Email')" />
 
-                            <x-input id="email" class="block mt-1 w-full" type="email" name="email" value="{{$item->email}}" required />
+                            <x-input id="LAST_NAME" class="block mt-1 w-full" type="text" name="LAST_NAME" value="{{$item->LAST_NAME}}" required />
                         </div>
 
-                        <!-- Business -->
+                        <!-- ACTIVE -->
                         <div class="mt-4">
-                            <x-label for="crmuser_id" :value="__('*Business')" />
+                            <x-label for="ACTIVE" :value="__('*Business')" />
 
-                            <x-input id="crmuser_id" class="block mt-1 w-full" type="text" name="crmuser_id" value="{{$item->crmuser_id}}" />
+                            <x-input id="ACTIVE" class="block mt-1 w-full" type="text" name="ACTIVE" value="{{$item->ACTIVE}}" />
                         </div>
 
-                        <!-- Password -->
-                        <div class="mt-4">
-                            <x-label for="password" :value="__('Password')" />
 
-                            <x-input id="password" class="block mt-1 w-full" type="password" name="password" autocomplete="new-password" />
-                        </div>
-
-                        <!-- Confirm Password -->
-                        <div class="mt-4">
-                            <x-label for="password_confirmation" :value="__('Confirm Password')" />
-
-                            <x-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" />
-                        </div>
                         <div class="flex items-center justify-end mt-4">
                             <x-button class="ml-4">
                                 {{ __   ('Confirm') }}
                             </x-button>
                             <x-button_red class="ml-4">
-                                <a class="btn btn-link" href="{{ route('user.index') }}">
+                                <a class="btn btn-link" href="{{ route('B24User.index') }}">
                                     {{ __('Cancel') }}</a>
                             </x-button_red>
                         </div>

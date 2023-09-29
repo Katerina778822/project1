@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\B24User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class B24UserController extends AbstractB24Controller
 {
@@ -15,7 +16,11 @@ class B24UserController extends AbstractB24Controller
      */
     public function index()
     {
-        //
+        $users = B24User::orderBy('ID', 'asc')->get();
+        return view('bitrix24.b24user.index', [
+            'items' => $users,
+            //   'id_node' => $id
+        ]);
     }
 
     /**
@@ -25,7 +30,7 @@ class B24UserController extends AbstractB24Controller
      */
     public function create()
     {
-        //
+        return view('Bitrix24.B24User.create');
     }
 
     /**
@@ -34,21 +39,30 @@ class B24UserController extends AbstractB24Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(array $item)
+    public function store(Request $request, array $item = null)
     {
-        $modelItem = null;
-        $modelItem = B24User::where('ID', $item['ID'])->get();
-        if (count($modelItem)) {
-            $modelItem->update($item);
-        }
-        $modelItem = B24User::create($item);
+        if (!empty($item)) {
+            $modelItem = null;
+            $modelItem = B24User::where('ID', $item['ID'])->get();
+            if (count($modelItem)) {
+                $modelItem->update($item);
+            }
+            $modelItem = B24User::create($item);
+        } else if (!empty($request)) {
+            $validator = $request->validate([
+                'ID' => 'required|integer||unique:App\Models\B24User,ID',
+                'NAME' => 'required|string|max:25',
+                'LAST_NAME' => 'required|string|max:25',
+                'ACTIVE' => 'required|integer|min:0|max:1',
+            ]);
 
-        try {
-        } catch (Exception $e) {
-            $e->getMessage();
-        } finally {
-            return;
+
+            $user = B24User::create($request->all());
+
+            return redirect()->back()->with('status', 'User added!'); 
+
         }
+
     }
 
     /**
@@ -70,7 +84,12 @@ class B24UserController extends AbstractB24Controller
      */
     public function edit($id)
     {
-        //
+        $user = B24User::findOrFail($id);
+
+        return view('bitrix24.B24user.edit', [
+            'item' => $user,
+
+        ]);
     }
 
     /**
@@ -81,6 +100,16 @@ class B24UserController extends AbstractB24Controller
      * @return \Illuminate\Http\Response
      */
     public function update(array $item)
+    {
+        $b24Item = B24User::find($item['ID']);
+
+        if (!empty($b24Item)) {
+            $b24Item->update($item);
+        } else
+            $this->store($item);
+    }
+
+    public function updateItem(array $item)
     {
         $b24Item = B24User::find($item['ID']);
 
@@ -101,11 +130,11 @@ class B24UserController extends AbstractB24Controller
         //
     }
 
-    
+
     public function fetchAll()
     {
         //  $count = 0;
-        $checkDate =null; //'2016-01-01T00:00:00+03:00';
+        $checkDate = null; //'2016-01-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantity('user', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24User::count();
@@ -137,8 +166,8 @@ class B24UserController extends AbstractB24Controller
         while (count($items) && $b24countItems > $b24count) {
             foreach ($items as $item) {
 
-              
-                $this->store($item);
+
+                $this->updateItem($item);
             }
             $b24count = B24User::count(); //save result count
             //$b24count->save();
@@ -148,12 +177,11 @@ class B24UserController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantity('user', $checkDate);
         }
-
     }
     public function updateData($checkDate)
     {
         //  $count = 0;
-        $checkDate =null; //'2016-01-01T00:00:00+03:00';
+        $checkDate = null; //'2016-01-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantityUpdate('user', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $count = 0;
@@ -184,8 +212,8 @@ class B24UserController extends AbstractB24Controller
         while (count($items) && $b24countItems > $count) {
             foreach ($items as $item) {
 
-              
-                $this->update($item);
+
+                $this->updateItem($item);
                 $count++;
             }
             $b24count = B24User::count(); //save result count
@@ -196,6 +224,5 @@ class B24UserController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('user', $checkDate);
         }
-
     }
 }
