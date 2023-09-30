@@ -30,10 +30,9 @@ Route::get('/home', function () {
     return view('home');
 });
 
-Route::get('/home/stage', 'StageController@stage');
-Route::get('/home', 'StageController@index')->name('home');
-Route::get('/home/create', 'StageController@create');
-Route::post('/home', 'StageController@store')->name('stage.store');
+
+Route::get('agenda/company/{companyId}', 'CompanyController@show')->name('company.show');
+Route::get('/show-company/', 'CompanyController@showCompanyPage');
 
 require __DIR__.'/auth.php';
 

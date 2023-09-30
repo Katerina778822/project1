@@ -20,7 +20,7 @@ class CreateB24UsersTable extends Migration
             $table->string('NAME')->default('')->nullable();
             $table->string('LAST_NAME')->default('')->nullable();
             $table->string('VALUE')->default('')->nullable();
-            $table->unsignedBigInteger('business_id');
+//            $table->unsignedBigInteger('business_id')->default('')->nullable();
 
 
             $table->timestamps();
