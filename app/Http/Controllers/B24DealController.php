@@ -166,12 +166,12 @@ class B24DealController extends AbstractB24Controller
 
                 if (empty($item['COMPANY_ID'])){
                     $item['COMPANY_ID'] = 7549;
-                    $error = B24Analitics::create([
-                        'AIM' => 4555,
-                        'id_item' => $item['id_item'],
-                        'string1' => $item['TITLE'],
-                        'string' => "Deal without company",
-                    ]);
+//                        $error = B24Analitics::create([
+//                        'AIM' => 4555,
+//                        'id_item' => $item['id_item'],
+//                        'string1' => $item['TITLE'],
+//                        'string' => "Deal without company",
+//                    ]);
                 }
 
                 $this->store($item);
@@ -242,9 +242,9 @@ class B24DealController extends AbstractB24Controller
                         'string2' => "Deal without company",
                     ]);
                 }
-                    
 
-        
+
+
 
                 $this->update($item);
                 $count++;

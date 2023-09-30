@@ -14,6 +14,7 @@
                 <th>Создать Расписание</th>
                 <th>Смотреть Расписание</th>
                 <th>Смотреть Отчет</th>
+                <th>Смотреть</th>
             </tr>
         </thead>
         <tbody>
@@ -26,12 +27,19 @@
                         Создать </a></td>
                 <td> <a class="btn btn-link" href="{{ route('agenda.show', ['agenda' => $item['ID']]) }}">
                         Смотреть
-                <td> 
+                <td>
                     <form action="{{ route('raport.show', ['raport' => $item['ID']]) }}" method="GET">
                     <button class="btn-link">Смотреть</button>
-                    <input type="date" class="w-18 h-2 text-xs" id="date" name="date">                  
-                    <input type="date" class="w-18 h-2 text-xs" id="dateEnd" name="dateEnd">                  
+                    <input type="date" class="w-18 h-2 text-xs" id="date" name="date">
+                    <input type="date" class="w-18 h-2 text-xs" id="dateEnd" name="dateEnd">
                 </form>
+                        <td>
+                            <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
+                                <x-button>
+                                    Компания
+                                </x-button>
+                            </a>
+                        </td>
                 </td>
             </tr>
             @endforeach
