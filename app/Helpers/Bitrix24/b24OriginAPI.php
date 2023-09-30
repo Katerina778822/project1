@@ -16,6 +16,7 @@ use Bitrix24\SDK\Core\Credentials\WebhookUrl;
 use Bitrix24\SDK\Core\Credentials\AccessToken;
 use Bitrix24\SDK\Core\Credentials\ApplicationProfile;
 use Bitrix24\SDK\Core\Credentials\Scope;
+use Illuminate\Support\Facades\Log;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -25,13 +26,17 @@ class b24OriginAPI
 {
     protected $apiClient;
 
-    public function __construct($base_uri = null)
+    public function __construct()
     {
+
         $client = HttpClient::create();
-        $url = env('B24_MAIN1_URI') . 'rest/1/' . env('B24_TOKEN'); // ваш URL
+
+        $url = env('B24_API'); // ваш URL
         $accessToken = env('B24_TOKEN'); // ваш access token
         $app_id = env('BITRIX24_APP_ID');
         $app_secret = env('BITRIX24_APP_SECRET');
+        //dd( $url,$accessToken,$app_id, $app_secret);
+        Log::info('webhookUrl - ' . $url);
         $webhookUrl = new WebhookUrl($url);
         $accessTokenObj = new AccessToken($accessToken, "", 0);
         $scope = new Scope(array('tasks'));
@@ -193,7 +198,7 @@ class b24OriginAPI
     public function getItemUpdate($itemType, $requestArray, $apiUrl = null)
     {   //    $requestArray['filter']['<' . $this->getDateModifyString($itemType)] = '2023-05-19T19:40:00+03:00';//TEMP
         usleep(800000);
-          $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
+        $requestArray['filter']['>' . $this->getDateString($itemType)]  = $this->getDate($itemType);
         //$requestArray['filter']['start']=  intdiv( $requestArray['filter']['start'], 50)*50;//целочисленное деление на 50 и умножение для нарезки блоков items строго по 50 в запросе.
         if ($requestArray['DATE'])
             $requestArray['filter']['>' . $this->getDateModifyString($itemType)] = $requestArray["DATE"];
@@ -203,7 +208,7 @@ class b24OriginAPI
         $response = $this->apiClient->getResponse($this->getApiUrl($itemType), $requestArray);
         $responseContent = $response->getContent();
         $result = json_decode($responseContent, true);
-            // dd($requestArray);
+        // dd($requestArray);
         if (!empty($result['result']['tasks']))
             return $result['result']['tasks'];
         return  $result['result'];
@@ -383,16 +388,16 @@ class b24OriginAPI
                 return false;
         }
     }
-    public function companyUpdate($id,  $status){
-     //   usleep(500000);
+    public function companyUpdate($id,  $status)
+    {
+        //   usleep(500000);
         $response = $this->apiClient->getResponse('crm.company.update', [
             'id' => $id,
             'fields' => [
                 'UF_CRM_1540465145514' => $status,
             ],
         ]);
-         $responseContent = $response->getContent();
-         return $responseContent;
+        $responseContent = $response->getContent();
+        return $responseContent;
     }
-
 }

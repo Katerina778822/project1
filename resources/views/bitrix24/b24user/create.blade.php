@@ -36,7 +36,7 @@
                         <div>
                             <x-label for="ID" :value="__('ID')" />
 
-                            <x-input id="NAIDME" class="block mt-1 w-full" type="text" NAME="ID" :value="old('ID')" required autofocus />
+                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" :value="old('ID')" required autofocus />
                         </div>
                         <!-- Name -->
                         <div>

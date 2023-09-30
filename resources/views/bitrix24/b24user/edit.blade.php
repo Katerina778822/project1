@@ -36,26 +36,26 @@
                         <div>
                             <x-label for="ID" :value="__('ID')" />
 
-                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" :value="old('ID')" required autofocus />
+                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" value="{{$item->ID}}" required autofocus />
                         </div>
 
                         <!-- Name -->
                         <div>
-                            <x-label for="NAME" :value="__('NAME')" />
+                            <x-label for="NAME" :value="__('Имя')" />
 
                             <x-input id="NAME" class="block mt-1 w-full" type="text" name="NAME" value="{{$item->NAME}}" required autofocus />
                         </div>
 
                         <!-- LAST_NAME -->
                         <div class="mt-4">
-                            <x-label for="LAST_NAME" :value="__('Email')" />
+                            <x-label for="LAST_NAME" :value="__('Фамилия')" />
 
                             <x-input id="LAST_NAME" class="block mt-1 w-full" type="text" name="LAST_NAME" value="{{$item->LAST_NAME}}" required />
                         </div>
 
                         <!-- ACTIVE -->
                         <div class="mt-4">
-                            <x-label for="ACTIVE" :value="__('*Business')" />
+                            <x-label for="ACTIVE" :value="__('ACTIVE')" />
 
                             <x-input id="ACTIVE" class="block mt-1 w-full" type="text" name="ACTIVE" value="{{$item->ACTIVE}}" />
                         </div>

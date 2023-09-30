@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Hash;
 
 class B24UserController extends AbstractB24Controller
 {
+    private $validateArray = [
+        'ID' => 'required|integer||unique:App\Models\B24User,ID',
+        'NAME' => 'required|string|max:25',
+        'LAST_NAME' => 'required|string|max:25',
+        'ACTIVE' => 'required|integer|min:0|max:1',
+    ];
     /**
      * Display a listing of the resource.
      *
@@ -39,30 +45,16 @@ class B24UserController extends AbstractB24Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, array $item = null)
+    public function store(Request $request)
     {
-        if (!empty($item)) {
-            $modelItem = null;
-            $modelItem = B24User::where('ID', $item['ID'])->get();
-            if (count($modelItem)) {
-                $modelItem->update($item);
-            }
-            $modelItem = B24User::create($item);
-        } else if (!empty($request)) {
-            $validator = $request->validate([
-                'ID' => 'required|integer||unique:App\Models\B24User,ID',
-                'NAME' => 'required|string|max:25',
-                'LAST_NAME' => 'required|string|max:25',
-                'ACTIVE' => 'required|integer|min:0|max:1',
-            ]);
+        if (!empty($request)) {
+            $validator = $request->validate($this->validateArray);
 
 
             $user = B24User::create($request->all());
 
-            return redirect()->back()->with('status', 'User added!'); 
-
+            return redirect()->back()->with('status', 'User added!');
         }
-
     }
 
     /**
@@ -101,12 +93,13 @@ class B24UserController extends AbstractB24Controller
      */
     public function update(array $item)
     {
-        $b24Item = B24User::find($item['ID']);
+        /*  $user = B24User::findOrFail($id);
 
-        if (!empty($b24Item)) {
-            $b24Item->update($item);
-        } else
-            $this->store($item);
+        $validator = $request->validate($this->validateArray);
+
+          $user->update($request->all());
+
+        return redirect()->back()->with('status', 'crm User updated!'); */
     }
 
     public function updateItem(array $item)
