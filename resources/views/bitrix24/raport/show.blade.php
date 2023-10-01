@@ -13,7 +13,7 @@
             <div class=" w-11/12  ">
                 <div>cron:{{$cronTime}} /Raport:{{$agendaTime}}</div>
                 <div>{{$user}}</div>
-                
+
                 <!-- errorUpdateData  -->
                 @if(!empty($errorUpdateData))
                 <div class="text-xl text-red-500">
@@ -72,6 +72,7 @@
                             <th>Дело</th>
                             <th>Тип клиента</th>
                             <th>Дата</th>
+                            <th>Смотреть</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,10 +88,18 @@
                             <td>{{$item['BUSINESS']??0}}</td>
                             <td>{{$item['DEAL_TYPE']??0}}</td>
                             <td>{{$item['DATE']??0}}</td>
+                            <td>
+                                <x-button>
+                                    <a href="{{ route('company.details', ['companyId' => $item['ID']]) }}">
+                                        Смотреть
+                                    </a>
+                                </x-button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+
                 @endif
                 <!--All Users Main Raport -->
                 @if(!empty($allUsersmainRaports))

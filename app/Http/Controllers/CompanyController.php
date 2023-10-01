@@ -72,28 +72,16 @@ class CompanyController extends AbstractB24Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-//    public function show($id)
-//    {
-//        //
-//    }
-
-    public function show($companyId)
+    public function showDetails($ID)
     {
-        // Используйте модель Company для получения данных о компании по ID
-        $company = Company::find($companyId);
+        // код для обработки запроса
 
-        // Передайте данные о компании в представление
+        $company = Company::find($ID);
+
         return view('bitrix24.company.show', ['company' => $company]);
     }
 
-    public function showCompanyPage($UF_CRM_5DBAA9FFCC357) //название компании
-    {
-        // Найти компанию с активной сделкой
-        $companyName = Company::where($UF_CRM_5DBAA9FFCC357, '1')->first();
 
-        return view('bitrix24.company.show', ['companyName' => $companyName]);
-
-    }
 
     /**
      * Show the form for editing the specified resource.
