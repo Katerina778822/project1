@@ -14,7 +14,6 @@
                 <th>Создать Расписание</th>
                 <th>Смотреть Расписание</th>
                 <th>Смотреть Отчет</th>
-                <th>Смотреть</th>
             </tr>
         </thead>
         <tbody>
@@ -33,13 +32,6 @@
                     <input type="date" class="w-18 h-2 text-xs" id="date" name="date">
                     <input type="date" class="w-18 h-2 text-xs" id="dateEnd" name="dateEnd">
                 </form>
-                        <td>
-                            <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
-                                <x-button>
-                                    Компания
-                                </x-button>
-                            </a>
-                        </td>
                 </td>
             </tr>
             @endforeach

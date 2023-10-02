@@ -31,8 +31,7 @@ Route::get('/home', function () {
 });
 
 
-Route::get('agenda/company/{companyId}', 'CompanyController@show')->name('company.show');
-Route::get('/show-company/', 'CompanyController@showCompanyPage');
+Route::get('/company/{companyId}', 'CompanyController@showDetails')->name('company.details');
 
 require __DIR__.'/auth.php';
 

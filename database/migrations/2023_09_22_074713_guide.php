@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('guides', function (Blueprint $table) {
             $table->id();
-            $table->text('text_message')->default('')->nullable();
-            $table->binary('media_files')->default('')->nullable();
+            $table->text('text_message')->nullable();
+            $table->binary('media_files')->nullable();
         });
     }
 
