@@ -13,16 +13,16 @@ class CreateB24AnaliticsTable extends Migration
      */
 
      // AIM   legend description
-     //1 - 
-     //2 -  
-     //3 -  
-     //3377 -  cron.php update ALL DATA time  
-     //3388 -  agenda create time  
-     //4477 -    cron.php RAPORT update time  
-     //4488 -     RAPORT create time  
-     //4555 -     Error - deal without company  
-     //4554 -     Error - contact without company  
-     //4553 -     Error - other RAPORT creating error 
+     //1 -
+     //2 -
+     //3 -
+     //3377 -  cron.php update ALL DATA time
+     //3388 -  agenda create time
+     //4477 -    cron.php RAPORT update time
+     //4488 -     RAPORT create time
+     //4555 -     Error - deal without company
+     //4554 -     Error - contact without company
+     //4553 -     Error - other RAPORT creating error
 //
     public function up()
     {
@@ -45,9 +45,9 @@ class CreateB24AnaliticsTable extends Migration
             $table->double('double3')->nullable()->default(0);
             $table->double('double4')->nullable()->default(0);
             $table->double('double5')->nullable()->default(0);
-            $table->text('text1')->nullable()->default('');
-            $table->text('text2')->nullable()->default('');
-            $table->text('text3')->nullable()->default('');
+            $table->text('text1')->nullable();
+            $table->text('text2')->nullable();
+            $table->text('text3')->nullable();
             $table->dateTime('date1')->nullable()->default(null);
             $table->dateTime('date2')->nullable()->default(null);
             $table->dateTime('date3')->nullable()->default(null);
@@ -56,7 +56,7 @@ class CreateB24AnaliticsTable extends Migration
             $table->dateTime('date6')->nullable()->default(null);
             $table->timestamps();
         });
-   
+
     }
 
     /**

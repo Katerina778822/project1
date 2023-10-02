@@ -20,7 +20,7 @@ class CreateB24RingsTable extends Migration
             $table->string('PHONE_NUMBER')->nullable()->default('');
             $table->string('CALL_CATEGORY')->nullable()->default('');
             $table->string('CRM_ENTITY_TYPE')->nullable()->default('');
-            $table->text('CALL_RECORD_URL')->nullable()->default('');
+            $table->text('CALL_RECORD_URL')->nullable();
             $table->string('CALL_FAILED_REASON')->nullable()->default('');
             $table->unsignedBigInteger('PORTAL_USER_ID')->nullable()->default(0);
            // $table->unsignedBigInteger('CRM_ENTITY_ID')->nullable()->default(0);

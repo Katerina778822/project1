@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <div class="flex " x-data="{  Tomorrow_cargo: false  }">
-         
+
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight mx-4">
                     <button x-on:click="Tomorrow_cargo = !Tomorrow_cargo; $dispatch('toggle-content', Tomorrow_cargo)" class="btn-main">С делом/Развоз</button>
                 </h2>
@@ -25,6 +25,7 @@
                             <th>Дата</th>
                             <th>Статус сделки</th>
                             <th>Статус клиента</th>
+                            <th>Смотреть</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,6 +39,13 @@
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
+                            <td>
+                                <x-button>
+                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                        Смотреть
+                                    </a>
+                                </x-button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -55,6 +63,7 @@
                             <th>Дата</th>
                             <th>Статус сделки</th>
                             <th>Статус клиента</th>
+                            <th>Смотреть</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,6 +77,13 @@
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
+                            <td>
+                                <x-button>
+                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                        Смотреть
+                                    </a>
+                                </x-button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -85,6 +101,7 @@
                             <th>Дата</th>
                             <th>Статус сделки</th>
                             <th>Статус клиента</th>
+                            <th>Смотреть</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -98,6 +115,13 @@
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
+                            <td>
+                                <x-button>
+                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                        Смотреть
+                                    </a>
+                                </x-button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -114,6 +138,7 @@
                             <th>Дата</th>
                             <th>Статус сделки</th>
                             <th>Статус клиента</th>
+                            <th>Смотреть</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,6 +152,13 @@
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
+                            <td>
+                                <x-button>
+                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                        Смотреть
+                                    </a>
+                                </x-button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -144,6 +176,7 @@
                             <th>Дата</th>
                             <th>Статус сделки</th>
                             <th>Статус клиента</th>
+                            <th>Смотреть</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,6 +190,13 @@
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
+                            <td>
+                                <x-button>
+                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                        Смотреть
+                                    </a>
+                                </x-button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -173,6 +213,7 @@
                             <th>Дата</th>
                             <th>Статус сделки</th>
                             <th>Статус клиента</th>
+                            <th>Смотреть</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -186,6 +227,13 @@
                             <td>{{$item['AGENDA_DATE']??0}}</td>
                             <td>{{$item['STATUS']??0}}</td>
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
+                            <td>
+                                <x-button>
+                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                        Смотреть
+                                    </a>
+                                </x-button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
