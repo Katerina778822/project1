@@ -36,7 +36,7 @@ class b24OriginAPI
         $app_id = env('BITRIX24_APP_ID');
         $app_secret = env('BITRIX24_APP_SECRET');
         //dd( $url,$accessToken,$app_id, $app_secret);
-        Log::info('webhookUrl - ' . $url);
+       // Log::info('webhookUrl - ' . $url);
         $webhookUrl = new WebhookUrl($url);
         $accessTokenObj = new AccessToken($accessToken, "", 0);
         $scope = new Scope(array('tasks'));

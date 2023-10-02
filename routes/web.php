@@ -51,16 +51,16 @@ Route::get('/tail', function () {
 
 
 
-Route::resource('B24User','App\Http\Controllers\B24UserController');
-Route::resource('user','App\Http\Controllers\UserController');
-Route::resource('raport','App\Http\Controllers\B24RaportController');
-Route::resource('agenda','App\Http\Controllers\B24AgendaController');
-Route::resource('company','App\Http\Controllers\CompanyController');
-Route::resource('node','App\Http\Controllers\NodeController');
-Route::resource('catalog','App\Http\Controllers\CatalogController');
-Route::resource('goods','App\Http\Controllers\GoodsController');
-Route::resource('selector','App\Http\Controllers\SelectorController');
-Route::resource('b24analitics_companies_date', 'App\Http\Controllers\B24AnaliticsCompanyColdController');
+Route::resource('B24User','App\Http\Controllers\B24UserController')->middleware(['auth']);
+Route::resource('user','App\Http\Controllers\UserController')->middleware(['auth']);
+Route::resource('raport','App\Http\Controllers\B24RaportController')->middleware(['auth']);
+Route::resource('agenda','App\Http\Controllers\B24AgendaController')->middleware(['auth']);
+Route::resource('company','App\Http\Controllers\CompanyController')->middleware(['auth']);
+Route::resource('node','App\Http\Controllers\NodeController')->middleware(['auth']);
+Route::resource('catalog','App\Http\Controllers\CatalogController')->middleware(['auth']);
+Route::resource('goods','App\Http\Controllers\GoodsController')->middleware(['auth']);
+Route::resource('selector','App\Http\Controllers\SelectorController')->middleware(['auth']);
+Route::resource('b24analitics_companies_date', 'App\Http\Controllers\B24AnaliticsCompanyColdController')->middleware(['auth']);
 
 
 Route::get('/export/{node_id}', [App\Http\Controllers\Controller::class, 'exportData'])->name('exp');

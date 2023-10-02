@@ -33,10 +33,15 @@
                         @method('PUT')
 
                         <!-- ID -->
+                        <div hidden>
+                            <x-label for="ID" :value="__('ID')" />
+
+                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" value="{{$item->ID}}"  />
+                        </div>
                         <div>
                             <x-label for="ID" :value="__('ID')" />
 
-                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" value="{{$item->ID}}" required autofocus />
+                            <x-input id="ID" class="block mt-1 w-full bg-gray-500" type="text" NAME="ID" value="{{$item->ID}}" disabled />
                         </div>
 
                         <!-- Name -->

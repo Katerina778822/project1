@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 class B24UserController extends AbstractB24Controller
 {
     private $validateArray = [
-        'ID' => 'required|integer||unique:App\Models\B24User,ID',
+        'ID' => 'required|integer|unique:App\Models\B24User,ID',
         'NAME' => 'required|string|max:25',
         'LAST_NAME' => 'required|string|max:25',
         'ACTIVE' => 'required|integer|min:0|max:1',
@@ -48,6 +48,7 @@ class B24UserController extends AbstractB24Controller
     public function store(Request $request)
     {
         if (!empty($request)) {
+   
             $validator = $request->validate($this->validateArray);
 
 
@@ -91,15 +92,15 @@ class B24UserController extends AbstractB24Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(array $item)
+    public function update(Request $request, string $id)
     {
-        /*  $user = B24User::findOrFail($id);
-
+        $user = B24User::findOrFail($id);
+        $this->validateArray['ID'] =  'required|integer';//
         $validator = $request->validate($this->validateArray);
 
           $user->update($request->all());
 
-        return redirect()->back()->with('status', 'crm User updated!'); */
+        return redirect()->back()->with('status', 'crm User updated!');
     }
 
     public function updateItem(array $item)
@@ -120,7 +121,9 @@ class B24UserController extends AbstractB24Controller
      */
     public function destroy($id)
     {
-        //
+        B24User::findOrFail($id)->delete();
+
+        return redirect()->route('B24User.index')->with('status', 'User deleted!');
     }
 
 

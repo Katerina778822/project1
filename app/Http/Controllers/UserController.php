@@ -71,7 +71,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         
         $validator = $request->validate([
-            'name' => 'required|string|max:25|unique:App\Models\User,name,' . $id ,
+            'name' => 'required|string|max:25',
             'email' => 'required|string|email|max:45|unique:App\Models\User,email,'. $id,
             'crmuser_id' => 'integer|min:0|nullable',
             //'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],  // Geleon7

@@ -44,8 +44,8 @@
                     <td> <a class="btn btn-link" href="{{ route('B24User.edit', ['B24User' => $item]) }}">
                             Edit </a></td>
                     <td>
-                        <form action="{{ route('B24User.delete', ['id' => $item['id']]) " method="post" style="display: inline-block">
-                        @csrf
+                        <form action="{{ route('B24User.destroy', [$item->ID])}} " method="post" style="display: inline-block">
+                        @csrf 
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>

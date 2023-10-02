@@ -38,7 +38,7 @@ class RegisteredUserController extends Controller
     {
     //    try {
             $validator = $request->validate([
-                'name' => 'required|string|max:25|unique:App\Models\User,name',
+                'name' => 'required|string|max:25',
                 'email' => 'required|string|email|max:45|unique:App\Models\User,email',
                 'business_id' => 'integer|min:0|nullable',
                 //'password' => ['required', 'string', 'min:8', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],  // Geleon7
@@ -54,18 +54,8 @@ class RegisteredUserController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            $users = User::with('roles')->get();
-            $hasAdminRole = false;
-            foreach ($users as $cur_user) {
 
-                foreach ($cur_user->roles as $role) {
-
-                    if ($role->slug == 'admin') {
-                        $hasAdminRole = true;
-                        break;
-                    }
-                }
-            }
+            $user->assignRole('user');
          /*   if (!$hasAdminRole) {
 
                 $adminRole = Role::where('slug', 'admin')->first();

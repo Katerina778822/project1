@@ -33,19 +33,9 @@ class RoleSeeder extends Seeder
                 'UpdateDataPeople' => true,
                 'UpdateDataTeam' => true
             ]
-        ]);
-
-        $user = Role::create([
-            'name' => 'user',
-
-            'permissions' => [
-
-                'InsertDataPeople' => true,
-                'DeleteDataPeople' => true,
-                'UpdateDataPeople' => true,
-
-            ]
         ]);*/
+
+        $user = Role::create(['name' => 'user','guard_name' => 'web']);
     }
 
 
