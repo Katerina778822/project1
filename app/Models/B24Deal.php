@@ -44,9 +44,9 @@ class B24Deal extends Model
         return $this->belongsTo(Company::class, 'COMPANY_ID', 'ID' );
     }
 
-    public function event()
+    public function events()
     {
-        return $this->hasOne(Event::class);
+        return $this->hasMany(Event::class,'deal_id');
     }
 
 

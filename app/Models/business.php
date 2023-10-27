@@ -5,19 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class business extends Model
+class Business extends Model
 {
+   
     use HasFactory;
-
+    public $timestamps = false;
     protected $fillable = [
-    'name',
-    'Type',
-];
-    public function users()
+        'name',
+        'type',
+    ];
+
+/*    public function users()
     {
         return $this->hasOne(B24User::class);
-    }
-
-
-
+    }*/
 }

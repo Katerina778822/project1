@@ -41,7 +41,7 @@
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                             <td>
                                 <x-button>
-                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                    <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
                                         Смотреть
                                     </a>
                                 </x-button>
@@ -79,7 +79,7 @@
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                             <td>
                                 <x-button>
-                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                    <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
                                         Смотреть
                                     </a>
                                 </x-button>
@@ -117,7 +117,7 @@
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                             <td>
                                 <x-button>
-                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                    <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
                                         Смотреть
                                     </a>
                                 </x-button>
@@ -154,7 +154,7 @@
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                             <td>
                                 <x-button>
-                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                    <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
                                         Смотреть
                                     </a>
                                 </x-button>
@@ -192,7 +192,7 @@
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                             <td>
                                 <x-button>
-                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                    <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
                                         Смотреть
                                     </a>
                                 </x-button>
@@ -229,7 +229,7 @@
                             <td>{{$item['UF_CRM_1540465145514']??0}}</td>
                             <td>
                                 <x-button>
-                                    <a href="{{ route('company.details', ['company' => $item['ID']]) }}">
+                                    <a href="{{ route('company.show', ['company' => $item['ID']]) }}">
                                         Смотреть
                                     </a>
                                 </x-button>

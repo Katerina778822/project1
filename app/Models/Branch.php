@@ -9,10 +9,11 @@ class Branch extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'ID'; // Указываем имя первичного ключа
+    public $timestamps = false;
 
     protected $fillable = [
-        'name_business',
+        'name',
+        'business_id',
     ];
 
 

@@ -24,5 +24,10 @@ class B24User extends Model
         return $this->hasOne(Company::class);
     }
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'crmuser_id');
+    }
+
 
 }

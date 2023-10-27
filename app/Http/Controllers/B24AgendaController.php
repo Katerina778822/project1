@@ -20,7 +20,10 @@ use DateInterval;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class B24AgendaController extends Controller
 {
@@ -59,11 +62,18 @@ class B24AgendaController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
+        $r = $user->hasAnyPermission('B24User.read.list');
+    //    $r = Gate::allows('B24User.read.list');
+        if ($user->hasAnyPermission('B24User.read.list')) {
+            $items = B24User::where('ACTIVE', 1)->get();
+        } else
+        $items = B24User::join('users', 'b24_users.ID', '=', 'users.crmuser_id')
+            ->where([
+               [ 'ACTIVE','=', 1],
+               [ 'crmuser_id','=', $user->crmuser_id??0],
 
-        // получить список компаний по пользователю
-        $items = B24User::WHERE('ACTIVE', 1)->get();
-
-
+                ])->get();
 
 
         return view('bitrix24.b24agenda.index', [

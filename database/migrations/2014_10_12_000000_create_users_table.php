@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->timestamp('createdAt')->nullable();
             $table->timestamp('updatedAt')->nullable();
+            $table->unsignedBigInteger('business_id')->nullable();
+            $table->unsignedBigInteger('crmuser_id')->nullable();
           
         });
     }

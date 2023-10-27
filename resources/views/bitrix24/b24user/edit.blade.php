@@ -1,10 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{('Редактирование пользователя') }}
-        </h2>
-    </x-slot>
+        <x-userMenu />
 
+    </x-slot>
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{('Редактирование пользователя') }}
+    </h2>
 
     <div class="space-y-10 divide-y divide-gray-900/10 justify-center flex ">
         <div class="grid grid-cols-1 gap-x-8 gap-y-8 max-w-xs mb-4">
@@ -36,7 +37,7 @@
                         <div hidden>
                             <x-label for="ID" :value="__('ID')" />
 
-                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" value="{{$item->ID}}"  />
+                            <x-input id="ID" class="block mt-1 w-full" type="text" NAME="ID" value="{{$item->ID}}" />
                         </div>
                         <div>
                             <x-label for="ID" :value="__('ID')" />

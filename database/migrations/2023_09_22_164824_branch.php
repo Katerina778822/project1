@@ -10,11 +10,19 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-    {
+    {/**/
         Schema::create('branches', function (Blueprint $table) {
-            $table->unsignedBigInteger('ID')->primary();
-            $table->string('name_business')->default('')->nullable();
+            $table->id();
+            $table->string('name');
+            $table->unsignedBigInteger('business_id');
+            $table->foreign('business_id')->references('id')->on('businesses');
         });
+
+        Schema::table('b24_deals', function (Blueprint $table) {
+         //   $table->unsignedBigInteger('branch_id')->default(1); // Define the branch_id column
+            $table->foreign('branch_id')->references('id')->on('branches');
+        });
+
     }
 
     /**

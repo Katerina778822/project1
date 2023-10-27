@@ -1,17 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex">
-
-            <x-button_green class="ml-4">
-                <a class="btn btn-link" href="{{ route('B24User.create') }}">
-                    {{ __('Create') }}</a>
-            </x-button_green>
-            <x-button_red class="ml-4">
-
-                {{ __('Register') }}
-
-            </x-button_red>
-        </div>
+        <x-userMenu />
 
     </x-slot>
 
@@ -30,7 +19,7 @@
                     <th>Имя</th>
                     <th>Фамилия</th>
                     <th>Активен</th>
-                  
+
                 </tr>
             </thead>
             <tbody>
@@ -41,21 +30,36 @@
                     <td>{{$item->NAME}}</td>
                     <td>{{$item->LAST_NAME}}</td>
                     <td>{{$item->ACTIVE}}</td>
-                    <td> <a class="btn btn-link" href="{{ route('B24User.edit', ['B24User' => $item]) }}">
-                            Edit </a></td>
+                    @if(auth()->user()->can('B24User.edit'))
+                    <td>
+                        <x-button_blue class="">
+                            <a class="" href="{{ route('B24User.edit', ['B24User' => $item]) }}">
+                                {{ __('Edit') }}</a>
+                        </x-button_blue>
+                    </td>
+                    @endif
+                    @if(auth()->user()->can('B24User.delete'))
                     <td>
                         <form action="{{ route('B24User.destroy', [$item->ID])}} " method="post" style="display: inline-block">
-                        @csrf 
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                   </td>  
+                            @csrf
+                            @method('DELETE')
+                            <x-button_red class="">
+                                {{ __('Delete') }}
+                            </x-button_red>
+                        </form>
+                    </td>
+                    @endif
                 </tr>
                 @endforeach
                 @endif
             </tbody>
         </table>
-
+        @if(auth()->user()->can('B24User.add'))
+        <x-button_green class="ml-2">
+            <a class="btn btn-link" href="{{ route('B24User.create') }}">
+                {{ __('Create new crm user') }}</a>
+        </x-button_green>
+        @endif
 
 
 

@@ -10,10 +10,10 @@ class Event extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ID',
+        'id',
         'typeEvent',
         'deal_id',
-        'branch_id',
+
     ];
 
     // Определение отношения с моделью Stage
@@ -28,11 +28,7 @@ class Event extends Model
         return $this->belongsTo(B24Deal::class, 'deal_id', 'ID');
     }
 
-    // Определение отношения с моделью Branch
-    public function branch()
-    {
-        return $this->belongsTo(Branch::class, 'branch_id');
-    }
+
 
 
 

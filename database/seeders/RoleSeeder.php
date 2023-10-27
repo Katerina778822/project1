@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-  /*      $admin = Role::create([
+        $admin = Role::create([
             'name' => 'admin',
 
             'permissions' => [
@@ -33,7 +33,7 @@ class RoleSeeder extends Seeder
                 'UpdateDataPeople' => true,
                 'UpdateDataTeam' => true
             ]
-        ]);*/
+        ]);
 
         $user = Role::create(['name' => 'user','guard_name' => 'web']);
     }

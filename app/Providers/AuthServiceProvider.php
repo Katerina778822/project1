@@ -41,6 +41,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('InsertDataPeople',function ($user){
             return $user->hasRole('head');
         });
+
     }
 
 }

@@ -10,9 +10,17 @@ use App\View\Components\Alert;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class B24DealController extends AbstractB24Controller
 {
+
+    private $validateArray = [
+        'ID' => 'required|integer|unique:App\Models\B24User,ID',
+        'NAME' => 'required|string|max:25',
+        'LAST_NAME' => 'required|string|max:25',
+        'ACTIVE' => 'required|integer|min:0|max:1',
+    ];
     /**
      * Display a listing of the resource.
      *
@@ -39,19 +47,29 @@ class B24DealController extends AbstractB24Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(array $item)
+    public function store(Request $request)
     {
+        if (!empty($request)) {
+   
+            $validator = $request->validate($this->validateArray);
 
 
-        $modelItem = B24Deal::where('ID', $item['ID'])->get();
-        if (count($modelItem)) {
-            return;
+            $user = B24Deal::create($request->all());
+
+            return redirect()->back()->with('status', 'User added!');
         }
-        $modelItem = B24Deal::create($item);
+    }
+
+    public function updateItem(array $item)
+    {
+        $b24Item = B24Deal::find($item['ID']);
         try {
+            if (!empty($b24Item)) {
+                $b24Item->update($item);
+            } else
+                B24Deal::create($item);
         } catch (Exception $e) {
-            echo ('Не могу записать сделку ИД' . $item['ID'] . ' название ' . $item['TITLE'] . ' Проверьте компанию и  пользователя. ИД компании ' . $item['COMPANY_ID']);
-            return;
+            Log::error('Couldnt create/update deal: ID' .$item['ID'].'\ '.$e->getMessage());
         }
     }
 
@@ -86,15 +104,7 @@ class B24DealController extends AbstractB24Controller
      */
     public function update(array $item)
     {
-        $b24Item = B24Deal::find($item['ID']);
 
-        if (!empty($b24Item)) {
-            //           if (empty($b24Item['STAGE_ID_BEFORE']))
-            //                $item['STAGE_ID_BEFORE'] =  $item['STAGE_ID'];
-
-            $b24Item->update($item);
-        } else
-            $this->store($item);
     }
 
     /**
@@ -164,17 +174,17 @@ class B24DealController extends AbstractB24Controller
                 else $item['DATE_MODIFY'] = NULL;
 
 
-                if (empty($item['COMPANY_ID'])){
+                if (empty($item['COMPANY_ID'])) {
                     $item['COMPANY_ID'] = 7549;
-//                        $error = B24Analitics::create([
-//                        'AIM' => 4555,
-//                        'id_item' => $item['id_item'],
-//                        'string1' => $item['TITLE'],
-//                        'string' => "Deal without company",
-//                    ]);
+                    //                        $error = B24Analitics::create([
+                    //                        'AIM' => 4555,
+                    //                        'id_item' => $item['id_item'],
+                    //                        'string1' => $item['TITLE'],
+                    //                        'string' => "Deal without company",
+                    //                    ]);
                 }
 
-                $this->store($item);
+                $this->updateItem($item);
             }
             $b24count = B24Deal::count(); //save result count
             //$b24count->save();
@@ -233,7 +243,7 @@ class B24DealController extends AbstractB24Controller
                     $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 else $item['DATE_MODIFY'] = NULL;
 
-                if (empty($item['COMPANY_ID'])){
+                if (empty($item['COMPANY_ID'])) {
                     $item['COMPANY_ID'] = 7549;
                     $error = B24Analitics::create([
                         'AIM' => 4555,
@@ -243,10 +253,7 @@ class B24DealController extends AbstractB24Controller
                     ]);
                 }
 
-
-
-
-                $this->update($item);
+                $this->updateItem($item);
                 $count++;
             }
             // $b24count = B24Deal::count(); //save result count

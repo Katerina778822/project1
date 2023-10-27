@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\B24UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -31,7 +32,7 @@ Route::get('/home', function () {
 });
 
 
-Route::get('/company/{companyId}', 'CompanyController@showDetails')->name('company.details');
+
 
 require __DIR__.'/auth.php';
 
@@ -48,10 +49,43 @@ Route::get('/tail', function () {
     return view('tailwind'); });
 */
 
-
+Route::resource('event','App\Http\Controllers\EventController')->middleware(['auth']);
+Route::get('event/create', 'App\Http\Controllers\EventController@create')->middleware('can:event.add')->name('event.create');
+Route::get('event/{event}/edit', [EventController::class, 'edit'])->middleware(['can:event.edit'])->name('event.edit');
+Route::delete('event/{event}',[EventController::class, 'destroy'])->middleware(['can:event.delete'])->name('event.destroy');
+Route::get('event', [EventController::class, 'index'])->middleware(['can:event.read.list'])->name('event.index');
 
 Route::resource('B24User','App\Http\Controllers\B24UserController')->middleware(['auth']);
+Route::get('B24User/create', 'App\Http\Controllers\B24UserController@create')->middleware('can:B24User.add')->name('B24User.create');
+Route::get('B24User/{B24User}/edit', [B24UserController::class, 'edit'])->middleware(['can:B24User.edit'])->name('B24User.edit');
+Route::delete('B24User/{B24User}',[B24UserController::class, 'destroy'])->middleware(['can:B24User.delete'])->name('B24User.destroy');
+Route::get('B24User', [B24UserController::class, 'index'])->middleware(['can:B24User.read.list'])->name('B24User.index');
+
+Route::resource('business','App\Http\Controllers\BusinessController')->middleware(['auth']);
+Route::get('business/create', 'App\Http\Controllers\BusinessController@create')->middleware('can:business.add')->name('business.create');
+Route::get('business/{business}/edit', [App\Http\Controllers\BusinessController::class, 'edit'])->middleware(['can:business.edit'])->name('business.edit');
+Route::delete('business/{business}',[App\Http\Controllers\BusinessController::class, 'destroy'])->middleware(['can:business.delete'])->name('business.destroy');
+Route::get('business', [App\Http\Controllers\BusinessController::class, 'index'])->middleware(['can:business.read.list'])->name('business.index');
+
+Route::resource('branch','App\Http\Controllers\BranchController')->middleware(['auth']);
+Route::get('branch/create', 'App\Http\Controllers\BranchController@create')->middleware('can:branch.add')->name('branch.create');
+Route::get('branch/{branch}/edit', 'App\Http\Controllers\BranchController@edit')->middleware(['can:branch.edit'])->name('branch.edit');
+Route::delete('branch/{branch}','App\Http\Controllers\BranchController@destroy')->middleware(['can:branch.delete'])->name('branch.destroy');
+Route::get('branch', 'App\Http\Controllers\BranchController@index')->middleware(['can:branch.read.list'])->name('branch.index');
+
+Route::resource('role','App\Http\Controllers\RoleController')->middleware(['role:super-user|admin|director']);
+Route::get('role/create', 'App\Http\Controllers\RoleController@create')->middleware('can:role.add')->name('role.create');
+Route::get('role/{role}/edit', [App\Http\Controllers\RoleController::class, 'edit'])->middleware(['can:role.edit'])->name('role.edit');
+Route::delete('role/{role}',[App\Http\Controllers\RoleController::class, 'destroy'])->middleware(['can:B24User.delete'])->name('role.destroy');
+Route::get('role', [App\Http\Controllers\RoleController::class, 'index'])->middleware(['can:role.read.list'])->name('role.index');
+
 Route::resource('user','App\Http\Controllers\UserController')->middleware(['auth']);
+Route::get('user/create', 'App\Http\Controllers\UserController@create')->middleware('can:user.add')->name('user.create');
+Route::get('user/{user}/edit', [App\Http\Controllers\UserController::class, 'edit'])->middleware(['can:user.edit'])->name('user.edit');
+Route::delete('user/{user}',[App\Http\Controllers\UserController::class, 'destroy'])->middleware(['can:B24User.delete'])->name('user.destroy');
+Route::get('user', [App\Http\Controllers\UserController::class, 'index'])->middleware(['can:user.read.list'])->name('user.index');
+
+
 Route::resource('raport','App\Http\Controllers\B24RaportController')->middleware(['auth']);
 Route::resource('agenda','App\Http\Controllers\B24AgendaController')->middleware(['auth']);
 Route::resource('company','App\Http\Controllers\CompanyController')->middleware(['auth']);

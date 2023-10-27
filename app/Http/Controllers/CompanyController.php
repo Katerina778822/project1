@@ -72,13 +72,22 @@ class CompanyController extends AbstractB24Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function showDetails($ID)
+    public function show($id)
     {
         // код для обработки запроса
 
-        $company = Company::find($ID);
+        $company = Company::find($id);
+        $activeDeals = $company->getActiveDeals();
+        foreach($activeDeals as $activeDeal){//поиск последней стадии
+           $event = $activeDeal->events()->latest('updated_at')->first();
+           if(!empty($event))
+           $activeDeal->event = $event->typeEvent;
+        }
 
-        return view('bitrix24.company.show', ['company' => $company]);
+        return view('bitrix24.company.show', [
+            'company' => $company,
+            'activeDeals' => $activeDeals,
+        ]);
     }
 
 

@@ -51,6 +51,15 @@ class Company extends Model
         return $this->belongsToMany(Company::class, 'b24_contact_company', 'company_id', 'contact_id');
     }
 
+    public function getActiveDeals()
+    {
+        $activeDeals = B24Deal::where([
+            ['COMPANY_ID',$this->ID],
+            ['CLOSED','N'],
+            ])->orderBy('DATE_MODIFY','DESC')->get();
+        return $activeDeals;
+    }
+
 
 
     public function b24user()

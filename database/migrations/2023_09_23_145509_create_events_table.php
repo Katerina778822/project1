@@ -14,15 +14,12 @@ class CreateEventsTable extends Migration
     public function up()
     {
         Schema::create('events', function (Blueprint $table) {
-            $table->unsignedBigInteger('ID')->primary();
+            $table->id();
             $table->unsignedBigInteger('typeEvent');
             $table->unsignedBigInteger('deal_id');
-            $table->unsignedBigInteger('branch_id');
-
-            $table->foreign('typeEvent')->references('ID')->on('stage');
+            $table->timestamps();
+            $table->foreign('typeEvent')->references('id')->on('stage');
             $table->foreign('deal_id')->references('ID')->on('b24_deals');
-            $table->foreign('branch_id')->references('ID')->on('branches');
-
 
         });
     }

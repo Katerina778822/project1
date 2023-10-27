@@ -21,6 +21,10 @@
       
   }
   @layer components {
+    .btn-deal-stage {
+      @apply transition duration-500 ease-in-out bg-transparent hover:border border-sky-300 transform  hover:scale-100
+      rounded-lg mx-2 px-2;
+    }
     .btn-main {
       @apply transition duration-500 ease-in-out bg-transparent hover:border border-sky-300 transform  hover:scale-100
       rounded-lg mx-2 px-2;
