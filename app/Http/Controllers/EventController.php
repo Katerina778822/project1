@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\B24Deal;
 use App\Models\Event;
 use Illuminate\Http\Request;
 
@@ -30,6 +31,7 @@ class EventController extends Controller
     {
 
         $event = Event::create($request->all());
+
         return redirect()->back()->with('status', 'Event added!');
     }
 

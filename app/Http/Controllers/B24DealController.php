@@ -7,6 +7,7 @@ use App\Models\B24Analitics;
 use App\Models\B24Deal;
 use App\Models\Company;
 use App\View\Components\Alert;
+use App\View\Components\company as ComponentsCompany;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -50,10 +51,13 @@ class B24DealController extends AbstractB24Controller
     public function store(Request $request)
     {
         if (!empty($request)) {
-   
             $validator = $request->validate($this->validateArray);
-
-
+            $item['dealtype_id'] = 1;
+            if (!empty($request->dealtype_id)) { //определение типа сделки
+                $request->merge([
+                    'dealtype_id' => company::findOrFail($request->COMPANY_ID)->getClientStatus(),
+                ]);
+            }
             $user = B24Deal::create($request->all());
 
             return redirect()->back()->with('status', 'User added!');
@@ -66,10 +70,15 @@ class B24DealController extends AbstractB24Controller
         try {
             if (!empty($b24Item)) {
                 $b24Item->update($item);
-            } else
+            } else {
+                $item['dealtype_id'] = 1;
+                if (!empty($item['COMPANY_ID'])) { //определение типа сделки
+                    $item['dealtype_id'] = company::findOrFail($item['COMPANY_ID'])->getClientStatus();
+                }
                 B24Deal::create($item);
+            }
         } catch (Exception $e) {
-            Log::error('Couldnt create/update deal: ID' .$item['ID'].'\ '.$e->getMessage());
+            Log::error('Couldnt create/update deal: ID' . $item['ID'] . '\ ' . $e->getMessage());
         }
     }
 
@@ -104,7 +113,6 @@ class B24DealController extends AbstractB24Controller
      */
     public function update(array $item)
     {
-
     }
 
     /**
@@ -172,17 +180,12 @@ class B24DealController extends AbstractB24Controller
                 if (!empty($item['DATE_MODIFY']))
                     $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 else $item['DATE_MODIFY'] = NULL;
-
-
                 if (empty($item['COMPANY_ID'])) {
                     $item['COMPANY_ID'] = 7549;
-                    //                        $error = B24Analitics::create([
-                    //                        'AIM' => 4555,
-                    //                        'id_item' => $item['id_item'],
-                    //                        'string1' => $item['TITLE'],
-                    //                        'string' => "Deal without company",
-                    //                    ]);
                 }
+
+
+
 
                 $this->updateItem($item);
             }

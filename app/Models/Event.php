@@ -19,7 +19,7 @@ class Event extends Model
     // Определение отношения с моделью Stage
     public function stage()
     {
-        return $this->belongsToMany(Stage::class, 'typeEvent', 'ID');
+        return $this->hasOne(Stage::class, 'stage');
     }
 
     // Определение отношения с моделью B24Deal

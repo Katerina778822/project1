@@ -82,8 +82,18 @@ class CompanyController extends AbstractB24Controller
            $event = $activeDeal->events()->latest('updated_at')->first();
            if(!empty($event))
            $activeDeal->event = $event->typeEvent;
-        }
 
+           $type = $activeDeal->getTypeDeal()->id;
+           switch ($type){
+               case (1): $type = 0;break;
+               case (2): $type =  20;break;
+               case (3): $type =  40;break;
+               case (4): $type =  60;break;
+           }
+           $activeDeal->type = $type;
+
+        }
+      
         return view('bitrix24.company.show', [
             'company' => $company,
             'activeDeals' => $activeDeals,

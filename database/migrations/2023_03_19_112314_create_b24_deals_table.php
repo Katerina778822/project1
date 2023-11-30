@@ -14,9 +14,11 @@ class CreateB24DealsTable extends Migration
     public function up()
     {
         Schema::create('b24_deals', function (Blueprint $table) {
-            $table->unsignedBigInteger('ID')->primary();
+            $table->unsignedBigInteger('id1')->autoIncrement();
+            $table->unsignedBigInteger('ID')->nullable();//b24 ID
             $table->unsignedBigInteger('ASSIGNED_BY_ID')->default(0); //user
             $table->unsignedBigInteger('COMPANY_ID')->default(0); //company
+            $table->unsignedBigInteger('dealtype_id')->default(0); //deal type
             $table->string('TITLE')->default('');
 
             $table->char('CLOSED')->default('');
@@ -46,6 +48,7 @@ class CreateB24DealsTable extends Migration
 
             $table->foreign('ASSIGNED_BY_ID')->references('ID')->on('b24_users');
             $table->foreign('COMPANY_ID')->references('ID')->on('companies');
+            $table->foreign('dealtype_id')->references('ID')->on('deal_types');
 
 
 

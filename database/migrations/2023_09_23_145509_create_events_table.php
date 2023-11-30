@@ -19,7 +19,7 @@ class CreateEventsTable extends Migration
             $table->unsignedBigInteger('deal_id');
             $table->timestamps();
             $table->foreign('typeEvent')->references('id')->on('stage');
-            $table->foreign('deal_id')->references('ID')->on('b24_deals');
+            $table->foreign('deal_id')->references('id1')->on('b24_deals');
 
         });
     }

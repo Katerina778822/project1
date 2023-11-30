@@ -26,9 +26,9 @@ class Company extends Model
 
     protected $primaryKey = 'ID';
 
-    public function b24deals()
+    public function deals()
     {
-        return $this->hasMany(B24Deal::class, 'b24deal');
+        return $this->hasMany(B24Deal::class, 'b24deal', 'ID');
     }
 
     public function b24fields()
@@ -67,9 +67,21 @@ class Company extends Model
         return $this->belongsTo(B24User::class, 'ASSIGNED_BY_ID', 'ID');
     }
 
-    //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
-    public function getClientStatus(DateTime $end)
+    public function getJameClientStatus()
     {
+        $status = $this->deals->get();
+
+    }
+
+
+    //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
+    public function getClientStatus(DateTime $end=null)
+    {
+        if(empty($end)){
+            $timezone = new DateTimeZone('Europe/Kiev');
+            $end = new DateTime('now', $timezone);
+        }
+
         $start = clone $end;
         $start->setTime(0, 0, 0);
         // if ($this->ID == 8759) //TEMP!!

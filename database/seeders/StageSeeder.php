@@ -14,30 +14,7 @@ class StageSeeder extends Seeder
      */
     public function run(): void
     {   /* */
-        //Новый
-        Stage::create(['stage'=>'Открытие.ПРОСЧЕТ.Новый']);
-        Stage::create(['stage'=>'Потребности.ПРОСЧЕТ.Новый']);
-        Stage::create(['stage'=>'Презентация.ПРОСЧЕТ.Новый']);
-        Stage::create(['stage'=>'Закрытие.ПРОСЧЕТ.Новый']);
-        Stage::create(['stage'=>'ПРОСЧЕТ.Новый']);
-        //*******
-        Stage::create(['stage'=>'Открытие.КП.Новый']);
-        Stage::create(['stage'=>'Потребности.КП.Новый']);
-        Stage::create(['stage'=>'Презентация.КП.Новый']);
-        Stage::create(['stage'=>'Закрытие.КП.Новый']);
-        Stage::create(['stage'=>'КП.Новый']);
-        //*******
-        Stage::create(['stage'=>'Открытие.ЗАКАЗ.Новый']);
-        Stage::create(['stage'=>'Потребности.ЗАКАЗ.Новый']);
-        Stage::create(['stage'=>'Презентация.ЗАКАЗ.Новый']);
-        Stage::create(['stage'=>'Закрытие.ЗАКАЗ.Новый']);
-        Stage::create(['stage'=>'ЗАКАЗ.Новый']);
-        //*******
-        Stage::create(['stage'=>'Открытие.ДЕНЬГИ.Новый']);
-        Stage::create(['stage'=>'Потребности.ДЕНЬГИ.Новый']);
-        Stage::create(['stage'=>'Презентация.ДЕНЬГИ.Новый']);
-        Stage::create(['stage'=>'Закрытие.ДЕНЬГИ.Новый']);
-        Stage::create(['stage'=>'ДЕНЬГИ.Новый']);
+       
         //Клиент
         Stage::create(['stage'=>'Открытие.ПРОСЧЕТ.Клиент']);
         Stage::create(['stage'=>'Потребности.ПРОСЧЕТ.Клиент']);
@@ -110,6 +87,30 @@ class StageSeeder extends Seeder
         Stage::create(['stage'=>'Презентация.ДЕНЬГИ.Остывший']);
         Stage::create(['stage'=>'Закрытие.ДЕНЬГИ.Остывший']);
         Stage::create(['stage'=>'ДЕНЬГИ.Остывший']);
+         //Новый
+         Stage::create(['stage'=>'Открытие.ПРОСЧЕТ.Новый']);
+         Stage::create(['stage'=>'Потребности.ПРОСЧЕТ.Новый']);
+         Stage::create(['stage'=>'Презентация.ПРОСЧЕТ.Новый']);
+         Stage::create(['stage'=>'Закрытие.ПРОСЧЕТ.Новый']);
+         Stage::create(['stage'=>'ПРОСЧЕТ.Новый']);
+         //*******
+         Stage::create(['stage'=>'Открытие.КП.Новый']);
+         Stage::create(['stage'=>'Потребности.КП.Новый']);
+         Stage::create(['stage'=>'Презентация.КП.Новый']);
+         Stage::create(['stage'=>'Закрытие.КП.Новый']);
+         Stage::create(['stage'=>'КП.Новый']);
+         //*******
+         Stage::create(['stage'=>'Открытие.ЗАКАЗ.Новый']);
+         Stage::create(['stage'=>'Потребности.ЗАКАЗ.Новый']);
+         Stage::create(['stage'=>'Презентация.ЗАКАЗ.Новый']);
+         Stage::create(['stage'=>'Закрытие.ЗАКАЗ.Новый']);
+         Stage::create(['stage'=>'ЗАКАЗ.Новый']);
+         //*******
+         Stage::create(['stage'=>'Открытие.ДЕНЬГИ.Новый']);
+         Stage::create(['stage'=>'Потребности.ДЕНЬГИ.Новый']);
+         Stage::create(['stage'=>'Презентация.ДЕНЬГИ.Новый']);
+         Stage::create(['stage'=>'Закрытие.ДЕНЬГИ.Новый']);
+         Stage::create(['stage'=>'ДЕНЬГИ.Новый']);
        
     }
 }
