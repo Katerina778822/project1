@@ -155,13 +155,13 @@ class B24ActivityController extends AbstractB24Controller
                 $this->update($item);
                 $count++; //save result count
             }
-            $b24count = B24Activity::count(); //save result count
+           // $b24count = B24Activity::count(); //save result count
             //$b24count->save();
             // $count = 0;
-            $requestArray['start'] = $b24count;
-            $items = $this->helperOriginAPI->getItem('activity', $requestArray);
+            $requestArray['start'] = $count;
+            $items = $this->helperOriginAPI->getItemUpdate('activity', $requestArray);
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-            $b24countItems = $this->helperOriginAPI->getQuantity('activity', $checkDate, null, $requestArray);
+            $b24countItems = $this->helperOriginAPI->getQuantityUpdate('activity', $checkDate, null, $requestArray);
         }
     }
 
@@ -245,6 +245,8 @@ class B24ActivityController extends AbstractB24Controller
      */
     public function update(array $item)
     {
+        if($item['ID2']==760955)
+            $rf = 0;
         $activity = B24Activity::where('ID2', $item['ID2'])->first();
         if (!empty($activity)) {
             $activity->update($item); // Заполняем модель данными из $item
