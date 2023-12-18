@@ -79,7 +79,7 @@ class B24UserController extends AbstractB24Controller
     {
         $user = B24User::findOrFail($id);
 
-        return view('bitrix24.B24user.edit', [
+        return view('bitrix24.b24user.edit', [
             'item' => $user,
 
         ]);
