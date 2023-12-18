@@ -2,6 +2,7 @@
 
 use App\Models\B24Analitics;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 require __DIR__ . '/../vendor/autoload.php'; // Путь к автозагрузчику Laravel
 
@@ -9,6 +10,8 @@ require __DIR__ . '/../vendor/autoload.php'; // Путь к автозагруз
 
 
 $app = require_once __DIR__ . '/../bootstrap/app.php';
+$request = Request::create('/'); // Создаем фиктивный запрос
+$app->instance('request', $request); // Регистрируем его в контейнере Laravel
 $app->make('Illuminate\Contracts\Http\Kernel')->bootstrap();
 
 $orderController = $app->make(\App\Http\Controllers\B24FetchController::class);
