@@ -14,27 +14,7 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $admin = Role::create([
-            'name' => 'admin',
-
-            'permissions' => [
-                'InsertDataAll' => true,
-                'DeleteDataAll' => true,
-                'UpdateData' => true
-            ]
-        ]);
-        $head = Role::create([
-            'name' => 'head',
-
-            'permissions' => [
-                'InsertDataTeam' => true,
-                'InsertDataPeople' => true,
-                'DeleteDataPeople' => true,
-                'UpdateDataPeople' => true,
-                'UpdateDataTeam' => true
-            ]
-        ]);
-
+       
         $user = Role::create(['name' => 'user','guard_name' => 'web']);
     }
 
