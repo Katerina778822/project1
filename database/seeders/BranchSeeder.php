@@ -17,7 +17,7 @@ class BranchSeeder extends Seeder
     public function run()
     {
 
-        $business = Business::create(['name' => 'Geleon','type' => 1]);
+      //  $business = Business::create(['name' => 'Geleon','type' => 1]);
         $business = Branch::create(['name' => 'Развоз','business_id' => 1]);
         $business = Branch::create(['name' => 'Украина','business_id' => 1]);
         $business = Branch::create(['name' => 'Опт', 'business_id' => 1]);
