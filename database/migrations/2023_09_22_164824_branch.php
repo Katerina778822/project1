@@ -19,7 +19,7 @@ return new class extends Migration
         });
 
         Schema::table('b24_deals', function (Blueprint $table) {
-         //   $table->unsignedBigInteger('branch_id')->default(1); // Define the branch_id column
+            $table->unsignedBigInteger('branch_id')->default(1); // Define the branch_id column
             $table->foreign('branch_id')->references('id')->on('branches');
         });
 
