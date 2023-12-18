@@ -66,6 +66,8 @@ class B24DealController extends AbstractB24Controller
 
     public function updateItem(array $item)
     {
+        if($item['ID']==118901)
+        $rt = 10;
         $b24Item = B24Deal::find($item['ID']);
         try {
             if (!empty($b24Item)) {
@@ -73,6 +75,7 @@ class B24DealController extends AbstractB24Controller
             } else {
                 $item['dealtype_id'] = 1;
                 if (!empty($item['COMPANY_ID'])) { //определение типа сделки
+                    $ew = company::findOrFail($item['COMPANY_ID']);
                     $item['dealtype_id'] = company::findOrFail($item['COMPANY_ID'])->getClientStatus();
                 }
                 B24Deal::create($item);
@@ -183,6 +186,9 @@ class B24DealController extends AbstractB24Controller
                 if (empty($item['COMPANY_ID'])) {
                     $item['COMPANY_ID'] = 7549;
                 }
+                if (empty($item['branch_id'])) {
+                    $item['branch_id'] = 1;
+                }
 
 
 
@@ -245,6 +251,9 @@ class B24DealController extends AbstractB24Controller
                 if (!empty($item['DATE_MODIFY']))
                     $item['DATE_MODIFY'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['DATE_MODIFY'])->format('Y-m-d H:i:s');
                 else $item['DATE_MODIFY'] = NULL;
+                if (empty($item['branch_id'])) {
+                    $item['branch_id'] = 1;
+                }
 
                 if (empty($item['COMPANY_ID'])) {
                     $item['COMPANY_ID'] = 7549;

@@ -77,6 +77,7 @@ class Company extends Model
     //@returns 4-новый; 3-Остывший; 2 - База; 1 - Клиент;
     public function getClientStatus(DateTime $end=null)
     {
+
         if(empty($end)){
             $timezone = new DateTimeZone('Europe/Kiev');
             $end = new DateTime('now', $timezone);
