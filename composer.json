@@ -16,7 +16,7 @@
         "doctrine/dbal": "^3.0",
         "laravel/tinker": "^2.5",
         "mesilov/bitrix24-php-sdk": "2.0-alpha.7",
-        "spatie/laravel-permission": "*",
+        "spatie/laravel-permission": "5.11.0",
         "symfony/http-client": "^5.2"
     },
     "require-dev": {
