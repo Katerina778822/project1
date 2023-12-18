@@ -66,7 +66,7 @@ class B24DealController extends AbstractB24Controller
 
     public function updateItem(array $item)
     {
-        if($item['ID']==118901)
+        if($item['ID']==119327)
         $rt = 10;
         $b24Item = B24Deal::find($item['ID']);
         try {
@@ -151,9 +151,10 @@ class B24DealController extends AbstractB24Controller
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = [
             'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID', 'CLOSED',
-            'OPPORTUNITY', 'COMMENTS', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
+            'OPPORTUNITY',  'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
             'UF_CRM_5BB6246DC30D8', 'UF_CRM_1545811346080', 'UF_CRM_1564411704463', 'UF_CRM_5CAB07390C964', 'UF_CRM_1540120643248',
             'UF_CRM_1545811274193', 'UF_CRM_1547732437301', 'DATE_CREATE', 'CLOSEDATE', 'UF_CRM_5C224D08961A9',
+           // 'COMMENTS'
         ];
         $requestArray['start'] = $b24count;
 
@@ -219,9 +220,10 @@ class B24DealController extends AbstractB24Controller
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = [
             'ID', 'ASSIGNED_BY_ID', 'COMPANY_ID', 'TITLE', 'STAGE_ID', 'CURRENCY_ID', 'CATEGORY_ID', 'CLOSED',
-            'OPPORTUNITY', 'COMMENTS', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
+            'OPPORTUNITY', 'IS_RETURN_CUSTOMER', 'UF_CRM_1545747379148', 'UF_CRM_5C20F23556A62',
             'UF_CRM_5BB6246DC30D8', 'UF_CRM_1545811346080', 'UF_CRM_1564411704463', 'UF_CRM_5CAB07390C964', 'UF_CRM_1540120643248',
-            'UF_CRM_1545811274193', 'UF_CRM_1547732437301', 'DATE_CREATE', 'CLOSEDATE', 'UF_CRM_5C224D08961A9', 'DATE_MODIFY'
+            'UF_CRM_1545811274193', 'UF_CRM_1547732437301', 'DATE_CREATE', 'CLOSEDATE', 'UF_CRM_5C224D08961A9', 'DATE_MODIFY',
+              // 'COMMENTS'
         ];
         $requestArray['start'] = $count;
 
