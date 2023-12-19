@@ -407,8 +407,8 @@ class B24AgendaController extends Controller
         foreach ($userCompanies as $userCompany) {
             $userCompany->URL_TYPE = 0; //company
             //актуальность компании на сегодня
-            if ($userCompany->ID == 7563) //temp
-                $i = 0;
+           // if ($userCompany->ID == 7563) //temp
+             //   $i = 0;
             if (!$this->checkUserCompanyToday($userCompany))
                 if (!$this->checkUserCompanyTomorrow($userCompany))
                     if (!$this->checkUserCompanyYesterday($userCompany))

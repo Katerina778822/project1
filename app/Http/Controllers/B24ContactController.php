@@ -7,6 +7,7 @@ use App\Models\B24Contact;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class B24ContactController extends AbstractB24Controller
 {
@@ -38,22 +39,18 @@ class B24ContactController extends AbstractB24Controller
      */
     public function store(array $item)
     {
-        $modelItem = null;
-        $modelItem = B24Contact::where('ID', $item['ID'])->first();
-        if (empty($modelItem)) {
-            $modelItem = B24Contact::create($item);
-        }
-        else{
-            $modelItem->update($item);
-            $modelItem->save();
-        }
-
 
         try {
+            $modelItem = null;
+            $modelItem = B24Contact::where('ID', $item['ID'])->first();
+            if (empty($modelItem)) {
+                $modelItem = B24Contact::create($item);
+            } else {
+                $modelItem->update($item);
+                $modelItem->save();
+            }
         } catch (Exception $e) {
-            $e->getMessage();
-        } finally {
-            return;
+            Log::error('Couldnt create/update Contact: ID ' . $item['ID'] . '\ ' . $e->getMessage());
         }
     }
 

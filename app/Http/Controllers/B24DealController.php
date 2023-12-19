@@ -66,9 +66,9 @@ class B24DealController extends AbstractB24Controller
 
     public function updateItem(array $item)
     {
-        //if($item['ID']==119327)
-      //  $rt = 10;
-        $b24Item = B24Deal::find($item['ID']);
+        if($item['ID']==120583)
+        $rt = 10;
+        $b24Item = B24Deal::where('ID',$item['ID'])->first();
         try {
             if (!empty($b24Item)) {
                 $b24Item->update($item);

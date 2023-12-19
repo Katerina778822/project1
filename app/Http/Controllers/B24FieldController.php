@@ -6,6 +6,7 @@ use App\Helpers\Bitrix24\b24Companies;
 use App\Models\B24Field;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class B24FieldController extends AbstractB24Controller
 {
@@ -38,18 +39,15 @@ class B24FieldController extends AbstractB24Controller
      */
     public function store(array $item)
     {
-        $modelItem = null;
-        $modelItem = B24Field::where('ID', $item['ID'])->get();
-        if (count($modelItem)) {
-            return;
-        }
-        $modelItem = B24Field::create($item);
-
         try {
+            $modelItem = null;
+            $modelItem = B24Field::where('ID', $item['ID'])->get();
+            if (count($modelItem)) {
+                return;
+            }
+            $modelItem = B24Field::create($item);
         } catch (Exception $e) {
-            $e->getMessage();
-        } finally {
-            return;
+            Log::error('Couldnt create/update Field: ID ' . $item['ID'] . '\ ' . $e->getMessage());
         }
     }
 
@@ -101,15 +99,15 @@ class B24FieldController extends AbstractB24Controller
 
     public function fetchAll()
     {
-  //      $item2 = $this->helper->getFields();
+        //      $item2 = $this->helper->getFields();
         //  $count = 0;
-        $checkDate = null;//'2016-01-01T00:00:00+03:00';
+        $checkDate = null; //'2016-01-01T00:00:00+03:00';
         $b24countItems = $this->helperOriginAPI->getQuantity('field', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $b24count = B24Field::count();
 
 
-        $fieldApicount=0;
+        $fieldApicount = 0;
         //$requestArray['filter'][ '>CREATED_DATE']=$checkDate;
         $requestArray['DATE'] = $checkDate;
         $requestArray['select'] = ['ID', 'VALUE', 'ENTITY_ID', 'FIELD_NAME', 'FIELD_ID'];
@@ -118,30 +116,28 @@ class B24FieldController extends AbstractB24Controller
         //      $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
         $items = $this->helperOriginAPI->getItem('field', $requestArray);
         //dd($items);
-    //  while (count($items)) {
-            foreach ($items as $item) {
-                $fieldApicount++;
-                if ( !empty($item['LIST'])) {
-                    foreach ($item['LIST'] as $list) {
-    
-                        $list['FIELD_ID'] = $item["ID"];
-                        $list['ENTITY_ID'] = $item['ENTITY_ID'];
-                        $list['FIELD_NAME'] = $item['FIELD_NAME'];
-                       // $list = get_object_vars($list);
-                        $this->store($list);
-        
-                    }
-                  
+        //  while (count($items)) {
+        foreach ($items as $item) {
+            $fieldApicount++;
+            if (!empty($item['LIST'])) {
+                foreach ($item['LIST'] as $list) {
+
+                    $list['FIELD_ID'] = $item["ID"];
+                    $list['ENTITY_ID'] = $item['ENTITY_ID'];
+                    $list['FIELD_NAME'] = $item['FIELD_NAME'];
+                    // $list = get_object_vars($list);
+                    $this->store($list);
                 }
             }
-           // $b24count = B24Field::count(); //save result count
-            //$b24count->save();
-            // $count = 0;
-            $requestArray['start'] = 0;//передаем только основные поля без значений
-            $items = $this->helperOriginAPI->getItem('field', $requestArray);
-            // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
-           
-     //   }
-     //   dd($item);
+        }
+        // $b24count = B24Field::count(); //save result count
+        //$b24count->save();
+        // $count = 0;
+        $requestArray['start'] = 0; //передаем только основные поля без значений
+        $items = $this->helperOriginAPI->getItem('field', $requestArray);
+        // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
+
+        //   }
+        //   dd($item);
     }
 }

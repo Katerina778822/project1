@@ -6,6 +6,7 @@ use App\Models\B24User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class B24UserController extends AbstractB24Controller
 {
@@ -48,7 +49,7 @@ class B24UserController extends AbstractB24Controller
     public function store(Request $request)
     {
         if (!empty($request)) {
-   
+
             $validator = $request->validate($this->validateArray);
 
 
@@ -95,10 +96,10 @@ class B24UserController extends AbstractB24Controller
     public function update(Request $request, string $id)
     {
         $user = B24User::findOrFail($id);
-        $this->validateArray['ID'] =  'required|integer';//
+        $this->validateArray['ID'] =  'required|integer'; //
         $validator = $request->validate($this->validateArray);
 
-          $user->update($request->all());
+        $user->update($request->all());
 
         return redirect()->back()->with('status', 'crm User updated!');
     }
@@ -106,11 +107,14 @@ class B24UserController extends AbstractB24Controller
     public function updateItem(array $item)
     {
         $b24Item = B24User::find($item['ID']);
-
-        if (!empty($b24Item)) {
-            $b24Item->update($item);
-        } else
-            B24User::create($item);
+        try {
+            if (!empty($b24Item)) {
+                $b24Item->update($item);
+            } else
+                B24User::create($item);
+        } catch (Exception $e) {
+            Log::error('Couldnt create/update B24User: ID ' . $item['ID'] . '\ ' . $e->getMessage());
+        }
     }
 
     /**

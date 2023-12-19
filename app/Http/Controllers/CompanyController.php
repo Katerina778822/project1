@@ -57,13 +57,6 @@ class CompanyController extends AbstractB24Controller
             return;
         }
         $modelCompanie = Company::create($companie);
-
-        try {
-        } catch (Exception $e) {
-            $e->getMessage();
-        } finally {
-            return;
-        }
     }
 
     /**
@@ -78,22 +71,29 @@ class CompanyController extends AbstractB24Controller
 
         $company = Company::find($id);
         $activeDeals = $company->getActiveDeals();
-        foreach($activeDeals as $activeDeal){//поиск последней стадии
-           $event = $activeDeal->events()->latest('updated_at')->first();
-           if(!empty($event))
-           $activeDeal->event = $event->typeEvent;
+        foreach ($activeDeals as $activeDeal) { //поиск последней стадии
+            $event = $activeDeal->events()->latest('updated_at')->first();
+            if (!empty($event))
+                $activeDeal->event = $event->typeEvent;
 
-           $type = $activeDeal->getTypeDeal()->id;
-           switch ($type){
-               case (1): $type = 0;break;
-               case (2): $type =  20;break;
-               case (3): $type =  40;break;
-               case (4): $type =  60;break;
-           }
-           $activeDeal->type = $type;
-
+            $type = $activeDeal->getTypeDeal()->id;
+            switch ($type) {
+                case (1):
+                    $type = 0;
+                    break;
+                case (2):
+                    $type =  20;
+                    break;
+                case (3):
+                    $type =  40;
+                    break;
+                case (4):
+                    $type =  60;
+                    break;
+            }
+            $activeDeal->type = $type;
         }
-      
+
         return view('bitrix24.company.show', [
             'company' => $company,
             'activeDeals' => $activeDeals,
@@ -123,11 +123,14 @@ class CompanyController extends AbstractB24Controller
     public function update(array $item)
     {
         $b24Item = Company::find($item['ID']);
-
-        if (Company::where('ID', $item['ID'])->exists()) {
-            $b24Item->update($item);
-        } else
-            $this->store($item);
+        try {
+            if (Company::where('ID', $item['ID'])->exists()) {
+                $b24Item->update($item);
+            } else
+                $this->store($item);
+        } catch (Exception $e) {
+            Log::error('Couldnt create/update Company: ID ' . $item['ID'] . '\ ' . $e->getMessage());
+        }
     }
 
     /**
@@ -245,10 +248,10 @@ class CompanyController extends AbstractB24Controller
         foreach ($companies as $company) {
             if ($company->UF_CRM_1540465145514 == 1587) //закрылся не работает пропустить
                 continue;
-            if ($company->ID==2833)
-            $asd=2;
+            if ($company->ID == 2833)
+                $asd = 2;
 
-                $status = $company->getClientStatus($end);
+            $status = $company->getClientStatus($end);
             switch ($status) {
                 case 1: {
                         $status = 1753;

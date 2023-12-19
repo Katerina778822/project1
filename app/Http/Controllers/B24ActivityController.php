@@ -9,6 +9,7 @@ use App\Models\B24Deal;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class B24ActivityController extends AbstractB24Controller
 {
@@ -245,6 +246,7 @@ class B24ActivityController extends AbstractB24Controller
      */
     public function update(array $item)
     {
+        try{
         if($item['ID2']==760955)
             $rf = 0;
         $activity = B24Activity::where('ID2', $item['ID2'])->first();
@@ -253,6 +255,10 @@ class B24ActivityController extends AbstractB24Controller
         } else {
             $this->store($item);
         }
+        
+    } catch (Exception $e) {
+        Log::error('Couldnt create/update Activity: ID ' . $item['ID'] . '\ ' . $e->getMessage());
+    }
     }
 
     /**

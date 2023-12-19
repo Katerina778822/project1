@@ -8,6 +8,7 @@ use App\Models\B24Ring;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class B24RingController extends AbstractB24Controller
 {
@@ -85,12 +86,17 @@ class B24RingController extends AbstractB24Controller
      */
     public function update(array $item)
     {
+        try {
         $b24Item = B24Ring::find($item['ID']);
 
         if (B24Ring::where('ID', $item['ID'])->exists()) {
             $b24Item->update($item);
         } else
             $this->store($item);
+
+        } catch (Exception $e) {
+            Log::error('Couldnt create/update Ring: ID ' . $item['ID'] . '\ ' . $e->getMessage());
+        }
     }
 
     /**
@@ -244,6 +250,5 @@ class B24RingController extends AbstractB24Controller
             // $items = $this->helperOriginAPI->getTasks($b24count->big_int1);
             $b24countItems = $this->helperOriginAPI->getQuantityUpdate('ring', $checkDate);
         }
-
     }
 }

@@ -11,7 +11,7 @@ use App\Models\B24Task;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Log;
 
 class B24TaskController extends AbstractB24Controller
 {
@@ -89,12 +89,16 @@ class B24TaskController extends AbstractB24Controller
      */
     public function update(array $item)
     {
-        $b24Item = B24Task::find($item['id']);
+        try {
+            $b24Item = B24Task::find($item['id']);
 
-        if (B24Task::where('ID', $item['id'])->exists()) {
-            $b24Item->update($item);
-        } else
-            $this->store($item);
+            if (B24Task::where('ID', $item['id'])->exists()) {
+                $b24Item->update($item);
+            } else
+                $this->store($item);
+        } catch (Exception $e) {
+            Log::error('Couldnt create/update Task: ID ' . $item['ID'] . '\ ' . $e->getMessage());
+        }
     }
 
     /**
@@ -204,7 +208,7 @@ class B24TaskController extends AbstractB24Controller
     public function updateData($checkDate)
     {
         //  $count = 0;
-    //    $checkDate = '2023-05-08T13:30:00+03:00'; //TEMP
+        //    $checkDate = '2023-05-08T13:30:00+03:00'; //TEMP
         $b24countItems = $this->helperOriginAPI->getQuantityUpdate('task', $checkDate);
         //$b24count = B24Analitics::where('AIM', 2)->first();
         $count = 0;
@@ -221,8 +225,8 @@ class B24TaskController extends AbstractB24Controller
             $i++; //temp
             foreach ($items as $item) {
 
-     // if($item['id'] == 268549)
-      //  $r=0;
+                // if($item['id'] == 268549)
+                //  $r=0;
 
                 if (!empty($item['closedDate']))
                     $item['closedDate'] = DateTime::createFromFormat("Y-m-d\TH:i:sP",  $item['closedDate'])->format('Y-m-d H:i:s');

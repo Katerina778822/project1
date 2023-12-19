@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use DateTimeZone;
+use Illuminate\Support\Facades\Log;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -93,11 +94,14 @@ class B24LeadController extends AbstractB24Controller
     public function update(array $item)
     {
         $lead = B24Lead::find($item['ID']);
-
-        if (!empty($lead)) {
-            $lead->update($item);
-        } else
-            $this->store($item);
+        try {
+            if (!empty($lead)) {
+                $lead->update($item);
+            } else
+                $this->store($item);
+        } catch (Exception $e) {
+            Log::error('Couldnt create/update Lead: ID ' . $item['ID'] . '\ ' . $e->getMessage());
+        }
     }
 
     /**
@@ -235,18 +239,18 @@ class B24LeadController extends AbstractB24Controller
         $dateStart = null;
         $dateEnd = null;
         $timezone = new DateTimeZone('Europe/Kiev');
-        if (empty($request->dateStart)) {   
+        if (empty($request->dateStart)) {
             $dateStart = new DateTime('now', $timezone);
             // $dateStart->modify("-1 day");
-        } else{
-            $dateStart =  new DateTime($request->dateStart,$timezone);
+        } else {
+            $dateStart =  new DateTime($request->dateStart, $timezone);
         }
-      
+
         if (empty($request->dateEnd)) {
 
             $dateEnd = new DateTime('now', $timezone);
         } else {
-            $dateEnd =  new DateTime($request->dateEnd,$timezone);
+            $dateEnd =  new DateTime($request->dateEnd, $timezone);
             $dateEnd->setTime(23, 59, 59);
         }
         $dateStart->setTime(0, 0, 0);
@@ -258,18 +262,18 @@ class B24LeadController extends AbstractB24Controller
         foreach ($leads as $lead) {
             $lead->USER_NAME = B24User::find($lead->ASSIGNED_BY_ID)->NAME;
             //поиск компании, сделок и суммы всех продаж данного лида
-            if(!empty($lead->COMPANY_ID)){
+            if (!empty($lead->COMPANY_ID)) {
                 $company = Company::find($lead->COMPANY_ID);
                 $deals = B24Deal::where([
-                   [ 'COMPANY_ID',$company->ID],
-                   [ 'CLOSED','y'],
-                    ])->get();
-                if(!empty($deals)){
-                    $deals_count=0;
-                    $deals_summ=0;
-                    foreach($deals as $deal){
+                    ['COMPANY_ID', $company->ID],
+                    ['CLOSED', 'y'],
+                ])->get();
+                if (!empty($deals)) {
+                    $deals_count = 0;
+                    $deals_summ = 0;
+                    foreach ($deals as $deal) {
                         $deals_count++;
-                        $deals_summ+= $deal->OPPORTUNITY;
+                        $deals_summ += $deal->OPPORTUNITY;
                     }
                     $lead->DEALS_COUNT = $deals_count;
                     $lead->DEALS_SUMM = $deals_summ;
