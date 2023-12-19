@@ -51,9 +51,9 @@ Route::get('/tail', function () {
 
 Route::resource('event','App\Http\Controllers\EventController')->middleware(['auth']);
 Route::get('event/create', 'App\Http\Controllers\EventController@create')->middleware('can:event.add')->name('event.create');
-Route::get('event/{event}/edit', [EventController::class, 'edit'])->middleware(['can:event.edit'])->name('event.edit');
-Route::delete('event/{event}',[EventController::class, 'destroy'])->middleware(['can:event.delete'])->name('event.destroy');
-Route::get('event', [EventController::class, 'index'])->middleware(['can:event.read.list'])->name('event.index');
+Route::get('event/{event}/edit', [App\Http\Controllers\EventController::class, 'edit'])->middleware(['can:event.edit'])->name('event.edit');
+Route::delete('event/{event}',[App\Http\Controllers\EventController::class, 'destroy'])->middleware(['can:event.delete'])->name('event.destroy');
+Route::get('event', [App\Http\Controllers\EventController::class, 'index'])->middleware(['can:event.read.list'])->name('event.index');
 
 Route::resource('B24User','App\Http\Controllers\B24UserController')->middleware(['auth']);
 Route::get('B24User/create', 'App\Http\Controllers\B24UserController@create')->middleware('can:B24User.add')->name('B24User.create');

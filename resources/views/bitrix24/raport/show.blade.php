@@ -90,7 +90,7 @@
                             <td>{{$item['DATE']??0}}</td>
                             <td>
                                 <x-button>
-                                    <a href="{{ route('company.details', ['companyId' => $item['ID']]) }}">
+                                    <a href="">
                                         Смотреть
                                     </a>
                                 </x-button>
