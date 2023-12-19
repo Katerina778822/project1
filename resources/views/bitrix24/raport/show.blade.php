@@ -72,7 +72,7 @@
                             <th>Дело</th>
                             <th>Тип клиента</th>
                             <th>Дата</th>
-                            <th>Смотреть</th>
+                           
                         </tr>
                     </thead>
                     <tbody>
@@ -88,13 +88,7 @@
                             <td>{{$item['BUSINESS']??0}}</td>
                             <td>{{$item['DEAL_TYPE']??0}}</td>
                             <td>{{$item['DATE']??0}}</td>
-                            <td>
-                                <x-button>
-                                    <a href="">
-                                        Смотреть
-                                    </a>
-                                </x-button>
-                            </td>
+          
                         </tr>
                         @endforeach
                     </tbody>
