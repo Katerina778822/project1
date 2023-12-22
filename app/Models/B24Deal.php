@@ -54,6 +54,11 @@ class B24Deal extends Model
         return $this->hasMany(Event::class,'deal_id','id1');
     }
 
+    public function task()
+    {
+        return $this->hasOne(Task::class,'deal_id','id1');
+    }
+
  
 
 

@@ -64,14 +64,14 @@ class B24AgendaController extends Controller
     {
         $user = auth()->user();
         $r = $user->hasAnyPermission('B24User.read.list');
-    //    $r = Gate::allows('B24User.read.list');
-        if ($user->hasAnyPermission('B24User.read.list')||$user->hasRole('super-user')) {
+        //    $r = Gate::allows('B24User.read.list');
+        if ($user->hasAnyPermission('B24User.read.list') || $user->hasRole('super-user')) {
             $items = B24User::where('ACTIVE', 1)->get();
         } else
-        $items = B24User::join('users', 'b24_users.ID', '=', 'users.crmuser_id')
-            ->where([
-               [ 'ACTIVE','=', 1],
-               [ 'crmuser_id','=', $user->crmuser_id??0],
+            $items = B24User::join('users', 'b24_users.ID', '=', 'users.crmuser_id')
+                ->where([
+                    ['ACTIVE', '=', 1],
+                    ['crmuser_id', '=', $user->crmuser_id ?? 0],
 
                 ])->get();
 
@@ -81,6 +81,8 @@ class B24AgendaController extends Controller
             //   'id_node' => $id
         ]);
     }
+
+
 
     private function checkUserCompanyToday(Company $userCompany)
     {
@@ -144,7 +146,7 @@ class B24AgendaController extends Controller
             ->where('closedDate', '=', null)
             ->get();
         if (count($companyTasks)) {
-            $userCompany->STATUS = 0; // TODAY
+            $userCompany->STATUS = 0; // TOmorrow
             $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                 return $item->deadline;
             });
@@ -155,7 +157,7 @@ class B24AgendaController extends Controller
                 ->where('COMPLETED', 'N')
                 ->get();
             if (count($companyTasks)) {
-                $userCompany->STATUS = 0; // TODAY
+                $userCompany->STATUS = 0; // TOmorrow
                 $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                     return $item->DEADLINE;
                 });
@@ -168,7 +170,7 @@ class B24AgendaController extends Controller
                     ->where('closedDate', '=', null)
                     ->get();
                 if (count($companyTasks)) {
-                    $userCompany->STATUS = 0; // TODAY
+                    $userCompany->STATUS = 0; // TOmorrow
                     $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                         return $item->deadline;
                     });
@@ -179,7 +181,7 @@ class B24AgendaController extends Controller
                         ->where('COMPLETED', 'N')
                         ->get();
                     if (count($companyTasks)) {
-                        $userCompany->STATUS = 0; // TODAY
+                        $userCompany->STATUS = 0; // TOmorrow
                         $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                             return $item->DEADLINE;
                         });
@@ -200,7 +202,7 @@ class B24AgendaController extends Controller
             ])
             ->get();
         if (count($companyTasks)) {
-            $userCompany->STATUS = 3; // TODAY
+            $userCompany->STATUS = 3; // Yesterday
             $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                 return $item->deadline;
             });
@@ -213,7 +215,7 @@ class B24AgendaController extends Controller
                 ])
                 ->get();
             if (count($companyTasks)) {
-                $userCompany->STATUS = 3; // TODAY
+                $userCompany->STATUS = 3; // Yesterday
                 $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                     return $item->DEADLINE;
                 });
@@ -228,7 +230,7 @@ class B24AgendaController extends Controller
                     ])
                     ->get();
                 if (count($companyTasks)) {
-                    $userCompany->STATUS = 3; // TODAY
+                    $userCompany->STATUS = 3; // Yesterday
                     $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                         return $item->deadline;
                     });
@@ -241,7 +243,7 @@ class B24AgendaController extends Controller
                         ])
                         ->get();
                     if (count($companyTasks)) {
-                        $userCompany->STATUS = 3; // TODAY
+                        $userCompany->STATUS = 3; // Yesterday
                         $userCompany->AGENDA_DATE = $companyTasks->max(function ($item) {
                             return $item->DEADLINE;
                         });
@@ -383,6 +385,60 @@ class B24AgendaController extends Controller
     }
 
     /**
+     * Анализирует активные сделки компании и их задачи (Task).
+     * Устанавливает статус компании в зависимости от ближайшего дедлайна задач.
+     * Возвращает -1, если задач не найдено, 1 - если есть задача с дедлайном сегодня,
+     * 0 - если нет задач на сегодня, но есть на завтра, 3 - если нет задач на сегодня и завтра, но есть на вчера.
+     * 
+     * @param Company $userCompany Компания для анализа.
+     * @return int Статус компании или -1, если задачи отсутствуют.
+     */
+    function checkJameCompanyDealsTasks($userCompany)
+    {
+        $today = new DateTime();
+        $tomorrow = new DateTime('tomorrow');
+        $yesterday = new DateTime('yesterday');
+        $deadline=0;
+
+        $hasTaskForToday = false;
+        $hasTaskForTomorrow = false;
+        $hasTaskForYesterday = false;
+        if ($userCompany->ID == 3409)
+            $rt = $userCompany->getActiveDeals(); //temp
+        foreach ($userCompany->getActiveDeals() as $deal) {
+            if(empty($deal->task))
+                return -1;  //если нет задачи task в сделке
+            $deadline = new DateTime($deal->task->deadline);
+            if ($deadline > $this->today && $deadline < $this->tomorrow) {
+                $hasTaskForToday = true;
+                break; // Выход из обоих циклов
+            } elseif ($deadline > $this->tomorrow) {
+                $hasTaskForTomorrow = true;
+                break;
+            } elseif ($deadline < $this->yesterday1) {
+                $hasTaskForYesterday = true;
+            }
+        }
+
+        $userCompany->AGENDA_DATE=$deadline?$deadline->format('Y-m-d H:i'):0;
+
+        if ($hasTaskForToday) {
+            $userCompany->STATUS = 1; // TODAY
+            return 1;
+        } elseif ($hasTaskForTomorrow) {
+            $userCompany->STATUS = 0; // TOMORROW
+            return 0;
+        } elseif ($hasTaskForYesterday) {
+            $userCompany->STATUS = 3; // YESTERDAY
+            return 3;
+        }
+
+        return -1; // Нет задач
+    }
+
+
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -407,14 +463,20 @@ class B24AgendaController extends Controller
         foreach ($userCompanies as $userCompany) {
             $userCompany->URL_TYPE = 0; //company
             //актуальность компании на сегодня
-           // if ($userCompany->ID == 7563) //temp
-             //   $i = 0;
-            if (!$this->checkUserCompanyToday($userCompany))
-                if (!$this->checkUserCompanyTomorrow($userCompany))
-                    if (!$this->checkUserCompanyYesterday($userCompany))
-                        if (!$this->checkUserCompanyLastDealWon($userCompany)) {
-                            $userCompany->STATUS = 4;
-                        }
+            // if ($userCompany->ID == 7563) //temp
+            //   $i = 0;
+
+            $STATUS = 0;
+            $STATUS = $this->checkJameCompanyDealsTasks($userCompany);
+            if ($STATUS == -1) {  //если не найдена Task, то проверяем B24Task
+                if (!$this->checkUserCompanyToday($userCompany))
+                    if (!$this->checkUserCompanyTomorrow($userCompany))
+                        if (!$this->checkUserCompanyYesterday($userCompany))
+                            if (!$this->checkUserCompanyLastDealWon($userCompany)) {
+                                $userCompany->STATUS = 4;
+                            }
+            } else  $userCompany->STATUS = $STATUS;
+
             //if ($userCompany->ID == 4495)
             //  dd($userCompany->STATUS, ' ', $userCompany->AGENDA_DATE);
         }

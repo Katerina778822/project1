@@ -97,7 +97,7 @@ class B24TaskController extends AbstractB24Controller
             } else
                 $this->store($item);
         } catch (Exception $e) {
-            Log::error('Couldnt create/update Task: ID ' . $item['ID'] . '\ ' . $e->getMessage());
+            Log::error('Couldnt create/update B24Task: ID ' . $item['ID'] . '\ ' . $e->getMessage());
         }
     }
 

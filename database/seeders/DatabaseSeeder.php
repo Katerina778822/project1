@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {    
         // \App\Models\User::factory(10)->create();
+        $this->call(TaskTypeSeeder::class);
         $this->call(DealTypeSeeder::class);
         $this->call(BranchSeeder::class);
         $this->call(PermissionsSeeder::class);

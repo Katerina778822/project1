@@ -7,6 +7,7 @@ use App\Jobs\b24CompanyFetch;
 use App\Jobs\b24UpdateStatusCompanies;
 use App\Models\B24Contact;
 use App\Models\Company;
+use App\Models\TaskType;
 use DateTime;
 use DateTimeZone;
 use Exception;
@@ -68,10 +69,11 @@ class CompanyController extends AbstractB24Controller
     public function show($id)
     {
         // код для обработки запроса
-
+        $typeTasks=TaskType::all();
         $company = Company::find($id);
         $activeDeals = $company->getActiveDeals();
         foreach ($activeDeals as $activeDeal) { //поиск последней стадии
+
             $event = $activeDeal->events()->latest('updated_at')->first();
             if (!empty($event))
                 $activeDeal->event = $event->typeEvent;
@@ -97,6 +99,7 @@ class CompanyController extends AbstractB24Controller
         return view('bitrix24.company.show', [
             'company' => $company,
             'activeDeals' => $activeDeals,
+            'typeTasks' => $typeTasks,
         ]);
     }
 

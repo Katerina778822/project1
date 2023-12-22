@@ -49,6 +49,8 @@ Route::get('/tail', function () {
     return view('tailwind'); });
 */
 
+Route::resource('task','App\Http\Controllers\TaskController')->middleware(['auth']);
+
 Route::resource('event','App\Http\Controllers\EventController')->middleware(['auth']);
 Route::get('event/create', 'App\Http\Controllers\EventController@create')->middleware('can:event.add')->name('event.create');
 Route::get('event/{event}/edit', [App\Http\Controllers\EventController::class, 'edit'])->middleware(['can:event.edit'])->name('event.edit');
