@@ -30,7 +30,22 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->typeTask = (int) request('typeTask'); // Convert the received value to integer
+
+        $validator = $request->validate([
+            'name' => 'string|max:25',
+            'description' => 'required|string|max:1000',
+            'deadline' => 'required',
+            'deal_id' => 'integer|min:0|required',
+            'typeTask' => 'integer|min:0|required',
+        ]);
+        try {
+                Task::create($request->all());
+
+            return redirect()->back()->with('status', 'Task created!');
+        } catch (Exception $e) {
+            Log::error('Couldnt create new Task! description: ' .$request->description. '\ ' . $e->getMessage());
+        }
     }
 
     /**

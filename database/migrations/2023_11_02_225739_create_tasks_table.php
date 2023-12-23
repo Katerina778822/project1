@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('deal_id')->nullable(false);
             $table->unsignedBigInteger('typeTask')->nullable(false);
-            $table->text('name')->nullable(false);
+            $table->text('name')->nullable(true);
             $table->text('description')->nullable();
             $table->dateTime('deadline')->nullable()->default(null);
             $table->timestamps();

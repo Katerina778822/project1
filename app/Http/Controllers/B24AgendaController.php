@@ -63,7 +63,7 @@ class B24AgendaController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $r = $user->hasAnyPermission('B24User.read.list');
+       // $r = $user->hasAnyPermission('B24User.read.list');
         //    $r = Gate::allows('B24User.read.list');
         if ($user->hasAnyPermission('B24User.read.list') || $user->hasRole('super-user')) {
             $items = B24User::where('ACTIVE', 1)->get();

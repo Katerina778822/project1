@@ -1,75 +1,86 @@
 <x-company>
-<div class="flex justify-center">
-    <!-- Centered block -->
-    <div class="w-full max-w-md">
-        <!-- Displaying the session message -->
-        @if (session('status'))
+    <div class="flex justify-center">
+        <!-- Centered block -->
+        <div class="w-full max-w-md">
+            <!-- Displaying the session message -->
+            @if (session('status'))
             <div class="alert alert-success">
                 {{ session('status') }}
             </div>
-        @endif
+            @endif
 
-        <p class="mt-1 text-sm leading-6 text-gray-600"> </p>
+            <p class="mt-1 text-sm leading-6 text-gray-600"> </p>
 
-        <!-- Displaying validation errors -->
-        <x-auth-validation-errors class="mb-4" :errors="$errors" />
+            <!-- Displaying validation errors -->
+            <x-auth-validation-errors class="mb-4" :errors="$errors" />
+        </div>
     </div>
-</div>
 
-    <div>
-        Компания {{$company->ID}} Название {{$company->TITLE}}
+    <div class="flex justify-between items-center w-full">
+        <div>
+            Название {{$company->TITLE}}
+        </div>
+        <div class="ml-auto">
+            <x-button_blue>
+                <a class="btn btn-link" href="{{ route('agenda.show', ['agenda'=>$company->ASSIGNED_BY_ID]) }}">
+                    {{ __('Agenda') }}
+                </a>
+            </x-button_blue>
+        </div>
+
+
+        <div>
+            @if(auth()->user()->can('deal.add'))
+            <!-- x-button_green class="ml-2">
+        <a class="btn btn-link" href="{{ route('dashboard') }}">
+            {{ __('Create new deal') }}</a>
+    </x-button_green -->
+            @endif
+        </div>
     </div>
-    <form method="POST" action="{{ route('dashboard') }}" class="flex  basis-11/12  justify-end">
-        @csrf
-        <input type="hidden" name="stage_button_id" value="{{ -1}}">
-        @if(auth()->user()->can('deal.add'))
-        <x-button_green class="ml-2">
-            <a class="btn btn-link" href="{{ route('dashboard') }}">
-                {{ __('Create new deal') }}</a>
-        </x-button_green>
-        @endif
-    </form>
+
+
     @foreach($activeDeals as $activeDeal)
     <x-jame.deal :active-deal="$activeDeal" />
 
     <!-- Вывод задачи -->
-    @if($activeDeal->task)
+
     <div>
-        <form class="bg-gray-200 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 items-center justify-center" method="post" action="{{ route('task.update', ['task' => $activeDeal->task->id]) }}" style="display: flex; flex-wrap: nowrap; align-items: center;">
+    <form class="bg-gray-200 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2" method="post" action="{{$activeDeal->task?route('task.update', ['task' => $activeDeal->task->id]):route('task.store') }}">
+        <div class="flex items-center border-t border-gray-900/10 py-2 px-4">
+            @csrf
+            @if($activeDeal->task)
+            @method('PUT')
+            @endif
 
-            <div class="items-center justify-center border-t border-gray-900/10 " style="display: flex;">
-                <div class="flex" style="flex-grow: 1;">
-                    @csrf
-                    @method('PUT')
-                    <!-- description -->
-                    <x-input id="description"  class="w-full max-w-none" type="text" name="description" value="{{$activeDeal->task->description}}" required autofocus style="flex-grow: 1;" />
+            <!-- description -->
+            <textarea id="description" class="flex-grow" name="description" required autofocus>{{ $activeDeal->task->description ?? '' }}</textarea>
 
-                    <!-- deadline -->
-                   <x-input id="deadline" class="" type="datetime-local" name="deadline" value="{{ \Carbon\Carbon::parse($activeDeal->task->deadline)->format('Y-m-d\TH:i') }}" />
+            <!-- deadline -->
+            <x-input id="deadline" class="ml-2" type="datetime-local" name="deadline" value="{{$activeDeal->task?(\Carbon\Carbon::parse($activeDeal->task->deadline)->format('Y-m-d\TH:i')):'' }}" />
 
-                    <!-- deal_id -->
-                    <x-input id="deal_id" class="" type="hidden" name="deal_id" value="{{$activeDeal->id1}}" />
+            <!-- deal_id -->
+            <x-input id="deal_id" type="hidden" name="deal_id" value="{{$activeDeal->id1??''}}" />
 
-                    <!-- typeTask -->
-                    <div class="form-group" style="margin-left: 10px;">
-                        <label for="typeTask"></label>
-                        <select class="form-control" id="typeTask" name="typeTask">
-                            @foreach($typeTasks as $typeTask)
-                            <option value="{{ (integer) $typeTask->id }}"{{ $activeDeal->task->typeTask == $typeTask->id ? 'selected' : '' }}>
-                                {{ $typeTask->name }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <x-button class="ml-4" style="margin-left: 10px;">
-                        {{ __('Confirm') }}
-                    </x-button>
-                </div>
+            <!-- typeTask -->
+            <div class="form-group mx-2">
+                <label for="typeTask"></label>
+                <select class="form-control" id="typeTask" name="typeTask">
+                    @foreach($typeTasks as $typeTask)
+                    <option value="{{ (integer) $typeTask->id }}" {{  !empty($activeDeal->task) && $activeDeal->task->typeTask == $typeTask->id ? 'selected' : '' }}>
+                        {{ $typeTask->name }}
+                    </option>
+                    @endforeach
+                </select>
             </div>
-        </form>
-    </div>
-    @endif
+
+            <x-button class="ml-auto">
+                {{ __('Confirm') }}
+            </x-button>
+        </div>
+    </form>
+</div>
+
 
     @endforeach
     <x-alert />
