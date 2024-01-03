@@ -198,3 +198,10 @@ Route::post('/bitrix24/updateDataDeal', [App\Http\Controllers\B24FetchController
 ->name('b24fetch.updateDataDeal');
 Route::post('/bitrix24/updateDataLead', [App\Http\Controllers\B24FetchController::class, 'updateDataLead'])->middleware(['auth'])
 ->name('b24fetch.updateDataLead');
+
+Route::get('/k1', [App\Http\Controllers\KaterinaFolder\Katerina1::class, 'k1'])->name('k1');
+
+Route::get('/kkk', function () {
+    return view('katerina.kkk');
+});
+
