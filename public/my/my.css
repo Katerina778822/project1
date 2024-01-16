@@ -1,0 +1,45 @@
+ul {
+    padding-left: 2rem;
+    list-style-type: none;
+  }
+  
+  ul li {
+    padding-left: 2rem;
+    background-image: url(star.svg);
+    background-position: 0 0;
+    background-size: 1.6rem 1.6rem;
+    background-repeat: no-repeat;
+  }
+
+  ol {
+    padding-left: 2rem;
+    list-style-type: none;
+    font-size: 1.4em;
+    color: rgb(27, 55, 14);
+  }
+  
+  ol li {
+    padding-left: 2rem;
+    background-image: url(star.svg);
+    background-position: 0 0;
+    background-size: 1.6rem 1.6rem;
+    background-repeat: no-repeat;
+  }
+
+  .span1 {
+    color: #f20;
+    background: #f9d;
+  }
+
+  .span2 {
+    color: rgb(125, 65, 9);
+    background: rgb(231, 255, 153);
+  }
+
+  .span3 {
+    color: rgb(59, 13, 5);
+    background: rgb(114, 211, 24);
+    font-style: italic;   
+  }
+
+   

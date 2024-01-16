@@ -25,7 +25,7 @@ class CreateB24ActivityTable extends Migration
             $table->string('PROVIDER_ID')->nullable()->default('');
             $table->string('PROVIDER_TYPE_ID')->nullable()->default('');
             $table->string('SUBJECT')->nullable()->default('');
-            $table->text('DESCRIPTION')->nullable()->default('');
+            $table->text('DESCRIPTION')->nullable();
             $table->char('COMPLETED')->nullable()->default('');
 
             $table->unsignedBigInteger('ASSIGNED_BY_ID')->nullable()->default(0);

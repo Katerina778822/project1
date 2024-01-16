@@ -11,13 +11,13 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-    {/*
+    {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('business_id');
             $table->foreign('business_id')->references('id')->on('businesses');
-        });*/
+        });
 
 
         Schema::table('b24_deals', function (Blueprint $table) {
