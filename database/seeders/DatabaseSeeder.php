@@ -22,6 +22,10 @@ class DatabaseSeeder extends Seeder
         
         $this->call(RoleSeeder::class);
         $this->call(StageSeeder::class);
+
+ // добавляю простых юзеров с именами пять пукв и такими же паролями
+       // $this->call(UserSeeder::class);
+       //нет, не добавляю
        
       
     }
